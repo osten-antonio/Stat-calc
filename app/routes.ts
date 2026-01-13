@@ -7,4 +7,7 @@ export default [
   route("stats-hell/tables", "routes/stats-hell.tables.tsx"),
   route("stats-hell/permutations", "routes/stats-hell.permutations.tsx"),
   route("stats-hell/combinations", "routes/stats-hell.combinations.tsx"),
+  route("stats-hell/binomial", "routes/stats-hell.binomial.tsx"),
+  route("stats-hell/poisson", "routes/stats-hell.poisson.tsx"),
+  route("stats-hell/hypergeometric", "routes/stats-hell.hypergeometric.tsx"),
 ] satisfies RouteConfig;
