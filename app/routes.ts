@@ -5,4 +5,5 @@ export default [
   route("stats-hell", "routes/stats-hell.tsx"),
   route("stats-hell/descriptive", "routes/stats-hell.descriptive.tsx"),
   route("stats-hell/tables", "routes/stats-hell.tables.tsx"),
+  route("stats-hell/permutations", "routes/stats-hell.permutations.tsx"),
 ] satisfies RouteConfig;
