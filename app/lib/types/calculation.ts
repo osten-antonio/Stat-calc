@@ -1,7 +1,7 @@
 export interface CalculationStep {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   formula?: string;
   substitution?: string;
   calculation?: string;
