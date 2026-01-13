@@ -10,4 +10,5 @@ export default [
   route("stats-hell/binomial", "routes/stats-hell.binomial.tsx"),
   route("stats-hell/poisson", "routes/stats-hell.poisson.tsx"),
   route("stats-hell/hypergeometric", "routes/stats-hell.hypergeometric.tsx"),
+  route("stats-hell/t-tests", "routes/stats-hell.t-tests.tsx"),
 ] satisfies RouteConfig;
