@@ -163,103 +163,141 @@ export default function OneWay() {
                         </div>
                     </div>
 
-                    {/* Detailed Working */}
+                    {/* Detailed Working (Deviation Method) */}
                     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 overflow-hidden">
                         <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white border-b pb-2 dark:border-gray-700 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
-                            Step-by-Step Calculation
+                            Step-by-Step Calculation (Deviation Method)
                         </h3>
 
-                        {/* Step 1: Descriptive Stats */}
+                        {/* Step 1: Means */}
                         <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 1: Calculate Totals, Means, and Squared Sums</h4>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full text-sm text-center border-collapse border border-gray-300 dark:border-gray-700">
-                                    <thead className="bg-gray-100 dark:bg-gray-600">
-                                        <tr>
-                                            <th className="border border-gray-300 dark:border-gray-700 p-2">Group</th>
-                                            <th className="border border-gray-300 dark:border-gray-700 p-2">N</th>
-                                            <th className="border border-gray-300 dark:border-gray-700 p-2">Sum (∑X)</th>
-                                            <th className="border border-gray-300 dark:border-gray-700 p-2">Mean (X̄)</th>
-                                            <th className="border border-gray-300 dark:border-gray-700 p-2">SumSq (∑X²)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {result.groupStats.map((g, i) => (
-                                            <tr key={i} className="even:bg-gray-50 dark:even:bg-gray-800/50">
-                                                <td className="border border-gray-300 dark:border-gray-700 p-2">Group {i + 1}</td>
-                                                <td className="border border-gray-300 dark:border-gray-700 p-2">{g.n}</td>
-                                                <td className="border border-gray-300 dark:border-gray-700 p-2">{g.sum.toFixed(2)}</td>
-                                                <td className="border border-gray-300 dark:border-gray-700 p-2">{g.mean.toFixed(2)}</td>
-                                                <td className="border border-gray-300 dark:border-gray-700 p-2">{g.sumSq.toFixed(2)}</td>
-                                            </tr>
-                                        ))}
-                                        <tr className="font-bold bg-blue-50 dark:bg-blue-900/20">
-                                            <td className="border border-gray-300 dark:border-gray-700 p-2">Total</td>
-                                            <td className="border border-gray-300 dark:border-gray-700 p-2">{result.grandN}</td>
-                                            <td className="border border-gray-300 dark:border-gray-700 p-2">{result.grandSum.toFixed(2)}</td>
-                                            <td className="border border-gray-300 dark:border-gray-700 p-2">-</td>
-                                            <td className="border border-gray-300 dark:border-gray-700 p-2">{result.sumOfSquaresRaw.toFixed(2)}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 1: Group Means and Overall Mean</h4>
+
+                            <div className="space-y-4 text-sm font-mono bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                                <div>
+                                    <div className="font-bold text-gray-800 dark:text-gray-200 mb-1">Calculate the grand mean (X̄):</div>
+                                    <div>Sum = {result.grandSum.toFixed(2)}</div>
+                                    <div>N = {result.grandN}</div>
+                                    <div className="mt-1">
+                                        X̄ = {result.grandSum.toFixed(2)} / {result.grandN} = <strong>{(result.grandSum / result.grandN).toFixed(4)}</strong>
+                                    </div>
+                                </div>
+
+                                <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+                                    <div className="font-bold text-gray-800 dark:text-gray-200 mb-1">Calculate the group means:</div>
+                                    {result.groupStats.map((g, i) => (
+                                        <div key={i} className="mb-2">
+                                            Mean_Group{i + 1} = {g.sum.toFixed(2)} / {g.n} = <strong>{g.mean.toFixed(4)}</strong>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Step 2: Correction Factor */}
-                        <div className="mb-8 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Step 2: Correction Factor (C.F.)</h4>
-                            <p className="font-mono text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                C.F. = (∑X_total)² / N_total
-                            </p>
-                            <p className="font-mono text-sm text-gray-800 dark:text-gray-200">
-                                C.F. = ({result.grandSum.toFixed(2)})² / {result.grandN} = <strong>{result.correctionFactor.toFixed(4)}</strong>
-                            </p>
-                        </div>
-
-                        {/* Step 3: Sum of Squares */}
+                        {/* Step 2: Sum of Squares */}
                         <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 3: Compute Sum of Squares (SS)</h4>
-                            <div className="space-y-4">
-                                <div className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-                                    <h5 className="font-semibold text-gray-800 dark:text-gray-200">SS Total</h5>
-                                    <p className="font-mono text-xs text-gray-500 mb-1">Formula: ∑(X²) - C.F.</p>
-                                    <p className="font-mono text-sm text-gray-700 dark:text-gray-300">
-                                        {result.sumOfSquaresRaw.toFixed(2)} - {result.correctionFactor.toFixed(2)} = <strong>{result.totalSS.toFixed(4)}</strong>
-                                    </p>
+                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 2: Sum of Squares</h4>
+
+                            {/* SS Total */}
+                            <div className="mb-4">
+                                <h5 className="font-semibold text-gray-800 dark:text-gray-200">Total Sum of Squares (SStotal)</h5>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Formula: ∑(X - GrandMean)²</p>
+                                <div className="p-3 bg-white dark:bg-gray-800 border rounded font-mono text-sm overflow-x-auto">
+                                    {/* Show first 3 deviations for illustration */}
+                                    {groups.flat().slice(0, 3).map((val, idx) => (
+                                        <span key={idx}>({val} - {(result.grandSum / result.grandN).toFixed(2)})² + </span>
+                                    ))}
+                                    <span>...</span>
+                                    <div className="mt-2 font-bold text-gray-800 dark:text-blue-400">
+                                        = {result.totalSS.toFixed(4)}
+                                    </div>
                                 </div>
-                                <div className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-                                    <h5 className="font-semibold text-gray-800 dark:text-gray-200">SS Between (Treatments)</h5>
-                                    <p className="font-mono text-xs text-gray-500 mb-1">Formula: ∑((∑X_group)² / n_group) - C.F.</p>
-                                    <p className="font-mono text-sm text-gray-700 dark:text-gray-300">
-                                        ({result.groupStats.map(g => `(${g.sum.toFixed(1)}²/${g.n})`).join(" + ")}) - {result.correctionFactor.toFixed(2)}
-                                    </p>
-                                    <p className="font-mono text-sm font-bold text-gray-800 dark:text-blue-400">
+                            </div>
+
+                            {/* SS Between */}
+                            <div className="mb-4">
+                                <h5 className="font-semibold text-gray-800 dark:text-gray-200">Between-Groups Sum of Squares (SSbetween)</h5>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Formula: ∑ n_group * (Mean_group - GrandMean)²</p>
+                                <div className="p-3 bg-white dark:bg-gray-800 border rounded font-mono text-sm overflow-x-auto">
+                                    {result.groupStats.map((g, i) => (
+                                        <span key={i}>
+                                            {g.n} * ({g.mean.toFixed(2)} - {(result.grandSum / result.grandN).toFixed(2)})²
+                                            {i < result.groupStats.length - 1 ? " + " : ""}
+                                        </span>
+                                    ))}
+                                    <div className="mt-2 font-bold text-gray-800 dark:text-blue-400">
                                         = {result.ssBetween.toFixed(4)}
-                                    </p>
+                                    </div>
                                 </div>
-                                <div className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-                                    <h5 className="font-semibold text-gray-800 dark:text-gray-200">SS Within (Error)</h5>
-                                    <p className="font-mono text-xs text-gray-500 mb-1">Formula: SS Total - SS Between</p>
-                                    <p className="font-mono text-sm text-gray-700 dark:text-gray-300">
-                                        {result.totalSS.toFixed(4)} - {result.ssBetween.toFixed(4)} = <strong>{result.ssWithin.toFixed(4)}</strong>
-                                    </p>
+                            </div>
+
+                            {/* SS Within */}
+                            <div className="mb-4">
+                                <h5 className="font-semibold text-gray-800 dark:text-gray-200">Within-Groups Sum of Squares (SSwithin)</h5>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Formula: SStotal - SSbetween</p>
+                                <div className="p-3 bg-white dark:bg-gray-800 border rounded font-mono text-sm">
+                                    {result.totalSS.toFixed(4)} - {result.ssBetween.toFixed(4)}
+                                    <div className="mt-2 font-bold text-gray-800 dark:text-blue-400">
+                                        = {result.ssWithin.toFixed(4)}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Step 4: Final MST and F */}
+                        {/* Step 3: MS and F */}
+                        <div className="mb-8">
+                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 3: Calculate Mean Squares and F-Statistic</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="p-3 border rounded bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                                    <strong>Degrees of Freedom (df)</strong>
+                                    <ul className="list-disc list-inside mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                        <li>df_between = k - 1 = {result.groupStats.length} - 1 = {result.dfBetween}</li>
+                                        <li>df_within = N - k = {result.grandN} - {result.groupStats.length} = {result.dfWithin}</li>
+                                    </ul>
+                                </div>
+                                <div className="p-3 border rounded bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                                    <strong>Mean Squares (MS)</strong>
+                                    <ul className="list-disc list-inside mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                        <li>MS_between = {result.ssBetween.toFixed(2)} / {result.dfBetween} = {result.msBetween.toFixed(4)}</li>
+                                        <li>MS_within = {result.ssWithin.toFixed(2)} / {result.dfWithin} = {result.msWithin.toFixed(4)}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="mt-4 p-4 border rounded-lg bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/50">
+                                <div className="text-center">
+                                    <span className="font-semibold text-gray-700 dark:text-gray-300">F-Statistic = MS_between / MS_within</span>
+                                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+                                        {result.msBetween.toFixed(2)} / {result.msWithin.toFixed(2)} ≈ {result.fStat.toFixed(4)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Step 4: Decision */}
                         <div>
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 4: Degrees of Freedom, Mean Squares, and F</h4>
-                            <ul className="list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                                <li><strong>df Between:</strong> k - 1 = {result.groupStats.length} - 1 = {result.dfBetween}</li>
-                                <li><strong>df Within:</strong> N - k = {result.grandN} - {result.groupStats.length} = {result.dfWithin}</li>
-                                <li><strong>MS Between:</strong> SS Between / df Between = {result.ssBetween.toFixed(2)} / {result.dfBetween} = {result.msBetween.toFixed(4)}</li>
-                                <li><strong>MS Within:</strong> SS Within / df Within = {result.ssWithin.toFixed(2)} / {result.dfWithin} = {result.msWithin.toFixed(4)}</li>
-                                <li><strong>F-Statistic:</strong> MS Between / MS Within = {result.fStat.toFixed(4)}</li>
-                            </ul>
+                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 4: Decision</h4>
+                            <div className="text-sm text-gray-600 dark:text-gray-400 border-l-4 border-purple-500 pl-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-r">
+                                <p className="mb-2"><strong>Critical F-Value:</strong></p>
+                                <p className="mb-2">
+                                    Look up the critical value in an F-distribution table with:
+                                    <br />
+                                    • df_between (numerator) = <strong>{result.dfBetween}</strong>
+                                    <br />
+                                    • df_within (denominator) = <strong>{result.dfWithin}</strong>
+                                    <br />
+                                    • α (significance level) usually = <strong>0.05</strong>
+                                </p>
+                                <p>
+                                    <strong>Compare F:</strong>
+                                    <br />
+                                    If F ({result.fStat.toFixed(4)}) &gt; F_critical, reject the null hypothesis (means are different).
+                                    <br />
+                                    If F ({result.fStat.toFixed(4)}) &le; F_critical, fail to reject (no significant difference).
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
