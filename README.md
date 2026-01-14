@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="https://stats-stuff.vercel.app">
+  <a href="https://stat-stuffs.vercel.app">
     <img src="https://img.shields.io/badge/▲_Deploy-stat--stuffs.vercel.app-black?style=for-the-badge&logo=vercel" alt="Deployed on Vercel" />
   </a>
 </p>
