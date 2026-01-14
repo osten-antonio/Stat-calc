@@ -66,70 +66,102 @@ export default function CombinationsCalculator() {
   }
 
   return (
-    <main className="retro-theme min-h-screen p-6">
-      <header className="mb-6">
-        <h1 className="text-3xl retro-fire">COMBINATIONS</h1>
-        <p className="text-sm mt-2">
-          Calculate C(n, r) — the number of ways to choose r items from n (order doesn't matter).
-        </p>
-        <Link to="/stats-stuff" className="text-xs">
-          ← Back to Stats Stuff
-        </Link>
-      </header>
+    <main className="min-h-screen px-6 py-12">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-8 fade-in">
+          <Link
+            to="/stats-stuff"
+            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+          >
+            ← Back to Stats Stuff
+          </Link>
+          <h1
+            className="text-4xl font-medium tracking-tight mb-2"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Combinations
+          </h1>
+          <p className="text-[var(--color-ink-light)]">
+            Calculate C(n, r) — the number of ways to choose r items from n (order doesn't matter).
+          </p>
+        </header>
 
-      <Card className="retro-card mb-6">
-        <MathBlock formula="C(n, r) = \frac{n!}{r!(n - r)!}" />
-      </Card>
+        <Card className="mb-8 bg-[var(--color-accent-peach)] fade-in" style={{ animationDelay: "50ms" }}>
+          <MathBlock formula="C(n, r) = \frac{n!}{r!(n - r)!}" />
+        </Card>
 
-      <section className="mb-6">
-        <div className="grid grid-cols-2 gap-4 max-w-md">
-          <Input
-            label="n (total items)"
-            type="number"
-            min={0}
-            value={n}
-            onChange={(e) => setN(e.target.value)}
-            placeholder="e.g. 10"
-          />
-          <Input
-            label="r (items to choose)"
-            type="number"
-            min={0}
-            value={r}
-            onChange={(e) => setR(e.target.value)}
-            placeholder="e.g. 3"
-          />
-        </div>
-
-        {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
-
-        <Button className="mt-4" onClick={calculate}>
-          Calculate
-        </Button>
-      </section>
-
-      {result && (
-        <section>
-          <h2 className="text-xl mb-4">Step-by-Step Working</h2>
-
-          <div className="space-y-4 mb-6">
-            {result.steps.map((step) => (
-              <Card key={step.id} className="retro-card">
-                <h3 className="font-bold text-lg">{step.title}</h3>
-                {step.description && <p>{step.description}</p>}
-                {step.formula && <MathBlock formula={step.formula} />}
-                {step.calculation && <MathBlock formula={step.calculation} />}
-                {step.note && <p className="text-sm opacity-80">{step.note}</p>}
-                {step.result && (
-                  <p className="text-xl font-bold mt-2 retro-fire">= {step.result}</p>
-                )}
-              </Card>
-            ))}
+        <section className="mb-8 fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="grid grid-cols-2 gap-4 max-w-lg">
+            <Input
+              label="n (total items)"
+              type="number"
+              min={0}
+              value={n}
+              onChange={(e) => setN(e.target.value)}
+              placeholder="e.g. 10"
+            />
+            <Input
+              label="r (items to choose)"
+              type="number"
+              min={0}
+              value={r}
+              onChange={(e) => setR(e.target.value)}
+              placeholder="e.g. 3"
+            />
           </div>
 
-          <CopyExamAnswer answer={resultToExamAnswer(result)} />
+          {error && (
+            <p className="text-red-600 mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
+              {error}
+            </p>
+          )}
+
+          <Button className="mt-4" onClick={calculate}>
+            Calculate
+          </Button>
         </section>
-      )}
+
+        {result && (
+          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+            <h2
+              className="text-2xl font-medium mb-6"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              Step-by-Step Working
+            </h2>
+
+            <div className="space-y-4 mb-6">
+              {result.steps.map((step) => (
+                <div
+                  key={step.id}
+                  className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                >
+                  <h3 className="font-semibold text-sm mb-2">{step.title}</h3>
+                  {step.description && (
+                    <p className="text-xs text-[var(--color-ink-light)] mb-2">
+                      {step.description}
+                    </p>
+                  )}
+                  {step.formula && <MathBlock formula={step.formula} className="my-2" />}
+                  {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                  {step.note && (
+                    <p className="text-xs text-[var(--color-ink-light)] mt-1">
+                      {step.note}
+                    </p>
+                  )}
+                  {step.result && (
+                    <p className="text-lg font-bold mt-2 text-[var(--color-dot-peach)]">
+                      = {step.result}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <CopyExamAnswer answer={resultToExamAnswer(result)} />
+          </section>
+        )}
+      </div>
     </main>
   );
 }

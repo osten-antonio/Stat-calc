@@ -133,227 +133,307 @@ export default function ChiSquarePage() {
   }
 
   return (
-    <main className="retro-theme min-h-screen p-6">
-      <header className="mb-6">
-        <h1 className="text-3xl retro-fire">CHI-SQUARE TESTS</h1>
-        <p className="text-sm mt-2">
-          Goodness-of-fit and test of independence with step-by-step workings.
-        </p>
-        <Link to="/stats-stuff" className="text-xs">
-          ← Back to Stats Stuff
-        </Link>
-      </header>
-
-      <div className="flex gap-2 mb-6 flex-wrap">
-        <Button variant={testType === "goodness" ? "primary" : "outline"} onClick={() => setTestType("goodness")}>
-          Goodness-of-Fit
-        </Button>
-        <Button variant={testType === "independence" ? "primary" : "outline"} onClick={() => setTestType("independence")}>
-          Test of Independence
-        </Button>
-      </div>
-
-      <Card className="retro-card mb-6">
-        <div className="flex items-center gap-4">
-          <label className="text-sm font-medium">Significance Level (α):</label>
-          <select
-            className="p-2 border rounded bg-white dark:bg-gray-800"
-            value={alpha}
-            onChange={(e) => setAlpha(e.target.value)}
+    <main className="min-h-screen px-6 py-12">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-8 fade-in">
+          <Link
+            to="/stats-stuff"
+            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
           >
-            <option value="0.01">0.01</option>
-            <option value="0.025">0.025</option>
-            <option value="0.05">0.05</option>
-            <option value="0.10">0.10</option>
-          </select>
+            ← Back to Stats Stuff
+          </Link>
+          <h1
+            className="text-4xl font-medium tracking-tight mb-2"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Chi-Square Tests
+          </h1>
+          <p className="text-[var(--color-ink-light)]">
+            Goodness-of-fit and test of independence with step-by-step workings.
+          </p>
+        </header>
+
+        <div className="flex gap-4 mb-8 fade-in" style={{ animationDelay: "50ms" }}>
+          <Button 
+            variant={testType === "goodness" ? "primary" : "outline"} 
+            onClick={() => setTestType("goodness")}
+            className={testType === "goodness" ? "bg-[var(--color-ink)] text-white" : ""}
+          >
+            Goodness-of-Fit
+          </Button>
+          <Button 
+            variant={testType === "independence" ? "primary" : "outline"} 
+            onClick={() => setTestType("independence")}
+            className={testType === "independence" ? "bg-[var(--color-ink)] text-white" : ""}
+          >
+            Test of Independence
+          </Button>
         </div>
-      </Card>
 
-      {testType === "goodness" && (
-        <section>
-          <Card className="retro-card mb-6">
-            <h2 className="text-xl font-bold mb-2">Goodness-of-Fit Test</h2>
-            <MathBlock formula="\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}" />
-            <p className="text-sm opacity-70 mt-2">
-              Tests if observed frequencies match expected frequencies.
-            </p>
-          </Card>
-
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-medium mb-1">Observed Frequencies</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded font-mono"
-                value={observedStr}
-                onChange={(e) => setObservedStr(e.target.value)}
-                placeholder="e.g. 20, 30, 25, 25"
-              />
-              <p className="text-xs opacity-70 mt-1">Comma-separated values</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Expected Frequencies</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded font-mono"
-                value={expectedStr}
-                onChange={(e) => setExpectedStr(e.target.value)}
-                placeholder="e.g. 25, 25, 25, 25"
-              />
-              <p className="text-xs opacity-70 mt-1">Must have same count as observed</p>
-            </div>
+        <Card className="mb-8 bg-[var(--color-accent-blue)] fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium">Significance Level (α):</label>
+            <select
+              className="p-2 border rounded bg-white/50 border-[var(--color-border)] cursor-pointer hover:bg-white transition-colors"
+              value={alpha}
+              onChange={(e) => setAlpha(e.target.value)}
+            >
+              <option value="0.01">0.01</option>
+              <option value="0.025">0.025</option>
+              <option value="0.05">0.05</option>
+              <option value="0.10">0.10</option>
+            </select>
           </div>
+        </Card>
 
-          {error && <p className="text-red-500 mb-4 retro-blink">{error}</p>}
-          <Button onClick={runGoodnessOfFit}>Run Goodness-of-Fit Test</Button>
+        {testType === "goodness" && (
+          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+            <Card className="mb-6 bg-[var(--color-accent-mint)]">
+              <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+                Goodness-of-Fit Test
+              </h2>
+              <MathBlock formula="\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}" />
+              <p className="text-sm text-[var(--color-ink-light)] mt-2">
+                Tests if observed frequencies match expected frequencies.
+              </p>
+            </Card>
 
-          {gofResult && (
-            <div className="mt-6">
-              <h3 className="text-xl mb-4">Results</h3>
-              <Card className="retro-card mb-4">
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold retro-fire">{formatNum(gofResult.value.chiSquare)}</div>
-                    <div className="text-xs opacity-70">χ²</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">{gofResult.value.df}</div>
-                    <div className="text-xs opacity-70">df</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">
-                      {gofResult.value.chiCritical ? formatNum(gofResult.value.chiCritical) : "N/A"}
-                    </div>
-                    <div className="text-xs opacity-70">χ²-critical</div>
-                  </div>
-                </div>
-              </Card>
-
-              <div className="space-y-4 mb-6">
-                {gofResult.steps.map((step) => (
-                  <Card key={step.id} className="retro-card">
-                    <h4 className="font-bold">{step.title}</h4>
-                    {step.description && <pre className="text-sm whitespace-pre-wrap font-sans">{step.description}</pre>}
-                    {step.formula && <MathBlock formula={step.formula} />}
-                    {step.calculation && <MathBlock formula={step.calculation} />}
-                    {step.note && <p className="text-sm opacity-80">{step.note}</p>}
-                    {step.result && <p className="font-bold mt-1 retro-fire">= {step.result}</p>}
-                  </Card>
-                ))}
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium mb-1">Observed Frequencies</label>
+                <Input
+                  type="text"
+                  value={observedStr}
+                  onChange={(e) => setObservedStr(e.target.value)}
+                  placeholder="e.g. 20, 30, 25, 25"
+                  className="font-mono"
+                />
+                <p className="text-xs text-[var(--color-ink-light)] mt-1">Comma-separated values</p>
               </div>
-              <CopyExamAnswer answer={resultToExamAnswer(gofResult, "Chi-Square Goodness-of-Fit")} />
+              <div>
+                <label className="block text-sm font-medium mb-1">Expected Frequencies</label>
+                <Input
+                  type="text"
+                  value={expectedStr}
+                  onChange={(e) => setExpectedStr(e.target.value)}
+                  placeholder="e.g. 25, 25, 25, 25"
+                  className="font-mono"
+                />
+                <p className="text-xs text-[var(--color-ink-light)] mt-1">Must have same count as observed</p>
+              </div>
             </div>
-          )}
-        </section>
-      )}
 
-      {testType === "independence" && (
-        <section>
-          <Card className="retro-card mb-6">
-            <h2 className="text-xl font-bold mb-2">Test of Independence</h2>
-            <MathBlock formula="\chi^2 = \sum \frac{(O - E)^2}{E}" />
-            <p className="text-sm opacity-70 mt-2">
-              Tests if two categorical variables are independent.
-            </p>
-          </Card>
+            {error && (
+              <p className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                {error}
+              </p>
+            )}
+            
+            <Button onClick={runGoodnessOfFit}>Run Goodness-of-Fit Test</Button>
 
-          <div className="mb-4 flex gap-4 items-center">
-            <div>
-              <label className="text-sm font-medium">Rows:</label>
-              <input
-                type="number"
-                min={2}
-                max={10}
-                value={tableRows}
-                onChange={(e) => updateTableSize(Math.max(2, parseInt(e.target.value) || 2), tableCols)}
-                className="w-20 ml-2 p-2 border rounded"
-              />
+            {gofResult && (
+              <div className="mt-8 fade-in">
+                <h3 
+                  className="text-2xl font-medium mb-6"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                >
+                  Results
+                </h3>
+                
+                <Card className="mb-6 bg-[var(--color-accent-peach)]">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-dot-peach)]">
+                        {formatNum(gofResult.value.chiSquare)}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">χ²</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-ink)]">
+                        {gofResult.value.df}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">df</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-ink)]">
+                        {gofResult.value.chiCritical ? formatNum(gofResult.value.chiCritical) : "N/A"}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">χ²-critical</div>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="mb-6">
+                  <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+                    Step-by-Step Working
+                  </h4>
+                  <div className="space-y-4">
+                    {gofResult.steps.map((step) => (
+                      <div key={step.id} className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]">
+                        <h5 className="font-semibold text-sm mb-2">{step.title}</h5>
+                        {step.description && (
+                          <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                            {step.description}
+                          </pre>
+                        )}
+                        {step.formula && <MathBlock formula={step.formula} className="my-2" />}
+                        {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                        {step.note && <p className="text-xs text-[var(--color-ink-light)] mb-1">{step.note}</p>}
+                        {step.result && (
+                          <p className="font-bold text-[var(--color-dot-peach)] mt-1">= {step.result}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+                
+                <CopyExamAnswer answer={resultToExamAnswer(gofResult, "Chi-Square Goodness-of-Fit")} />
+              </div>
+            )}
+          </section>
+        )}
+
+        {testType === "independence" && (
+          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+            <Card className="mb-6 bg-[var(--color-accent-mint)]">
+              <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+                Test of Independence
+              </h2>
+              <MathBlock formula="\chi^2 = \sum \frac{(O - E)^2}{E}" />
+              <p className="text-sm text-[var(--color-ink-light)] mt-2">
+                Tests if two categorical variables are independent.
+              </p>
+            </Card>
+
+            <div className="mb-6 flex gap-4 items-center">
+              <div>
+                <label className="text-sm font-medium">Rows:</label>
+                <input
+                  type="number"
+                  min={2}
+                  max={10}
+                  value={tableRows}
+                  onChange={(e) => updateTableSize(Math.max(2, parseInt(e.target.value) || 2), tableCols)}
+                  className="w-20 ml-2 p-2 border rounded border-[var(--color-border)] bg-white"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Columns:</label>
+                <input
+                  type="number"
+                  min={2}
+                  max={10}
+                  value={tableCols}
+                  onChange={(e) => updateTableSize(tableRows, Math.max(2, parseInt(e.target.value) || 2))}
+                  className="w-20 ml-2 p-2 border rounded border-[var(--color-border)] bg-white"
+                />
+              </div>
             </div>
-            <div>
-              <label className="text-sm font-medium">Columns:</label>
-              <input
-                type="number"
-                min={2}
-                max={10}
-                value={tableCols}
-                onChange={(e) => updateTableSize(tableRows, Math.max(2, parseInt(e.target.value) || 2))}
-                className="w-20 ml-2 p-2 border rounded"
-              />
-            </div>
-          </div>
 
-          <Card className="retro-card mb-6 overflow-x-auto">
-            <table className="font-mono text-sm">
-              <thead>
-                <tr>
-                  <th className="p-2 border bg-slate-100 dark:bg-slate-800"></th>
-                  {Array.from({ length: tableCols }, (_, c) => (
-                    <th key={c} className="p-2 border bg-slate-100 dark:bg-slate-800">Col {c + 1}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tableData.map((row, r) => (
-                  <tr key={r}>
-                    <td className="p-2 border bg-slate-100 dark:bg-slate-800 font-bold">Row {r + 1}</td>
-                    {row.map((cell, c) => (
-                      <td key={c} className="p-1 border">
-                        <input
-                          type="number"
-                          className="w-16 p-1 text-center border rounded"
-                          value={cell}
-                          onChange={(e) => setCell(r, c, e.target.value)}
-                        />
-                      </td>
+            <div className="mb-6 overflow-x-auto rounded-lg border border-[var(--color-border)]">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr>
+                    <th className="p-3 border-b border-r border-[var(--color-border)] bg-[var(--color-accent-blue)]"></th>
+                    {Array.from({ length: tableCols }, (_, c) => (
+                      <th key={c} className="p-3 border-b border-[var(--color-border)] bg-[var(--color-accent-blue)] font-medium">
+                        Col {c + 1}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </Card>
-
-          {error && <p className="text-red-500 mb-4 retro-blink">{error}</p>}
-          <Button onClick={runIndependence}>Run Test of Independence</Button>
-
-          {indepResult && (
-            <div className="mt-6">
-              <h3 className="text-xl mb-4">Results</h3>
-              <Card className="retro-card mb-4">
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold retro-fire">{formatNum(indepResult.value.chiSquare)}</div>
-                    <div className="text-xs opacity-70">χ²</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">{indepResult.value.df}</div>
-                    <div className="text-xs opacity-70">df</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">
-                      {indepResult.value.chiCritical ? formatNum(indepResult.value.chiCritical) : "N/A"}
-                    </div>
-                    <div className="text-xs opacity-70">χ²-critical</div>
-                  </div>
-                </div>
-              </Card>
-
-              <div className="space-y-4 mb-6">
-                {indepResult.steps.map((step) => (
-                  <Card key={step.id} className="retro-card">
-                    <h4 className="font-bold">{step.title}</h4>
-                    {step.description && <pre className="text-sm whitespace-pre-wrap font-sans">{step.description}</pre>}
-                    {step.formula && <MathBlock formula={step.formula} />}
-                    {step.calculation && <MathBlock formula={step.calculation} />}
-                    {step.note && <p className="text-sm opacity-80">{step.note}</p>}
-                    {step.result && <p className="font-bold mt-1 retro-fire">= {step.result}</p>}
-                  </Card>
-                ))}
-              </div>
-              <CopyExamAnswer answer={resultToExamAnswer(indepResult, "Chi-Square Test of Independence")} />
+                </thead>
+                <tbody>
+                  {tableData.map((row, r) => (
+                    <tr key={r}>
+                      <td className="p-3 border-r border-b border-[var(--color-border)] bg-[var(--color-accent-blue)] font-medium w-24">
+                        Row {r + 1}
+                      </td>
+                      {row.map((cell, c) => (
+                        <td key={c} className="p-2 border-b border-[var(--color-border)] bg-white">
+                          <input
+                            type="number"
+                            className="w-full p-2 text-center border rounded border-[var(--color-border)] focus:border-[var(--color-ink)] outline-none transition-colors"
+                            value={cell}
+                            onChange={(e) => setCell(r, c, e.target.value)}
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </section>
-      )}
+
+            {error && (
+              <p className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                {error}
+              </p>
+            )}
+            
+            <Button onClick={runIndependence}>Run Test of Independence</Button>
+
+            {indepResult && (
+              <div className="mt-8 fade-in">
+                <h3 
+                  className="text-2xl font-medium mb-6"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                >
+                  Results
+                </h3>
+
+                <Card className="mb-6 bg-[var(--color-accent-peach)]">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-dot-peach)]">
+                        {formatNum(indepResult.value.chiSquare)}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">χ²</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-ink)]">
+                        {indepResult.value.df}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">df</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-ink)]">
+                        {indepResult.value.chiCritical ? formatNum(indepResult.value.chiCritical) : "N/A"}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">χ²-critical</div>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="mb-6">
+                  <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+                    Step-by-Step Working
+                  </h4>
+                  <div className="space-y-4">
+                    {indepResult.steps.map((step) => (
+                      <div key={step.id} className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]">
+                        <h5 className="font-semibold text-sm mb-2">{step.title}</h5>
+                        {step.description && (
+                          <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                            {step.description}
+                          </pre>
+                        )}
+                        {step.formula && <MathBlock formula={step.formula} className="my-2" />}
+                        {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                        {step.note && <p className="text-xs text-[var(--color-ink-light)] mb-1">{step.note}</p>}
+                        {step.result && (
+                          <p className="font-bold text-[var(--color-dot-peach)] mt-1">= {step.result}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+                
+                <CopyExamAnswer answer={resultToExamAnswer(indepResult, "Chi-Square Test of Independence")} />
+              </div>
+            )}
+          </section>
+        )}
+      </div>
     </main>
   );
 }

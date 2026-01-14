@@ -101,107 +101,145 @@ export default function DescriptiveCalculator() {
   }
 
   return (
-    <main className="retro-theme min-h-screen p-6">
-      <header className="mb-6">
-        <h1 className="text-3xl retro-fire">DESCRIPTIVE STATISTICS</h1>
-        <p className="text-sm mt-2">
-          Calculate mean, median, mode, variance, and standard deviation with step-by-step workings.
-        </p>
-        <Link to="/stats-stuff" className="text-xs">
-          ← Back to Stats Stuff
-        </Link>
-      </header>
+    <main className="min-h-screen px-6 py-12">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-8 fade-in">
+          <Link
+            to="/stats-stuff"
+            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+          >
+            ← Back to Stats Stuff
+          </Link>
+          <h1
+            className="text-4xl font-medium tracking-tight mb-2"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Descriptive Statistics
+          </h1>
+          <p className="text-[var(--color-ink-light)]">
+            Calculate mean, median, mode, variance, and standard deviation with step-by-step workings.
+          </p>
+        </header>
 
-      <Card className="retro-card mb-6">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <MathBlock formula="\bar{x} = \frac{\Sigma x}{n}" />
-            <p className="text-center text-xs opacity-70">Mean</p>
-          </div>
-          <div>
-            <MathBlock formula="\sigma^2 = \frac{\Sigma(x - \bar{x})^2}{n}" />
-            <p className="text-center text-xs opacity-70">Population Variance</p>
-          </div>
-          <div>
-            <MathBlock formula="s^2 = \frac{\Sigma(x - \bar{x})^2}{n-1}" />
-            <p className="text-center text-xs opacity-70">Sample Variance</p>
-          </div>
-        </div>
-      </Card>
-
-      <section className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          <Button variant="outline" onClick={loadSampleData} className="text-xs">
-            Load Sample Data
-          </Button>
-          <span className="text-xs opacity-70">
-            {parsedData.length} valid number{parsedData.length !== 1 ? "s" : ""} detected
-          </span>
-        </div>
-
-        <DataTableInput
-          label="Enter Your Data"
-          helpText="Type values directly or paste from Excel/Google Sheets. All numeric values will be used."
-          value={tableData}
-          onChange={setTableData}
-          minRows={5}
-        />
-
-        {error && <p className="text-red-500 mt-4 text-sm retro-blink">{error}</p>}
-
-        <Button className="mt-4" onClick={calculate}>
-          Calculate Stats
-        </Button>
-      </section>
-
-      {result && (
-        <section>
-          <h2 className="text-xl mb-4">Step-by-Step Working</h2>
-
-          <Card className="retro-card mb-6">
-            <h3 className="font-bold text-lg mb-2">Quick Summary</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div className="text-center">
-                <div className="text-2xl font-bold retro-fire">{formatNum(result.value.mean)}</div>
-                <div className="text-xs opacity-70">Mean (x̄)</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">{formatNum(result.value.median)}</div>
-                <div className="text-xs opacity-70">Median</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">
-                  {result.value.mode.length > 0 ? result.value.mode.join(", ") : "None"}
-                </div>
-                <div className="text-xs opacity-70">Mode</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">{formatNum(result.value.standardDeviation.sample)}</div>
-                <div className="text-xs opacity-70">Sample SD (s)</div>
-              </div>
+        <Card className="mb-8 bg-[var(--color-accent-blue)] fade-in" style={{ animationDelay: "50ms" }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div>
+              <MathBlock formula="\bar{x} = \frac{\Sigma x}{n}" />
+              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">Mean</p>
             </div>
-          </Card>
+            <div>
+              <MathBlock formula="\sigma^2 = \frac{\Sigma(x - \bar{x})^2}{n}" />
+              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">Population Variance</p>
+            </div>
+            <div>
+              <MathBlock formula="s^2 = \frac{\Sigma(x - \bar{x})^2}{n-1}" />
+              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">Sample Variance</p>
+            </div>
+          </div>
+        </Card>
 
-          <div className="space-y-4 mb-6">
-            {result.steps.map((step) => (
-              <Card key={step.id} className="retro-card">
-                <h3 className="font-bold text-lg">{step.title}</h3>
-                {step.description && (
-                  <pre className="text-sm whitespace-pre-wrap font-sans">{step.description}</pre>
-                )}
-                {step.formula && <MathBlock formula={step.formula} />}
-                {step.calculation && <MathBlock formula={step.calculation} />}
-                {step.note && <p className="text-sm opacity-80 mt-1">{step.note}</p>}
-                {step.result && (
-                  <p className="text-xl font-bold mt-2 retro-fire">= {step.result}</p>
-                )}
-              </Card>
-            ))}
+        <section className="mb-8 fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="flex items-center gap-4 mb-4">
+            <Button variant="secondary" onClick={loadSampleData}>
+              Load Sample Data
+            </Button>
+            <span className="text-sm text-[var(--color-ink-light)]">
+              {parsedData.length} valid number{parsedData.length !== 1 ? "s" : ""} detected
+            </span>
           </div>
 
-          <CopyExamAnswer answer={resultToExamAnswer(result)} />
+          <DataTableInput
+            label="Enter Your Data"
+            helpText="Type values directly or paste from Excel/Google Sheets. All numeric values will be used."
+            value={tableData}
+            onChange={setTableData}
+            minRows={5}
+          />
+
+          {error && (
+            <p className="text-red-600 mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
+              {error}
+            </p>
+          )}
+
+          <Button className="mt-4" onClick={calculate}>
+            Calculate Stats
+          </Button>
         </section>
-      )}
+
+        {result && (
+          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+            <h2
+              className="text-2xl font-medium mb-6"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              Step-by-Step Working
+            </h2>
+
+            <Card className="mb-6 bg-[var(--color-accent-mint)]">
+              <h3 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+                Quick Summary
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
+                    {formatNum(result.value.mean)}
+                  </div>
+                  <div className="text-xs text-[var(--color-ink-light)]">Mean (x̄)</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-[var(--color-ink)]">
+                    {formatNum(result.value.median)}
+                  </div>
+                  <div className="text-xs text-[var(--color-ink-light)]">Median</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-[var(--color-ink)]">
+                    {result.value.mode.length > 0 ? result.value.mode.join(", ") : "None"}
+                  </div>
+                  <div className="text-xs text-[var(--color-ink-light)]">Mode</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-[var(--color-ink)]">
+                    {formatNum(result.value.standardDeviation.sample)}
+                  </div>
+                  <div className="text-xs text-[var(--color-ink-light)]">Sample SD (s)</div>
+                </div>
+              </div>
+            </Card>
+
+            <div className="space-y-4 mb-6">
+              {result.steps.map((step) => (
+                <div
+                  key={step.id}
+                  className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                >
+                  <h4 className="font-semibold text-sm mb-2">{step.title}</h4>
+                  {step.description && (
+                    <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                      {step.description}
+                    </pre>
+                  )}
+                  {step.formula && <MathBlock formula={step.formula} className="my-2" />}
+                  {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                  {step.note && (
+                    <p className="text-xs text-[var(--color-ink-light)] mt-1">
+                      {step.note}
+                    </p>
+                  )}
+                  {step.result && (
+                    <p className="text-lg font-bold mt-2 text-[var(--color-dot-blue)]">
+                      = {step.result}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <CopyExamAnswer answer={resultToExamAnswer(result)} />
+          </section>
+        )}
+      </div>
     </main>
   );
 }

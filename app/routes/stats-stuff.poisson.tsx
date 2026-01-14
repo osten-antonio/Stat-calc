@@ -79,88 +79,120 @@ export default function PoissonCalculator() {
   }
 
   return (
-    <main className="retro-theme min-h-screen p-6">
-      <header className="mb-6">
-        <h1 className="text-3xl retro-fire">POISSON DISTRIBUTION</h1>
-        <p className="text-sm mt-2">
-          Calculate the probability of k events occurring in a fixed interval when the average rate is λ.
-        </p>
-        <Link to="/stats-stuff" className="text-xs">
-          ← Back to Stats Stuff
-        </Link>
-      </header>
+    <main className="min-h-screen px-6 py-12">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-8 fade-in">
+          <Link
+            to="/stats-stuff"
+            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+          >
+            ← Back to Stats Stuff
+          </Link>
+          <h1
+            className="text-4xl font-medium tracking-tight mb-2"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Poisson Distribution
+          </h1>
+          <p className="text-[var(--color-ink-light)]">
+            Calculate the probability of k events occurring in a fixed interval when the average rate is λ.
+          </p>
+        </header>
 
-      <Card className="retro-card mb-6">
-        <MathBlock formula="P(X = k) = \frac{\lambda^k \cdot e^{-\lambda}}{k!}" />
-        <p className="text-center text-xs opacity-70 mt-2">
-          λ = average rate (mean), k = number of occurrences, e ≈ 2.71828
-        </p>
-      </Card>
+        <Card className="mb-8 bg-[var(--color-accent-pink)] fade-in" style={{ animationDelay: "50ms" }}>
+          <MathBlock formula="P(X = k) = \frac{\lambda^k \cdot e^{-\lambda}}{k!}" />
+          <p className="text-center text-xs text-[var(--color-ink-light)] mt-2">
+            λ = average rate (mean), k = number of occurrences, e ≈ 2.71828
+          </p>
+        </Card>
 
-      <section className="mb-6">
-        <div className="grid grid-cols-2 gap-4 max-w-md">
-          <Input
-            label="λ (lambda/mean)"
-            type="number"
-            min={0}
-            step={0.1}
-            value={lambda}
-            onChange={(e) => setLambda(e.target.value)}
-            placeholder="e.g. 3.5"
-          />
-          <Input
-            label="k (occurrences)"
-            type="number"
-            min={0}
-            value={k}
-            onChange={(e) => setK(e.target.value)}
-            placeholder="e.g. 2"
-          />
-        </div>
-
-        {error && <p className="text-red-500 mt-2 text-sm retro-blink">{error}</p>}
-
-        <Button className="mt-4" onClick={calculate}>
-          Calculate P(X = k)
-        </Button>
-      </section>
-
-      {result && (
-        <section>
-          <h2 className="text-xl mb-4">Step-by-Step Working</h2>
-
-          <Card className="retro-card mb-6">
-            <h3 className="font-bold text-lg mb-2">Result</h3>
-            <div className="text-center">
-              <div className="text-3xl font-bold retro-fire">
-                {formatNum(result.value.probability)}
-              </div>
-              <div className="text-sm opacity-70">
-                = {formatNum(result.value.probability * 100, 2)}%
-              </div>
-            </div>
-          </Card>
-
-          <div className="space-y-4 mb-6">
-            {result.steps.map((step) => (
-              <Card key={step.id} className="retro-card">
-                <h3 className="font-bold text-lg">{step.title}</h3>
-                {step.description && (
-                  <pre className="text-sm whitespace-pre-wrap font-sans">{step.description}</pre>
-                )}
-                {step.formula && <MathBlock formula={step.formula} />}
-                {step.calculation && <MathBlock formula={step.calculation} />}
-                {step.note && <p className="text-sm opacity-80 mt-1">{step.note}</p>}
-                {step.result && (
-                  <p className="text-xl font-bold mt-2 retro-fire">= {step.result}</p>
-                )}
-              </Card>
-            ))}
+        <section className="mb-8 fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
+            <Input
+              label="λ (lambda/mean)"
+              type="number"
+              min={0}
+              step={0.1}
+              value={lambda}
+              onChange={(e) => setLambda(e.target.value)}
+              placeholder="e.g. 3.5"
+            />
+            <Input
+              label="k (occurrences)"
+              type="number"
+              min={0}
+              value={k}
+              onChange={(e) => setK(e.target.value)}
+              placeholder="e.g. 2"
+            />
           </div>
 
-          <CopyExamAnswer answer={resultToExamAnswer(result)} />
+          {error && (
+            <p className="text-red-600 mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
+              {error}
+            </p>
+          )}
+
+          <Button className="mt-4" onClick={calculate}>
+            Calculate P(X = k)
+          </Button>
         </section>
-      )}
+
+        {result && (
+          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+            <h2
+              className="text-2xl font-medium mb-6"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              Step-by-Step Working
+            </h2>
+
+            <Card className="mb-6 bg-[var(--color-accent-mint)]">
+              <h3 className="font-semibold mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+                Result
+              </h3>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-[var(--color-dot-mint)] mb-1">
+                  {formatNum(result.value.probability)}
+                </div>
+                <div className="text-sm text-[var(--color-ink-light)]">
+                  = {formatNum(result.value.probability * 100, 2)}%
+                </div>
+              </div>
+            </Card>
+
+            <div className="space-y-4 mb-6">
+              {result.steps.map((step) => (
+                <div
+                  key={step.id}
+                  className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                >
+                  <h4 className="font-semibold text-sm mb-2">{step.title}</h4>
+                  {step.description && (
+                    <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                      {step.description}
+                    </pre>
+                  )}
+                  {step.formula && <MathBlock formula={step.formula} className="my-2" />}
+                  {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                  {step.note && (
+                    <p className="text-xs text-[var(--color-ink-light)] mt-1">
+                      {step.note}
+                    </p>
+                  )}
+                  {step.result && (
+                    <p className="text-lg font-bold mt-2 text-[var(--color-dot-blue)]">
+                      = {step.result}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <CopyExamAnswer answer={resultToExamAnswer(result)} />
+          </section>
+        )}
+      </div>
     </main>
   );
 }
