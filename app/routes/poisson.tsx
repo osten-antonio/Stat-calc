@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { Route } from "./+types/stats-stuff.hypergeometric";
+import type { Route } from "./+types/poisson";
 import { Link } from "react-router";
 
-import { hypergeometricWithSteps, type HypergeometricResult } from "~/lib/math/probability";
+import { poissonWithSteps, type PoissonResult } from "~/lib/math/probability";
 import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
 import { Input } from "~/components/ui/Input";
 import { Button } from "~/components/ui/Button";
@@ -13,8 +13,12 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Stuff | Hypergeometric Distribution" },
-    { name: "description", content: "Calculate hypergeometric probability for sampling without replacement." },
+    { title: "Poisson Distribution" },
+    {
+      name: "description",
+      content:
+        "Calculate Poisson probability P(X = k) with step-by-step workings.",
+    },
   ];
 }
 
@@ -23,9 +27,11 @@ function formatNum(num: number, decimals = 6): string {
   return num.toFixed(decimals).replace(/\.?0+$/, "");
 }
 
-function resultToExamAnswer(calc: CalculationResult<HypergeometricResult>): ExamAnswer {
+function resultToExamAnswer(
+  calc: CalculationResult<PoissonResult>,
+): ExamAnswer {
   return {
-    title: "Hypergeometric Probability Calculation",
+    title: "Poisson Probability Calculation",
     sections: calc.steps.map((step) => ({
       title: step.title,
       lines: [
@@ -40,45 +46,47 @@ function resultToExamAnswer(calc: CalculationResult<HypergeometricResult>): Exam
   };
 }
 
-export default function HypergeometricCalculator() {
-  const [N, setN] = useState("");
-  const [K, setK] = useState("");
-  const [n, setN2] = useState("");
-  const [k, setK2] = useState("");
-  const [result, setResult] = useState<CalculationResult<HypergeometricResult> | null>(null);
+export default function PoissonCalculator() {
+  const [lambda, setLambda] = useState("");
+  const [k, setK] = useState("");
+  const [result, setResult] = useState<CalculationResult<PoissonResult> | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
 
   function calculate() {
     setError(null);
     setResult(null);
 
-    const NVal = parseInt(N, 10);
-    const KVal = parseInt(K, 10);
-    const nVal = parseInt(n, 10);
+    const lambdaVal = parseFloat(lambda);
     const kVal = parseInt(k, 10);
 
-    if ([NVal, KVal, nVal, kVal].some(isNaN)) {
-      setError("All values must be valid integers. This isn't a creative writing exercise.");
+    if (isNaN(lambdaVal)) {
+      setError(
+        "λ must be a valid number. Not 'lambda' spelled out, the actual number.",
+      );
       return;
     }
-    if (NVal < 0 || KVal < 0 || nVal < 0 || kVal < 0) {
-      setError("Negative values? In probability? That's not how any of this works.");
+    if (isNaN(kVal)) {
+      setError("k must be a valid integer. Whole numbers only, no fractions.");
       return;
     }
-    if (KVal > NVal) {
-      setError("K can't exceed N. You can't have more successes than the total population.");
+    if (lambdaVal <= 0) {
+      setError(
+        "λ must be positive. Zero events per time period means nothing ever happens. Boring.",
+      );
       return;
     }
-    if (nVal > NVal) {
-      setError("n can't exceed N. You can't draw more items than exist.");
+    if (kVal < 0) {
+      setError("k must be non-negative. You can't have -3 meteor strikes.");
       return;
     }
-    if (NVal > 170) {
-      setError("N is too large (factorial overflow). Keep N ≤ 170.");
+    if (kVal > 170) {
+      setError("k is too large (factorial overflow). Keep k ≤ 170.");
       return;
     }
 
-    const calc = hypergeometricWithSteps(NVal, KVal, nVal, kVal);
+    const calc = poissonWithSteps(lambdaVal, kVal);
     setResult(calc);
   }
 
@@ -92,15 +100,15 @@ export default function HypergeometricCalculator() {
           >
             ← Back to Home
           </Link>
-
           <h1
             className="text-5xl font-medium tracking-tight mb-4"
             style={{ fontFamily: "var(--font-serif)" }}
           >
-            Hypergeometric Distribution
+            Poisson Distribution
           </h1>
           <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
-            Probability of k successes in n draws without replacement from a finite population.
+            Calculate the probability of k events occurring in a fixed interval
+            when the average rate is λ.
           </p>
         </header>
 
@@ -108,53 +116,32 @@ export default function HypergeometricCalculator() {
           className="mb-10 bg-[var(--color-accent-pink)] border-none fade-in"
           style={{ animationDelay: "50ms" }}
         >
-          <MathBlock formula="P(X = k) = \frac{C(K, k) \cdot C(N-K, n-k)}{C(N, n)}" />
+          <MathBlock formula="P(X = k) = \frac{\lambda^k \cdot e^{-\lambda}}{k!}" />
           <p className="text-center text-xs text-[var(--color-ink-light)] mt-2">
-            N = population, K = success states, n = draws, k = observed successes
+            λ = average rate (mean), k = number of occurrences, e ≈ 2.71828
           </p>
         </Card>
 
         <section className="mb-12 fade-in" style={{ animationDelay: "100ms" }}>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
             <Input
-              label="N (population)"
+              label="λ (lambda/mean)"
               type="number"
               min={0}
-              value={N}
-              onChange={(e) => setN(e.target.value)}
-              placeholder="e.g. 52"
+              step={0.1}
+              value={lambda}
+              onChange={(e) => setLambda(e.target.value)}
+              placeholder="e.g. 3.5"
             />
             <Input
-              label="K (successes in pop)"
-              type="number"
-              min={0}
-              value={K}
-              onChange={(e) => setK(e.target.value)}
-              placeholder="e.g. 13"
-            />
-            <Input
-              label="n (draws)"
-              type="number"
-              min={0}
-              value={n}
-              onChange={(e) => setN2(e.target.value)}
-              placeholder="e.g. 5"
-            />
-            <Input
-              label="k (successes wanted)"
+              label="k (occurrences)"
               type="number"
               min={0}
               value={k}
-              onChange={(e) => setK2(e.target.value)}
+              onChange={(e) => setK(e.target.value)}
               placeholder="e.g. 2"
             />
           </div>
-
-          <p className="text-xs text-[var(--color-ink-light)] mt-4 p-3 bg-white rounded border border-gray-100 shadow-sm">
-            <strong>Example:</strong> Drawing 5 cards from a 52-card deck, what's the probability of exactly 2 hearts?
-            <br />
-            N=52, K=13 (hearts), n=5, k=2
-          </p>
 
           {error && (
             <p className="text-red-600 mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
@@ -162,13 +149,20 @@ export default function HypergeometricCalculator() {
             </p>
           )}
 
-          <Button className="mt-6 w-full md:w-auto" tone="pink" onClick={calculate}>
+          <Button
+            className="mt-6 w-full md:w-auto"
+            tone="pink"
+            onClick={calculate}
+          >
             Calculate P(X = k)
           </Button>
         </section>
 
         {result && (
-          <section className="fade-in space-y-8" style={{ animationDelay: "150ms" }}>
+          <section
+            className="fade-in space-y-8"
+            style={{ animationDelay: "150ms" }}
+          >
             <h2
               className="text-3xl font-medium"
               style={{ fontFamily: "var(--font-serif)" }}
@@ -177,7 +171,10 @@ export default function HypergeometricCalculator() {
             </h2>
 
             <Card className="mb-2 bg-[var(--color-accent-pink)] border-none">
-              <h3 className="font-semibold mb-2 opacity-75" style={{ fontFamily: "var(--font-serif)" }}>
+              <h3
+                className="font-semibold mb-2 opacity-75"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
                 Result
               </h3>
               <div className="text-center">
@@ -202,8 +199,12 @@ export default function HypergeometricCalculator() {
                       {step.description}
                     </pre>
                   )}
-                  {step.formula && <MathBlock formula={step.formula} className="my-2" />}
-                  {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                  {step.formula && (
+                    <MathBlock formula={step.formula} className="my-2" />
+                  )}
+                  {step.calculation && (
+                    <MathBlock formula={step.calculation} className="my-2" />
+                  )}
                   {step.note && (
                     <p className="text-sm text-[var(--color-ink-light)] mt-1">
                       {step.note}
@@ -225,4 +226,3 @@ export default function HypergeometricCalculator() {
     </main>
   );
 }
-

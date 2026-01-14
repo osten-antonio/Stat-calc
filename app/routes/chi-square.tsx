@@ -1,360 +1,443 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import type { Route } from "./+types/chi-square";
-import { BackgroundGraph } from "../components/background-graph";
+import { Link } from "react-router";
 
-export function meta({ }: Route.MetaArgs) {
-    return [
-        { title: "Chi-Square Calculator" },
-        { name: "description", content: "Chi-Square Test of Independence Calculator" },
-    ];
+import {
+  goodnessOfFitWithSteps,
+  independenceTestWithSteps,
+  type GoodnessOfFitResult,
+  type IndependenceResult,
+} from "~/lib/math/chi-square";
+import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
+import { Input } from "~/components/ui/Input";
+import { Button } from "~/components/ui/Button";
+import { Card } from "~/components/ui/Card";
+import { MathBlock } from "~/components/math/MathBlock";
+import type { ExamAnswer } from "~/lib/format/examAnswer";
+import type { CalculationResult } from "~/lib/types/calculation";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Chi-Square Tests" },
+    { name: "description", content: "Chi-square goodness-of-fit and independence tests with step-by-step workings." },
+  ];
 }
 
-// Critical Value Lookup for alpha = 0.05
-const CRITICAL_VALUES_0_05: Record<number, number> = {
-    1: 3.841, 2: 5.991, 3: 7.815, 4: 9.488, 5: 11.070,
-    6: 12.592, 7: 14.067, 8: 15.507, 9: 16.919, 10: 18.307,
-    11: 19.675, 12: 21.026, 13: 22.362, 14: 23.685, 15: 24.996,
-    16: 26.296, 17: 27.587, 18: 28.869, 19: 30.144, 20: 31.410
-};
+type TestType = "goodness" | "independence";
 
-export default function ChiSquareCalculator() {
-    const [rows, setRows] = useState(3);
-    const [cols, setCols] = useState(3);
-    const [data, setData] = useState<number[][]>(
-        Array(3).fill(0).map(() => Array(3).fill(0))
+function formatNum(num: number, decimals = 4): string {
+  if (!Number.isFinite(num)) return "N/A";
+  if (Number.isInteger(num)) return String(num);
+  return num.toFixed(decimals).replace(/\.?0+$/, "");
+}
+
+function resultToExamAnswer<T>(calc: CalculationResult<T>, title: string): ExamAnswer {
+  return {
+    title,
+    sections: calc.steps.map((step) => ({
+      title: step.title,
+      lines: [
+        step.description ?? "",
+        step.formula ? `Formula: ${step.formula}` : "",
+        step.calculation ?? "",
+        step.note ? `Note: ${step.note}` : "",
+        step.result ? `= ${step.result}` : "",
+      ].filter(Boolean),
+    })),
+    finalAnswer: calc.steps.find((s) => s.id === "decision")?.result ?? "See above",
+  };
+}
+
+export default function ChiSquarePage() {
+  const [testType, setTestType] = useState<TestType>("goodness");
+  const [alpha, setAlpha] = useState("0.05");
+  const [error, setError] = useState<string | null>(null);
+
+  const [observedStr, setObservedStr] = useState("20, 30, 25, 25");
+  const [expectedStr, setExpectedStr] = useState("25, 25, 25, 25");
+  const [gofResult, setGofResult] = useState<CalculationResult<GoodnessOfFitResult> | null>(null);
+
+  const [tableRows, setTableRows] = useState(2);
+  const [tableCols, setTableCols] = useState(2);
+  const [tableData, setTableData] = useState<string[][]>([
+    ["30", "10"],
+    ["20", "40"],
+  ]);
+  const [indepResult, setIndepResult] = useState<CalculationResult<IndependenceResult> | null>(null);
+
+  function parseArray(str: string): number[] {
+    return str.split(",").map((s) => parseFloat(s.trim())).filter((n) => !isNaN(n));
+  }
+
+  function runGoodnessOfFit() {
+    setError(null);
+    setGofResult(null);
+    const observed = parseArray(observedStr);
+    const expected = parseArray(expectedStr);
+
+    if (observed.length < 2) {
+      setError("Enter at least 2 observed values, separated by commas.");
+      return;
+    }
+    if (expected.length !== observed.length) {
+      setError(`Expected needs ${observed.length} values to match observed. You provided ${expected.length}.`);
+      return;
+    }
+    if (expected.some((e) => e <= 0)) {
+      setError("Expected values must all be positive.");
+      return;
+    }
+
+    const result = goodnessOfFitWithSteps(observed, expected, parseFloat(alpha));
+    setGofResult(result);
+  }
+
+  function updateTableSize(newRows: number, newCols: number) {
+    const newData: string[][] = [];
+    for (let r = 0; r < newRows; r++) {
+      const row: string[] = [];
+      for (let c = 0; c < newCols; c++) {
+        row.push(tableData[r]?.[c] ?? "0");
+      }
+      newData.push(row);
+    }
+    setTableRows(newRows);
+    setTableCols(newCols);
+    setTableData(newData);
+  }
+
+  function setCell(r: number, c: number, value: string) {
+    const newData = tableData.map((row) => [...row]);
+    newData[r][c] = value;
+    setTableData(newData);
+  }
+
+  function runIndependence() {
+    setError(null);
+    setIndepResult(null);
+
+    const observed: number[][] = tableData.map((row) =>
+      row.map((cell) => {
+        const n = parseFloat(cell);
+        return isNaN(n) ? 0 : n;
+      })
     );
-    const [submittedData, setSubmittedData] = useState<number[][] | null>(null);
 
-    const handleDataChange = (r: number, c: number, val: string) => {
-        const newData = [...data];
-        newData[r] = [...newData[r]];
-        newData[r][c] = val === "" ? 0 : parseFloat(val);
-        setData(newData);
-    };
+    if (observed.some((row) => row.some((n) => n < 0))) {
+      setError("All values must be non-negative.");
+      return;
+    }
 
-    const updateDimensions = (newRows: number, newCols: number) => {
-        const newData = Array(newRows).fill(0).map((_, r) =>
-            Array(newCols).fill(0).map((_, c) => (data[r] && data[r][c] !== undefined ? data[r][c] : 0))
-        );
-        setRows(newRows);
-        setCols(newCols);
-        setData(newData);
-        setSubmittedData(null); // Reset results when dimensions change
-    };
+    const result = independenceTestWithSteps(observed, parseFloat(alpha));
+    setIndepResult(result);
+  }
 
-    const handleCalculate = () => {
-        setSubmittedData(data);
-    };
+  return (
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
+      <div className="max-w-5xl mx-auto">
+        <header className="mb-12 fade-in">
+          <Link
+            to="/"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-mint)] transition-colors mb-4 inline-block"
+          >
+            ← Back to Home
+          </Link>
+          <h1
+            className="text-5xl font-medium tracking-tight mb-4"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Chi-Square Tests
+          </h1>
+          <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
+            Goodness-of-fit and test of independence with step-by-step workings.
+          </p>
+        </header>
 
-    const results = useMemo(() => {
-        if (!submittedData) return null;
+        <section className="mb-10 fade-in" style={{ animationDelay: "50ms" }}>
+          <div className="flex gap-2 mb-6 flex-wrap">
+            <Button 
+              tone={testType === "goodness" ? "mint" : undefined}
+              variant={testType === "goodness" ? "primary" : "secondary"} 
+              onClick={() => setTestType("goodness")}
+            >
+              Goodness-of-Fit
+            </Button>
+            <Button 
+              tone={testType === "independence" ? "mint" : undefined}
+              variant={testType === "independence" ? "primary" : "secondary"} 
+              onClick={() => setTestType("independence")}
+            >
+              Test of Independence
+            </Button>
+          </div>
 
-        const rowTotals = submittedData.map(row => row.reduce((a, b) => a + b, 0));
-        const colTotals = Array(cols).fill(0).map((_, c) => submittedData.reduce((sum, row) => sum + row[c], 0));
-        const grandTotal = rowTotals.reduce((a, b) => a + b, 0);
-
-        const expected = submittedData.map((row, r) =>
-            row.map((_, c) => (rowTotals[r] * colTotals[c]) / (grandTotal || 1))
-        );
-
-        const chiSquareCells = submittedData.map((row, r) =>
-            row.map((obs, c) => {
-                const exp = expected[r][c];
-                if (exp === 0) return 0;
-                return Math.pow(obs - exp, 2) / exp;
-            })
-        );
-
-        const chiSquareStat = chiSquareCells.reduce((sum, row) => sum + row.reduce((rSum, val) => rSum + val, 0), 0);
-        const df = (rows - 1) * (cols - 1);
-
-        // Get critical value (approximate or lookup)
-        let criticalValue = CRITICAL_VALUES_0_05[df];
-        if (!criticalValue) {
-            criticalValue = 0;
-        }
-
-        // Decision
-        const rejectNull = chiSquareStat > criticalValue;
-
-        return { rowTotals, colTotals, grandTotal, expected, chiSquareCells, chiSquareStat, df, criticalValue, rejectNull };
-    }, [submittedData, rows, cols]);
-
-    const liveRowTotals = data.map(row => row.reduce((a, b) => a + b, 0));
-    const liveColTotals = Array(cols).fill(0).map((_, c) => data.reduce((sum, row) => sum + row[c], 0));
-    const liveGrandTotal = liveRowTotals.reduce((a, b) => a + b, 0);
-
-    return (
-        <div className="min-h-screen w-full px-6 py-16 sm:py-20 relative overflow-hidden">
-            <BackgroundGraph />
-
-            <div className="max-w-5xl mx-auto relative z-10">
-                <div className="mb-8 fade-in text-center">
-                    <h1 className="text-4xl font-extrabold mb-4 text-[var(--color-ink)]" style={{ fontFamily: "var(--font-serif)" }}>
-                        Chi-Square Test Calculator
-                    </h1>
-                    <p className="max-w-2xl mx-auto text-[var(--color-ink-light)]">
-                        Determine if there is a significant association between two categorical variables.
-                    </p>
-                </div>
-
-                <div
-                    className="mb-8 p-8 rounded-2xl shadow-sm fade-in delay-100"
-                    style={{ backgroundColor: "var(--color-accent-mint)" }}
-                >
-                    <div className="flex flex-wrap gap-8 mb-8 items-center justify-center p-4 rounded-xl border border-[var(--color-dot-mint)] bg-white/50">
-                        <div className="flex items-center gap-3">
-                            <label className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink)]">
-                                Rows
-                            </label>
-                            <input
-                                type="number"
-                                min="2"
-                                max="10"
-                                value={rows}
-                                onChange={(e) => updateDimensions(parseInt(e.target.value) || 2, cols)}
-                                className="w-20 p-2 text-center text-lg font-bold rounded-lg border-2 border-[var(--color-dot-mint)] focus:ring-0 transition-colors outline-none bg-white text-[var(--color-ink)]"
-                            />
-                        </div>
-                        <div className="text-xl font-light text-[var(--color-ink-light)]">×</div>
-                        <div className="flex items-center gap-3">
-                            <label className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink)]">
-                                Columns
-                            </label>
-                            <input
-                                type="number"
-                                min="2"
-                                max="10"
-                                value={cols}
-                                onChange={(e) => updateDimensions(rows, parseInt(e.target.value) || 2)}
-                                className="w-20 p-2 text-center text-lg font-bold rounded-lg border-2 border-[var(--color-dot-mint)] focus:ring-0 transition-colors outline-none bg-white text-[var(--color-ink)]"
-                            />
-                        </div>
-                    </div>
-
-                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-[var(--color-ink)]">
-                        <span className="w-2 h-8 rounded-full bg-[var(--color-dot-mint)]"></span>
-                        Observed Frequencies
-                    </h3>
-                    <div className="overflow-x-auto mb-8 rounded-xl border border-[var(--color-dot-mint)] bg-white shadow-sm">
-                        <table className="w-full border-collapse text-sm">
-                            <thead>
-                                <tr>
-                                    <th className="p-3 border-b border-r border-[var(--color-dot-mint)] bg-[var(--color-accent-mint)]"></th>
-                                    {Array(cols).fill(0).map((_, c) => (
-                                        <th key={c} className="p-3 border-b border-r border-[var(--color-dot-mint)] min-w-[100px] font-bold bg-[var(--color-accent-mint)] text-[var(--color-ink)]">
-                                            {String.fromCharCode(65 + c)}
-                                        </th>
-                                    ))}
-                                    <th className="p-3 border-b border-[var(--color-dot-mint)] font-bold bg-[var(--color-accent-mint)] text-[var(--color-ink)]">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data.map((row, r) => (
-                                    <tr key={r} className="group hover:bg-[var(--color-accent-mint)]/30 transition-colors">
-                                        <td className="p-3 border-r border-b border-[var(--color-dot-mint)] font-bold text-center bg-[var(--color-accent-mint)] text-[var(--color-ink)]">
-                                            {String.fromCharCode(88 + r) || `Row ${r + 1}`}
-                                        </td>
-                                        {row.map((val, c) => (
-                                            <td key={c} className="p-0 border-r border-b border-[var(--color-dot-mint)]">
-                                                <input
-                                                    type="number"
-                                                    value={val}
-                                                    onChange={(e) => handleDataChange(r, c, e.target.value)}
-                                                    className="w-full h-full text-center p-3 bg-transparent focus:outline-none focus:bg-[var(--color-accent-mint)]/30 font-medium text-lg text-[var(--color-ink)] transition-colors"
-                                                />
-                                            </td>
-                                        ))}
-                                        <td className="p-3 border-b border-[var(--color-dot-mint)] text-center font-bold text-[var(--color-ink-light)] bg-white">
-                                            {liveRowTotals[r].toFixed(0)}
-                                        </td>
-                                    </tr>
-                                ))}
-                                <tr>
-                                    <td className="p-3 font-bold text-center border-r border-[var(--color-dot-mint)] bg-[var(--color-accent-mint)] text-[var(--color-ink)]">Total</td>
-                                    {liveColTotals.map((tot, c) => (
-                                        <td key={c} className="p-3 text-center font-bold text-[var(--color-ink-light)] border-r border-[var(--color-dot-mint)] bg-white">
-                                            {tot.toFixed(0)}
-                                        </td>
-                                    ))}
-                                    <td className="p-3 text-center font-bold text-lg text-[var(--color-dot-mint)] bg-[var(--color-accent-mint)]">
-                                        {liveGrandTotal.toFixed(0)}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="flex justify-center">
-                        <button
-                            onClick={handleCalculate}
-                            className="text-white font-bold py-3 px-12 rounded-full shadow-md transition-all transform hover:-translate-y-0.5 active:scale-95 text-lg"
-                            style={{ backgroundColor: "var(--color-dot-mint)" }}
-                        >
-                            Calculate Chi-Square
-                        </button>
-                    </div>
-                </div>
-
-                {results && submittedData && (
-                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        {/* Section 1: Expected Frequencies */}
-                        <section className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
-                            <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 flex items-center gap-3">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold bg-[var(--color-accent-mint)] text-[var(--color-dot-mint)]">1</span>
-                                Expected Frequencies
-                            </h2>
-
-                            <div className="mb-6 p-4 rounded-xl border border-[var(--color-accent-mint)] bg-[var(--color-accent-mint)]/30">
-                                <div className="flex items-center gap-4 text-gray-700 dark:text-gray-200 font-serif flex-wrap justify-center">
-                                    <span className="font-semibold italic">E<sub>ij</sub> = </span>
-                                    <div className="flex flex-col items-center">
-                                        <span className="border-b border-gray-400 dark:border-gray-500 px-2 text-center text-sm">Row Total × Column Total</span>
-                                        <span className="text-center text-sm">Grand Total</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-                                <table className="w-full border-collapse text-sm">
-                                    <thead>
-                                        <tr>
-                                            <th className="p-3 border-b border-r dark:border-gray-700 bg-[var(--color-accent-mint)]/50"></th>
-                                            {Array(cols).fill(0).map((_, c) => (
-                                                <th key={c} className="p-3 border-b border-r dark:border-gray-700 font-bold text-gray-700 dark:text-gray-300 bg-[var(--color-accent-mint)]/50">
-                                                    {String.fromCharCode(65 + c)} (E)
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {results.expected.map((row, r) => (
-                                            <tr key={r} className="hover:bg-[var(--color-accent-mint)]/10 transition-colors">
-                                                <td className="p-3 border-r border-b dark:border-gray-700 font-bold text-center text-gray-700 dark:text-gray-300 bg-[var(--color-accent-mint)]/30">
-                                                    {String.fromCharCode(88 + r)}
-                                                </td>
-                                                {row.map((val, c) => (
-                                                    <td key={c} className="p-3 border-r border-b dark:border-gray-700 text-center">
-                                                        <div className="flex flex-col items-center">
-                                                            <span className="font-bold text-lg text-[var(--color-dot-mint)]">{val.toFixed(2)}</span>
-                                                            <span className="text-xs text-gray-400 mt-1">
-                                                                {results.rowTotals[r]} × {results.colTotals[c]} / {results.grandTotal}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                ))}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </section>
-
-                        {/* Section 2: Chi-Square Calculation */}
-                        <section className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
-                            <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 flex items-center gap-3">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold bg-[var(--color-accent-mint)] text-[var(--color-dot-mint)]">2</span>
-                                Compute Chi-Square Statistic
-                            </h2>
-
-                            <div className="mb-6 p-4 rounded-xl border border-[var(--color-accent-mint)] bg-[var(--color-accent-mint)]/30">
-                                <div className="flex items-center gap-3 text-gray-700 dark:text-gray-200 font-serif flex-wrap justify-center">
-                                    <span className="font-semibold italic text-xl">χ² = ∑</span>
-                                    <div className="flex flex-col items-center mx-2">
-                                        <span className="border-b border-gray-400 dark:border-gray-500 px-1 text-center text-sm">(O<sub>ij</sub> - E<sub>ij</sub>)<sup>2</sup></span>
-                                        <span className="text-center text-sm">E<sub>ij</sub></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-                                <table className="w-full border-collapse text-sm">
-                                    <thead>
-                                        <tr>
-                                            <th className="p-3 border-b border-r dark:border-gray-700 bg-[var(--color-accent-mint)]/50"></th>
-                                            {Array(cols).fill(0).map((_, c) => (
-                                                <th key={c} className="p-3 border-b border-r dark:border-gray-700 font-bold text-gray-700 dark:text-gray-300 bg-[var(--color-accent-mint)]/50">
-                                                    {String.fromCharCode(65 + c)} (χ²)
-                                                </th>
-                                            ))}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {results.chiSquareCells.map((row, r) => (
-                                            <tr key={r} className="hover:bg-[var(--color-accent-mint)]/10 transition-colors">
-                                                <td className="p-3 border-r border-b dark:border-gray-700 font-bold text-center text-gray-700 dark:text-gray-300 bg-[var(--color-accent-mint)]/30">
-                                                    {String.fromCharCode(88 + r)}
-                                                </td>
-                                                {row.map((val, c) => (
-                                                    <td key={c} className="p-3 border-r border-b dark:border-gray-700 text-center">
-                                                        <div className="flex flex-col items-center">
-                                                            <span className="font-bold text-lg text-[var(--color-dot-mint)]">{val.toFixed(2)}</span>
-                                                            <span className="text-xs text-gray-400 mt-1">
-                                                                ({submittedData[r][c]} - {results.expected[r][c].toFixed(2)})² / {results.expected[r][c].toFixed(2)}
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                ))}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </section>
-
-                        {/* Section 3: Results & Decision */}
-                        <section className="p-8 rounded-2xl shadow-xl border border-[var(--color-accent-mint)] bg-white dark:bg-gray-800 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 opacity-20 bg-[var(--color-accent-mint)] rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-
-                            <h2 className="text-2xl font-bold mb-8 text-gray-800 dark:text-gray-100 flex items-center gap-3 relative z-10">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold bg-[var(--color-accent-mint)] text-[var(--color-dot-mint)]">3</span>
-                                Results & Decision
-                            </h2>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
-                                <div className="space-y-6">
-                                    <div className="bg-white/80 dark:bg-gray-800/80 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-                                        <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:mb-0 last:pb-0">
-                                            <span className="text-gray-600 dark:text-gray-400 font-medium">Chi-Square Statistic (χ²)</span>
-                                            <span className="font-bold text-3xl font-mono text-[var(--color-dot-mint)]">{results.chiSquareStat.toFixed(4)}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:mb-0 last:pb-0">
-                                            <div className="flex flex-col">
-                                                <span className="text-gray-600 dark:text-gray-400 font-medium">Degrees of Freedom</span>
-                                                <span className="text-xs text-gray-400">({rows}-1) × ({cols}-1)</span>
-                                            </div>
-                                            <span className="font-bold text-xl text-gray-800 dark:text-gray-200 font-mono">{results.df}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-gray-600 dark:text-gray-400 font-medium">Critical Value (α = 0.05)</span>
-                                            <span className="font-bold text-xl text-gray-800 dark:text-gray-200 font-mono">{results.criticalValue > 0 ? results.criticalValue : "N/A"}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col justify-center items-center p-8 bg-[var(--color-accent-mint)]/20 rounded-xl shadow-lg border border-[var(--color-accent-mint)] relative">
-                                    <h3 className="text-sm font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-4 z-10">Conclusion</h3>
-
-                                    <div className={`text-5xl font-extrabold mb-4 z-10 text-center ${results.rejectNull ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
-                                        {results.rejectNull ? "Reject H₀" : "Fail to Reject H₀"}
-                                    </div>
-
-                                    <p className="text-center text-gray-600 dark:text-gray-300 z-10 leading-relaxed max-w-xs">
-                                        Since <span className="font-bold">{results.chiSquareStat.toFixed(2)}</span> {results.rejectNull ? ">" : "≤"} <span className="font-bold">{results.criticalValue}</span>,
-                                        we {results.rejectNull ? "reject" : "fail to reject"} the null hypothesis.
-                                    </p>
-
-                                    {results.rejectNull && (
-                                        <div className="mt-6 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-full text-sm font-semibold z-10 animate-pulse">
-                                            Significant Association
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                )}
+          <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
+            <div className="flex items-center gap-4">
+              <label className="text-sm font-medium">Significance Level (α):</label>
+              <select
+                className="p-2 border rounded bg-white/70 border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)] cursor-pointer"
+                value={alpha}
+                onChange={(e) => setAlpha(e.target.value)}
+              >
+                <option value="0.01">0.01 (1%)</option>
+                <option value="0.025">0.025 (2.5%)</option>
+                <option value="0.05">0.05 (5%)</option>
+                <option value="0.10">0.10 (10%)</option>
+              </select>
             </div>
-        </div>
-    );
+          </Card>
+        </section>
+
+        {testType === "goodness" && (
+          <section className="fade-in" style={{ animationDelay: "100ms" }}>
+            <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
+              <h2 className="text-xl font-medium mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+                Goodness-of-Fit Test
+              </h2>
+              <MathBlock formula="\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}" />
+              <p className="text-sm text-[var(--color-ink-light)] mt-2">
+                Tests if observed frequencies match expected frequencies.
+              </p>
+            </Card>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-sm font-medium mb-1">Observed Frequencies</label>
+                <Input
+                  label="Observed Frequencies"
+                  type="text"
+                  value={observedStr}
+                  onChange={(e) => setObservedStr(e.target.value)}
+                  placeholder="e.g. 20, 30, 25, 25"
+                  className="font-mono"
+                />
+                <p className="text-xs text-[var(--color-ink-light)] mt-1">Comma-separated values</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Expected Frequencies</label>
+                <Input
+                  label="Expected Frequencies"
+                  type="text"
+                  value={expectedStr}
+                  onChange={(e) => setExpectedStr(e.target.value)}
+                  placeholder="e.g. 25, 25, 25, 25"
+                  className="font-mono"
+                />
+                <p className="text-xs text-[var(--color-ink-light)] mt-1">Must have same count as observed</p>
+              </div>
+            </div>
+
+            {error && (
+              <p className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                {error}
+              </p>
+            )}
+            
+            <Button tone="mint" onClick={runGoodnessOfFit}>Run Goodness-of-Fit Test</Button>
+
+            {gofResult && (
+              <div className="mt-8 fade-in space-y-6" style={{ animationDelay: "150ms" }}>
+                <h3 
+                  className="text-2xl font-medium"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                >
+                  Results
+                </h3>
+                
+                <Card className="bg-[var(--color-accent-mint)] border-none">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
+                        {formatNum(gofResult.value.chiSquare)}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">χ²</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-ink)]">
+                        {gofResult.value.df}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">df</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-ink)]">
+                        {gofResult.value.chiCritical ? formatNum(gofResult.value.chiCritical) : "N/A"}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">χ²-critical</div>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="border border-gray-100 shadow-sm">
+                  <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+                    Step-by-Step Working
+                  </h4>
+                  <div className="space-y-4">
+                    {gofResult.steps.map((step) => (
+                      <div key={step.id} className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm">
+                        <h5 className="font-semibold text-base mb-2">{step.title}</h5>
+                        {step.description && (
+                          <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                            {step.description}
+                          </pre>
+                        )}
+                        {step.formula && <MathBlock formula={step.formula} className="my-2" />}
+                        {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                        {step.note && <p className="text-sm text-[var(--color-ink-light)] mb-1">{step.note}</p>}
+                        {step.result && (
+                          <p className="font-bold text-[var(--color-dot-mint)] mt-1">= {step.result}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+                
+                <CopyExamAnswer answer={resultToExamAnswer(gofResult, "Chi-Square Goodness-of-Fit")} />
+              </div>
+            )}
+          </section>
+        )}
+
+        {testType === "independence" && (
+          <section className="fade-in" style={{ animationDelay: "100ms" }}>
+            <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
+              <h2 className="text-xl font-medium mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+                Test of Independence
+              </h2>
+              <MathBlock formula="\chi^2 = \sum \frac{(O - E)^2}{E}" />
+              <p className="text-sm text-[var(--color-ink-light)] mt-2">
+                Tests if two categorical variables are independent.
+              </p>
+            </Card>
+
+            <div className="mb-6 flex gap-4 items-center">
+              <div>
+                <label className="text-sm font-medium">Rows:</label>
+                <input
+                  type="number"
+                  min={2}
+                  max={10}
+                  value={tableRows}
+                  onChange={(e) => updateTableSize(Math.max(2, parseInt(e.target.value) || 2), tableCols)}
+                  className="w-20 ml-2 p-2 border rounded border-[var(--color-border)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Columns:</label>
+                <input
+                  type="number"
+                  min={2}
+                  max={10}
+                  value={tableCols}
+                  onChange={(e) => updateTableSize(tableRows, Math.max(2, parseInt(e.target.value) || 2))}
+                  className="w-20 ml-2 p-2 border rounded border-[var(--color-border)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
+                />
+              </div>
+            </div>
+
+            <div className="mb-6 overflow-x-auto rounded-lg border border-[var(--color-border)]">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr>
+                    <th className="p-3 border-b border-r border-[var(--color-border)] bg-gray-50"></th>
+                    {Array.from({ length: tableCols }, (_, c) => (
+                      <th key={c} className="p-3 border-b border-[var(--color-border)] bg-gray-50 font-medium text-[var(--color-ink-light)]">
+                        Col {c + 1}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row, r) => (
+                    <tr key={r}>
+                      <td className="p-3 border-r border-b border-[var(--color-border)] bg-gray-50 font-medium w-24 text-[var(--color-ink-light)]">
+                        Row {r + 1}
+                      </td>
+                      {row.map((cell, c) => (
+                        <td key={c} className="p-2 border-b border-[var(--color-border)] bg-white">
+                          <input
+                            type="number"
+                            className="w-full p-2 text-center border rounded border-[var(--color-border)] focus:border-[var(--color-dot-mint)] focus:ring-1 focus:ring-[var(--color-dot-mint)] outline-none transition-colors"
+                            value={cell}
+                            onChange={(e) => setCell(r, c, e.target.value)}
+                          />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {error && (
+              <p className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                {error}
+              </p>
+            )}
+            
+            <Button tone="mint" onClick={runIndependence}>Run Test of Independence</Button>
+
+            {indepResult && (
+              <div className="mt-8 fade-in space-y-6" style={{ animationDelay: "150ms" }}>
+                <h3 
+                  className="text-2xl font-medium"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                >
+                  Results
+                </h3>
+
+                <Card className="bg-[var(--color-accent-mint)] border-none">
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
+                        {formatNum(indepResult.value.chiSquare)}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">χ²</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-ink)]">
+                        {indepResult.value.df}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">df</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold text-[var(--color-ink)]">
+                        {indepResult.value.chiCritical ? formatNum(indepResult.value.chiCritical) : "N/A"}
+                      </div>
+                      <div className="text-xs text-[var(--color-ink-light)]">χ²-critical</div>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="border border-gray-100 shadow-sm">
+                  <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+                    Step-by-Step Working
+                  </h4>
+                  <div className="space-y-4">
+                    {indepResult.steps.map((step) => (
+                      <div key={step.id} className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm">
+                        <h5 className="font-semibold text-base mb-2">{step.title}</h5>
+                        {step.description && (
+                          <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                            {step.description}
+                          </pre>
+                        )}
+                        {step.formula && <MathBlock formula={step.formula} className="my-2" />}
+                        {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                        {step.note && <p className="text-sm text-[var(--color-ink-light)] mb-1">{step.note}</p>}
+                        {step.result && (
+                          <p className="font-bold text-[var(--color-dot-mint)] mt-1">= {step.result}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+                
+                <CopyExamAnswer answer={resultToExamAnswer(indepResult, "Chi-Square Test of Independence")} />
+              </div>
+            )}
+          </section>
+        )}
+      </div>
+    </main>
+  );
 }

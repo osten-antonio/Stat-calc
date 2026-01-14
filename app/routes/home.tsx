@@ -3,7 +3,7 @@ import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Stuff" },
+    { title: "Stats Hell" },
     {
       name: "description",
       content: "A collection of statistical calculators.",
@@ -48,6 +48,8 @@ const CATEGORIES = [
     tools: [
       { name: "Descriptive Stats", path: "/descriptive" },
       { name: "Regression", path: "/regression" },
+      { name: "Box Plot", path: "/box-plot" },
+      { name: "Special Means", path: "/special-means" },
     ],
   },
   {

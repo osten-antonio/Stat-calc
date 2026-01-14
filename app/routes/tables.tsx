@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Route } from "./+types/stats-stuff.tables";
+import type { Route } from "./+types/tables";
 import { Link } from "react-router";
 
 import {
@@ -32,7 +32,7 @@ import { Card } from "~/components/ui/Card";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Stuff | Statistical Tables" },
+    { title: "Statistical Tables" },
     { name: "description", content: "t-distribution, z-distribution, chi-square, and F-distribution tables with auto-lookup." },
   ];
 }

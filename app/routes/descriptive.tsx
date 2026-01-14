@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { Route } from "./+types/stats-stuff.descriptive";
+import type { Route } from "./+types/descriptive";
 import { Link } from "react-router";
 
 import {
@@ -19,7 +19,7 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Stuff | Descriptive Statistics" },
+    { title: "Descriptive Statistics" },
     {
       name: "description",
       content:

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Route } from "./+types/stats-stuff.t-tests";
+import type { Route } from "./+types/t-tests";
 import { Link } from "react-router";
 
 import {
@@ -21,7 +21,7 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Stuff | T-Tests" },
+    { title: "T-Tests" },
     { name: "description", content: "One-sample, paired, and independent t-tests with step-by-step workings." },
   ];
 }

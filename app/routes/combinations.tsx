@@ -1,94 +1,172 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import type { Route } from "./+types/combinations";
-import { BackgroundGraph } from "../components/background-graph";
+import { Link } from "react-router";
 
-export function meta({ }: Route.MetaArgs) {
-    return [
-        { title: "Combinations Calculator" },
-        { name: "description", content: "Calculate Combinations" },
-    ];
+import { combinationsWithSteps } from "~/lib/math/combinations";
+import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
+import { Input } from "~/components/ui/Input";
+import { Button } from "~/components/ui/Button";
+import { Card } from "~/components/ui/Card";
+import { MathBlock } from "~/components/math/MathBlock";
+import type { ExamAnswer } from "~/lib/format/examAnswer";
+import type { CalculationResult } from "~/lib/types/calculation";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Combinations" },
+    { name: "description", content: "Calculate combinations C(n, r) with step-by-step workings." },
+  ];
 }
 
-const factorial = (n: number): number => {
-    if (n < 0) return 0;
-    if (n === 0 || n === 1) return 1;
-    let result = 1;
-    for (let i = 2; i <= n; i++) result *= i;
-    return result;
-};
+function resultToExamAnswer(calc: CalculationResult<number>): ExamAnswer {
+  return {
+    title: "Combinations Calculation",
+    sections: calc.steps.map((step) => ({
+      title: step.title,
+      lines: [
+        step.description ?? "",
+        step.formula ? `Formula: ${step.formula}` : "",
+        step.calculation ?? "",
+        step.note ? `Note: ${step.note}` : "",
+        step.result ? `= ${step.result}` : "",
+      ].filter(Boolean),
+    })),
+    finalAnswer: `C(${calc.inputs.n}, ${calc.inputs.r}) = ${calc.value}`,
+  };
+}
 
-const combination = (n: number, r: number): number => {
-    if (r < 0 || r > n) return 0;
-    return factorial(n) / (factorial(r) * factorial(n - r));
-};
+export default function CombinationsCalculator() {
+  const [n, setN] = useState("");
+  const [r, setR] = useState("");
+  const [result, setResult] = useState<CalculationResult<number> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-export default function Combinations() {
-    const [pcN, setPcN] = useState<number>(8); // Total items
-    const [pcR, setPcR] = useState<number>(4); // Items to choose
+  function calculate() {
+    setError(null);
+    setResult(null);
 
-    const comb = useMemo(() => combination(pcN, pcR), [pcN, pcR]);
+    const nVal = parseInt(n, 10);
+    const rVal = parseInt(r, 10);
 
-    return (
-        <div className="min-h-screen w-full px-6 py-12 relative overflow-hidden font-sans">
-            <BackgroundGraph />
+    if (isNaN(nVal) || isNaN(rVal)) {
+      setError("Please enter valid integers for n and r.");
+      return;
+    }
+    if (nVal < 0 || rVal < 0) {
+      setError("n and r must be non-negative integers.");
+      return;
+    }
+    if (nVal > 170) {
+      setError("n is too large (factorial overflow). Max is 170.");
+      return;
+    }
 
-            <div className="max-w-4xl mx-auto relative z-10">
-                <div className="mb-8 fade-in text-center">
-                    <h1 className="text-4xl font-extrabold mb-4 text-[var(--color-ink)]" style={{ fontFamily: "var(--font-serif)" }}>
-                        Combinations Calculator
-                    </h1>
-                    <p className="max-w-2xl mx-auto text-[var(--color-ink-light)]">
-                        Calculate the number of ways to choose <strong>r</strong> items from a set of <strong>n</strong> distinct items where order <strong>does not</strong> matter.
-                    </p>
-                </div>
+    const calc = combinationsWithSteps(nVal, rVal);
+    setResult(calc);
+  }
 
+  return (
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-12 fade-in">
+          <Link
+            to="/"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-peach)] transition-colors mb-4 inline-block"
+          >
+            ← Back to Home
+          </Link>
+
+          <h1
+            className="text-5xl font-medium tracking-tight mb-4"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            Combinations
+          </h1>
+          <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
+            Calculate C(n, r)  the number of ways to choose r items from n (order doesn't matter).
+          </p>
+        </header>
+
+        <Card
+          className="mb-10 bg-[var(--color-accent-peach)] border-none fade-in"
+          style={{ animationDelay: "50ms" }}
+        >
+          <MathBlock formula="C(n, r) = \frac{n!}{r!(n - r)!}" />
+        </Card>
+
+        <section className="mb-12 fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="grid grid-cols-2 gap-4 max-w-lg">
+            <Input
+              label="n (total items)"
+              type="number"
+              min={0}
+              value={n}
+              onChange={(e) => setN(e.target.value)}
+              placeholder="e.g. 10"
+            />
+            <Input
+              label="r (items to choose)"
+              type="number"
+              min={0}
+              value={r}
+              onChange={(e) => setR(e.target.value)}
+              placeholder="e.g. 3"
+            />
+          </div>
+
+          {error && (
+            <p className="text-red-600 mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
+              {error}
+            </p>
+          )}
+
+          <Button className="mt-6 w-full md:w-auto" tone="peach" onClick={calculate}>
+            Calculate
+          </Button>
+        </section>
+
+        {result && (
+          <section className="fade-in space-y-6" style={{ animationDelay: "150ms" }}>
+            <h2
+              className="text-3xl font-medium"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              Step-by-Step Working
+            </h2>
+
+            <div className="space-y-4">
+              {result.steps.map((step) => (
                 <div
-                    className="mb-8 p-8 rounded-2xl shadow-sm fade-in delay-100"
-                    style={{ backgroundColor: "var(--color-accent-peach)" }}
+                  key={step.id}
+                  className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm"
                 >
-                    <div className="flex flex-wrap gap-8 mb-8 items-center justify-center p-4 rounded-xl border border-[var(--color-dot-peach)] bg-white/50">
-                        <div className="flex items-center gap-3">
-                            <label className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink)]">
-                                Total Items (n)
-                            </label>
-                            <input
-                                type="number"
-                                value={pcN}
-                                onChange={e => setPcN(parseInt(e.target.value) || 0)}
-                                className="w-24 p-2 text-center text-lg font-bold rounded-lg border-2 border-[var(--color-dot-peach)] focus:ring-0 transition-colors outline-none bg-white text-[var(--color-ink)]"
-                            />
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <label className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink)]">
-                                Select (r)
-                            </label>
-                            <input
-                                type="number"
-                                value={pcR}
-                                onChange={e => setPcR(parseInt(e.target.value) || 0)}
-                                className="w-24 p-2 text-center text-lg font-bold rounded-lg border-2 border-[var(--color-dot-peach)] focus:ring-0 transition-colors outline-none bg-white text-[var(--color-ink)]"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="p-6 rounded-xl border bg-white shadow-sm" style={{ borderColor: "var(--color-dot-peach)" }}>
-                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-[var(--color-ink)]">
-                            <span className="w-2 h-8 rounded-full bg-[var(--color-dot-peach)]"></span>
-                            Result
-                        </h3>
-
-                        <div className="flex flex-col items-center justify-center space-y-4">
-                            <p className="font-mono text-sm text-[var(--color-ink-light)]">C(n, r) = n! / [r!(n-r)!]</p>
-                            <div className="text-lg text-[var(--color-ink)]">
-                                C({pcN}, {pcR}) = {pcN}! / [{pcR}!({pcN}-{pcR})!]
-                            </div>
-                            <div className="text-5xl font-extrabold text-[var(--color-dot-peach)]">
-                                {comb.toLocaleString()}
-                            </div>
-                        </div>
-                    </div>
+                  <h3 className="font-semibold text-lg mb-3">{step.title}</h3>
+                  {step.description && (
+                    <p className="text-sm text-[var(--color-ink-light)] mb-2">
+                      {step.description}
+                    </p>
+                  )}
+                  {step.formula && <MathBlock formula={step.formula} className="my-2" />}
+                  {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                  {step.note && (
+                    <p className="text-sm text-[var(--color-ink-light)] mt-1">
+                      {step.note}
+                    </p>
+                  )}
+                  {step.result && (
+                    <p className="text-xl font-bold mt-3 text-[var(--color-dot-peach)]">
+                      = {step.result}
+                    </p>
+                  )}
                 </div>
+              ))}
             </div>
-        </div>
-    );
+
+            <CopyExamAnswer answer={resultToExamAnswer(result)} />
+          </section>
+        )}
+      </div>
+    </main>
+  );
 }
+

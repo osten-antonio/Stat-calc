@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Route } from "./+types/stats-stuff.binomial";
+import type { Route } from "./+types/binomial";
 import { Link } from "react-router";
 
 import { binomialWithSteps, type BinomialResult } from "~/lib/math/probability";
@@ -13,7 +13,7 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Stuff | Binomial Distribution" },
+    { title: "Binomial Distribution" },
     {
       name: "description",
       content:
