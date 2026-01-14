@@ -1,0 +1,101 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - img
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - heading "Probability" [level=2] [ref=e6]
+        - list [ref=e7]:
+          - listitem [ref=e8]:
+            - link "→ Binomial Go" [ref=e9] [cursor=pointer]:
+              - /url: /stats-stuff/binomial
+              - generic [ref=e10]:
+                - generic [ref=e11]: →
+                - generic [ref=e12]: Binomial
+              - generic [ref=e13]: Go
+          - listitem [ref=e14]:
+            - link "→ Poisson Go" [ref=e15] [cursor=pointer]:
+              - /url: /stats-stuff/poisson
+              - generic [ref=e16]:
+                - generic [ref=e17]: →
+                - generic [ref=e18]: Poisson
+              - generic [ref=e19]: Go
+          - listitem [ref=e20]:
+            - link "→ Hypergeometric Go" [ref=e21] [cursor=pointer]:
+              - /url: /stats-stuff/hypergeometric
+              - generic [ref=e22]:
+                - generic [ref=e23]: →
+                - generic [ref=e24]: Hypergeometric
+              - generic [ref=e25]: Go
+      - generic [ref=e26]:
+        - heading "Counting" [level=2] [ref=e27]
+        - list [ref=e28]:
+          - listitem [ref=e29]:
+            - link "→ Permutations Go" [ref=e30] [cursor=pointer]:
+              - /url: /stats-stuff/permutations
+              - generic [ref=e31]:
+                - generic [ref=e32]: →
+                - generic [ref=e33]: Permutations
+              - generic [ref=e34]: Go
+          - listitem [ref=e35]:
+            - link "→ Combinations Go" [ref=e36] [cursor=pointer]:
+              - /url: /stats-stuff/combinations
+              - generic [ref=e37]:
+                - generic [ref=e38]: →
+                - generic [ref=e39]: Combinations
+              - generic [ref=e40]: Go
+      - generic [ref=e41]:
+        - heading "Inference" [level=2] [ref=e42]
+        - list [ref=e43]:
+          - listitem [ref=e44]:
+            - link "→ T-Tests Go" [ref=e45] [cursor=pointer]:
+              - /url: /stats-stuff/t-tests
+              - generic [ref=e46]:
+                - generic [ref=e47]: →
+                - generic [ref=e48]: T-Tests
+              - generic [ref=e49]: Go
+          - listitem [ref=e50]:
+            - link "→ Chi-Square Go" [ref=e51] [cursor=pointer]:
+              - /url: /stats-stuff/chi-square
+              - generic [ref=e52]:
+                - generic [ref=e53]: →
+                - generic [ref=e54]: Chi-Square
+              - generic [ref=e55]: Go
+          - listitem [ref=e56]:
+            - link "→ ANOVA Go" [ref=e57] [cursor=pointer]:
+              - /url: /stats-stuff/anova
+              - generic [ref=e58]:
+                - generic [ref=e59]: →
+                - generic [ref=e60]: ANOVA
+              - generic [ref=e61]: Go
+      - generic [ref=e62]:
+        - heading "Data" [level=2] [ref=e63]
+        - list [ref=e64]:
+          - listitem [ref=e65]:
+            - link "→ Descriptive Stats Go" [ref=e66] [cursor=pointer]:
+              - /url: /stats-stuff/descriptive
+              - generic [ref=e67]:
+                - generic [ref=e68]: →
+                - generic [ref=e69]: Descriptive Stats
+              - generic [ref=e70]: Go
+          - listitem [ref=e71]:
+            - link "→ Regression Go" [ref=e72] [cursor=pointer]:
+              - /url: /stats-stuff/regression
+              - generic [ref=e73]:
+                - generic [ref=e74]: →
+                - generic [ref=e75]: Regression
+              - generic [ref=e76]: Go
+      - generic [ref=e77]:
+        - heading "Reference" [level=2] [ref=e78]
+        - list [ref=e79]:
+          - listitem [ref=e80]:
+            - link "→ Statistical Tables Go" [ref=e81] [cursor=pointer]:
+              - /url: /stats-stuff/tables
+              - generic [ref=e82]:
+                - generic [ref=e83]: →
+                - generic [ref=e84]: Statistical Tables
+              - generic [ref=e85]: Go
+    - heading "Stats Stuff" [level=1] [ref=e86]
+```
