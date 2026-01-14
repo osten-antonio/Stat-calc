@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/home";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Stats Stuff" },
     {
@@ -38,7 +38,8 @@ const CATEGORIES = [
     tools: [
       { name: "T-Tests", path: "/stats-stuff/t-tests" },
       { name: "Chi-Square", path: "/stats-stuff/chi-square" },
-      { name: "ANOVA", path: "/stats-stuff/anova" },
+      { name: "One-Way ANOVA", path: "/stats-stuff/anova/one-way" },
+      { name: "Two-Way ANOVA", path: "/stats-stuff/anova/two-way" },
     ],
   },
   {

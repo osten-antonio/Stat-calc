@@ -1,5 +1,49 @@
 import React, { useState } from "react";
 import { calculateTwoWayAnova, type TwoWayResult } from "./anova-utils";
+import type { Route } from "./+types/anova-twoway";
+
+export function meta({ }: Route.MetaArgs) {
+    return [
+        { title: "Two-Way ANOVA Calculator" },
+        { name: "description", content: "Perform Two-Way Analysis of Variance with Replication" },
+    ];
+}
+
+function BackgroundGraph() {
+    return (
+        <svg
+            className="absolute inset-0 w-full h-full opacity-[0.04] pointer-events-none"
+            preserveAspectRatio="xMidYMid slice"
+        >
+            <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path
+                        d="M 40 0 L 0 0 0 40"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                    />
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+            <path
+                className="graph-line"
+                d="M0,300 Q100,280 150,200 T250,180 T350,220 T450,100 T550,150 T650,80 T750,120 T850,60 T950,100 T1050,40 T1150,80 T1250,30 T1350,60 T1450,20 T1550,50 T1650,15 T1750,40 T1850,10 T1950,30"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+            />
+            <path
+                className="graph-line-2"
+                d="M0,350 Q80,340 120,320 T200,350 T280,300 T360,330 T440,280 T520,310 T600,250 T680,290 T760,230 T840,270 T920,200 T1000,250 T1080,180 T1160,220 T1240,160 T1320,200 T1400,140 T1480,180 T1560,120 T1640,160 T1720,100 T1800,140 T1880,80 T1960,120"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeDasharray="4 4"
+            />
+        </svg>
+    );
+}
 
 export default function TwoWay() {
     const [rows, setRows] = useState<number>(2);
@@ -86,18 +130,22 @@ export default function TwoWay() {
     };
 
     return (
-        <div className="min-h-screen w-full px-6 py-12 relative overflow-hidden font-sans text-gray-800 dark:text-gray-100">
+        <div className="min-h-screen w-full px-6 py-12 relative overflow-hidden font-sans">
+            <BackgroundGraph />
 
             <div className="max-w-6xl mx-auto relative z-10">
-                <div className="mb-6 fade-in">
-                    <h1 className="text-3xl font-bold mb-6">Two-Way ANOVA (With Replication)</h1>
+                <div className="mb-6 fade-in text-center">
+                    <h1 className="text-3xl font-extrabold mb-6 text-[var(--color-ink)]" style={{ fontFamily: "var(--font-serif)" }}>Two-Way ANOVA (With Replication)</h1>
                 </div>
 
                 {/* Configuration */}
-                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8 fade-in delay-100">
+                <div
+                    className="rounded-lg shadow-sm border p-6 mb-8 fade-in delay-100"
+                    style={{ backgroundColor: "var(--color-accent-mint)", borderColor: "var(--color-dot-mint)" }}
+                >
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-sm font-medium mb-2 text-[var(--color-ink)]">
                                 Rows (Factor A Levels)
                             </label>
                             <input
@@ -106,11 +154,12 @@ export default function TwoWay() {
                                 max="5"
                                 value={rows}
                                 onChange={(e) => handleConfigChange(parseInt(e.target.value) || 2, cols, reps)}
-                                className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
+                                className="w-full p-2 rounded-md border bg-white focus:ring-2 outline-none"
+                                style={{ borderColor: "var(--color-dot-mint)" }}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-sm font-medium mb-2 text-[var(--color-ink)]">
                                 Columns (Factor B Levels)
                             </label>
                             <input
@@ -119,11 +168,12 @@ export default function TwoWay() {
                                 max="5"
                                 value={cols}
                                 onChange={(e) => handleConfigChange(rows, parseInt(e.target.value) || 2, reps)}
-                                className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
+                                className="w-full p-2 rounded-md border bg-white focus:ring-2 outline-none"
+                                style={{ borderColor: "var(--color-dot-mint)" }}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <label className="block text-sm font-medium mb-2 text-[var(--color-ink)]">
                                 Replications per Cell
                             </label>
                             <input
@@ -132,7 +182,8 @@ export default function TwoWay() {
                                 max="10"
                                 value={reps}
                                 onChange={(e) => handleConfigChange(rows, cols, parseInt(e.target.value) || 2)}
-                                className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
+                                className="w-full p-2 rounded-md border bg-white focus:ring-2 outline-none"
+                                style={{ borderColor: "var(--color-dot-mint)" }}
                             />
                         </div>
                     </div>
@@ -144,7 +195,7 @@ export default function TwoWay() {
                                 {/* Header Row */}
                                 <div className="p-2"></div>
                                 {Array.from({ length: cols }).map((_, j) => (
-                                    <div key={j} className="text-center font-bold text-gray-700 dark:text-gray-300 p-2 bg-gray-100 dark:bg-gray-700 rounded">
+                                    <div key={j} className="text-center font-bold p-2 rounded bg-white" style={{ color: "var(--color-ink)" }}>
                                         Col {j + 1}
                                     </div>
                                 ))}
@@ -152,11 +203,11 @@ export default function TwoWay() {
                                 {/* Data Rows */}
                                 {Array.from({ length: rows }).map((_, i) => (
                                     <React.Fragment key={i}>
-                                        <div className="flex items-center justify-center font-bold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded p-2">
+                                        <div className="flex items-center justify-center font-bold rounded p-2 bg-white" style={{ color: "var(--color-ink)" }}>
                                             Row {i + 1}
                                         </div>
                                         {Array.from({ length: cols }).map((_, j) => (
-                                            <div key={`${i}-${j}`} className="space-y-2 p-2 border border-gray-200 dark:border-gray-700 rounded-lg">
+                                            <div key={`${i}-${j}`} className="space-y-2 p-2 border rounded-lg bg-white/50" style={{ borderColor: "var(--color-dot-mint)" }}>
                                                 {Array.from({ length: reps }).map((_, k) => (
                                                     <input
                                                         key={`${i}-${j}-${k}`}
@@ -164,7 +215,8 @@ export default function TwoWay() {
                                                         placeholder={`Rep ${k + 1}`}
                                                         value={data[i][j][k]}
                                                         onChange={(e) => handleDataChange(i, j, k, e.target.value)}
-                                                        className="w-full p-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 focus:ring-1 focus:ring-purple-500"
+                                                        className="w-full p-1 text-sm rounded border bg-white focus:ring-1 outline-none"
+                                                        style={{ borderColor: "var(--color-dot-mint)" }}
                                                     />
                                                 ))}
                                             </div>
@@ -178,20 +230,22 @@ export default function TwoWay() {
                     <div className="mt-8 flex justify-between items-center">
                         <button
                             onClick={autoFillSample}
-                            className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 underline decoration-dotted"
+                            className="text-sm underline decoration-dotted hover:opacity-80 transition-opacity"
+                            style={{ color: "var(--color-ink-light)" }}
                         >
                             Autofill Sample Data
                         </button>
                         <button
                             onClick={handleCalculate}
-                            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-md transition-colors"
+                            className="px-6 py-2.5 text-white rounded-lg font-medium shadow-md transition-all hover:shadow-lg transform active:scale-95 uppercase tracking-wide text-sm"
+                            style={{ backgroundColor: "var(--color-dot-mint)" }}
                         >
                             Calculate F-Statistics
                         </button>
                     </div>
 
                     {error && (
-                        <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800 animate-pulse">
+                        <div className="mt-6 p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 animate-pulse">
                             {error}
                         </div>
                     )}
@@ -201,13 +255,16 @@ export default function TwoWay() {
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
                         {/* Summary Table */}
-                        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                            <h3 className="text-xl font-semibold p-6 text-gray-800 dark:text-white border-b dark:border-gray-700 flex items-center gap-2">
+                        <div
+                            className="rounded-lg shadow-sm border overflow-hidden"
+                            style={{ backgroundColor: "var(--color-accent-mint)", borderColor: "var(--color-dot-mint)" }}
+                        >
+                            <h3 className="text-xl font-semibold p-6 border-b flex items-center gap-2 text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-mint)" }}>
                                 ANOVA Summary Table
                             </h3>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <div className="overflow-x-auto bg-white border mx-6 mb-6 rounded-lg" style={{ borderColor: "var(--color-dot-mint)" }}>
+                                <table className="min-w-full text-sm text-left text-[var(--color-ink)]">
+                                    <thead className="text-xs uppercase" style={{ backgroundColor: "var(--color-accent-mint)" }}>
                                         <tr>
                                             <th scope="col" className="px-6 py-3">Source of Variation</th>
                                             <th scope="col" className="px-6 py-3">SS</th>
@@ -218,38 +275,38 @@ export default function TwoWay() {
                                     </thead>
                                     <tbody>
                                         {/* Row Factor */}
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        <tr className="bg-white border-b hover:bg-gray-50" style={{ borderColor: "var(--color-dot-mint)" }}>
+                                            <td className="px-6 py-4 font-medium whitespace-nowrap">
                                                 Rows (Factor A)
                                             </td>
                                             <td className="px-6 py-4">{result.ssRow.toFixed(4)}</td>
                                             <td className="px-6 py-4">{result.dfRow}</td>
                                             <td className="px-6 py-4">{result.msRow.toFixed(4)}</td>
-                                            <td className="px-6 py-4 font-bold text-purple-600 dark:text-purple-400">{result.fRow.toFixed(4)}</td>
+                                            <td className="px-6 py-4 font-bold" style={{ color: "var(--color-dot-mint)" }}>{result.fRow.toFixed(4)}</td>
                                         </tr>
                                         {/* Col Factor */}
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        <tr className="bg-white border-b hover:bg-gray-50" style={{ borderColor: "var(--color-dot-mint)" }}>
+                                            <td className="px-6 py-4 font-medium whitespace-nowrap">
                                                 Columns (Factor B)
                                             </td>
                                             <td className="px-6 py-4">{result.ssCol.toFixed(4)}</td>
                                             <td className="px-6 py-4">{result.dfCol}</td>
                                             <td className="px-6 py-4">{result.msCol.toFixed(4)}</td>
-                                            <td className="px-6 py-4 font-bold text-purple-600 dark:text-purple-400">{result.fCol.toFixed(4)}</td>
+                                            <td className="px-6 py-4 font-bold" style={{ color: "var(--color-dot-mint)" }}>{result.fCol.toFixed(4)}</td>
                                         </tr>
                                         {/* Interaction */}
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        <tr className="bg-white border-b hover:bg-gray-50" style={{ borderColor: "var(--color-dot-mint)" }}>
+                                            <td className="px-6 py-4 font-medium whitespace-nowrap">
                                                 Interaction (AxB)
                                             </td>
                                             <td className="px-6 py-4">{result.ssInter.toFixed(4)}</td>
                                             <td className="px-6 py-4">{result.dfInter}</td>
                                             <td className="px-6 py-4">{result.msInter.toFixed(4)}</td>
-                                            <td className="px-6 py-4 font-bold text-purple-600 dark:text-purple-400">{result.fInter.toFixed(4)}</td>
+                                            <td className="px-6 py-4 font-bold" style={{ color: "var(--color-dot-mint)" }}>{result.fInter.toFixed(4)}</td>
                                         </tr>
                                         {/* Error */}
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                                        <tr className="bg-white border-b hover:bg-gray-50" style={{ borderColor: "var(--color-dot-mint)" }}>
+                                            <td className="px-6 py-4 font-medium whitespace-nowrap">
                                                 Error (Within)
                                             </td>
                                             <td className="px-6 py-4">{result.ssError.toFixed(4)}</td>
@@ -258,8 +315,8 @@ export default function TwoWay() {
                                             <td className="px-6 py-4">-</td>
                                         </tr>
                                         {/* Total */}
-                                        <tr className="bg-gray-50 border-b dark:bg-gray-700 dark:border-gray-600">
-                                            <td className="px-6 py-4 font-bold text-gray-900 dark:text-white whitespace-nowrap">
+                                        <tr className="bg-gray-50 border-b" style={{ borderColor: "var(--color-dot-mint)" }}>
+                                            <td className="px-6 py-4 font-bold whitespace-nowrap">
                                                 Total
                                             </td>
                                             <td className="px-6 py-4 font-bold">{result.ssTotal.toFixed(4)}</td>
@@ -273,15 +330,18 @@ export default function TwoWay() {
                         </div>
 
                         {/* Detailed Working */}
-                        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden p-6">
-                            <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white border-b pb-2 dark:border-gray-700">
+                        <div
+                            className="rounded-lg shadow-sm border overflow-hidden p-6"
+                            style={{ backgroundColor: "var(--color-accent-mint)", borderColor: "var(--color-dot-mint)" }}
+                        >
+                            <h3 className="text-xl font-semibold mb-6 border-b pb-2 text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-mint)" }}>
                                 Step-by-Step Calculation (Deviation Method)
                             </h3>
 
                             {/* Step 1: Calculate Means */}
                             <div className="mb-8">
-                                <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 1: Calculate Means</h4>
-                                <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 font-mono text-sm space-y-4">
+                                <h4 className="text-lg font-medium mb-3 text-[var(--color-ink)]">Step 1: Calculate Means</h4>
+                                <div className="bg-white p-4 rounded-lg border font-mono text-sm space-y-4" style={{ borderColor: "var(--color-dot-mint)" }}>
                                     <div><strong>Grand Mean (X̄..):</strong> {result.grandMean.toFixed(4)}</div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
