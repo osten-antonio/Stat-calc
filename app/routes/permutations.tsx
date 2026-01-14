@@ -29,34 +29,61 @@ export default function Permutations() {
     const perm = useMemo(() => permutation(pcN, pcR), [pcN, pcR]);
 
     return (
-        <div className="min-h-screen w-full px-6 py-12 relative overflow-hidden font-sans text-gray-800 dark:text-gray-100">
+        <div className="min-h-screen w-full px-6 py-12 relative overflow-hidden font-sans">
             <BackgroundGraph />
             <div className="max-w-4xl mx-auto relative z-10">
-                <div className="mb-6 fade-in">
-                    <h1 className="text-3xl font-bold mb-2">Permutations</h1>
-                    <p className="text-gray-600 dark:text-gray-400">Calculate the number of ways to arrange <strong>r</strong> items from a set of <strong>n</strong> distinct items where order matters.</p>
+                <div className="mb-8 fade-in text-center">
+                    <h1 className="text-4xl font-extrabold mb-4 text-[var(--color-ink)]" style={{ fontFamily: "var(--font-serif)" }}>
+                        Permutations Calculator
+                    </h1>
+                    <p className="max-w-2xl mx-auto text-[var(--color-ink-light)]">
+                        Calculate the number of ways to arrange <strong>r</strong> items from a set of <strong>n</strong> distinct items where order matters.
+                    </p>
                 </div>
 
-                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 fade-in delay-100">
-                    <div className="flex flex-wrap gap-6 mb-6">
-                        <div>
-                            <label className="block text-sm font-medium mb-1 capitalize">Total Items (n)</label>
-                            <input type="number" value={pcN} onChange={e => setPcN(parseInt(e.target.value) || 0)} className="p-2 border rounded w-24 dark:bg-gray-700 dark:border-gray-600" />
+                <div
+                    className="mb-8 p-8 rounded-2xl shadow-sm fade-in delay-100"
+                    style={{ backgroundColor: "var(--color-accent-peach)" }}
+                >
+                    <div className="flex flex-wrap gap-8 mb-8 items-center justify-center p-4 rounded-xl border border-[var(--color-dot-peach)] bg-white/50">
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink)]">
+                                Total Items (n)
+                            </label>
+                            <input
+                                type="number"
+                                value={pcN}
+                                onChange={e => setPcN(parseInt(e.target.value) || 0)}
+                                className="w-24 p-2 text-center text-lg font-bold rounded-lg border-2 border-[var(--color-dot-peach)] focus:ring-0 transition-colors outline-none bg-white text-[var(--color-ink)]"
+                            />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1 capitalize">Select/Arrange (r)</label>
-                            <input type="number" value={pcR} onChange={e => setPcR(parseInt(e.target.value) || 0)} className="p-2 border rounded w-24 dark:bg-gray-700 dark:border-gray-600" />
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink)]">
+                                Select (r)
+                            </label>
+                            <input
+                                type="number"
+                                value={pcR}
+                                onChange={e => setPcR(parseInt(e.target.value) || 0)}
+                                className="w-24 p-2 text-center text-lg font-bold rounded-lg border-2 border-[var(--color-dot-peach)] focus:ring-0 transition-colors outline-none bg-white text-[var(--color-ink)]"
+                            />
                         </div>
                     </div>
 
-                    <div className="bg-gray-50/50 dark:bg-gray-700/50 p-4 rounded border dark:border-gray-700">
-                        <h3 className="text-lg font-bold mb-2">Permutation Calculation</h3>
-                        <p className="text-sm text-gray-500 mb-2 font-mono">P(n, r) = n! / (n-r)!</p>
-                        <div className="text-sm mb-2">
-                            P({pcN}, {pcR}) = {pcN}! / ({pcN}-{pcR})!
-                        </div>
-                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                            {perm.toLocaleString()}
+                    <div className="p-6 rounded-xl border bg-white shadow-sm" style={{ borderColor: "var(--color-dot-peach)" }}>
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-[var(--color-ink)]">
+                            <span className="w-2 h-8 rounded-full bg-[var(--color-dot-peach)]"></span>
+                            Result
+                        </h3>
+
+                        <div className="flex flex-col items-center justify-center space-y-4">
+                            <p className="font-mono text-sm text-[var(--color-ink-light)]">P(n, r) = n! / (n-r)!</p>
+                            <div className="text-lg text-[var(--color-ink)]">
+                                P({pcN}, {pcR}) = {pcN}! / ({pcN}-{pcR})!
+                            </div>
+                            <div className="text-5xl font-extrabold text-[var(--color-dot-peach)]">
+                                {perm.toLocaleString()}
+                            </div>
                         </div>
                     </div>
                 </div>
