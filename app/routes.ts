@@ -6,5 +6,6 @@ export default [
     route("stats-stuff/independent", "routes/independent.tsx"),
     route("stats-stuff/permutations", "routes/permutations.tsx"),
     route("stats-stuff/combinations", "routes/combinations.tsx"),
-    route("stats-stuff/descriptive", "routes/descriptive.tsx"),
+    route("stats-stuff/descriptive/basic", "routes/descriptive-basic.tsx"),
+    route("stats-stuff/descriptive/means", "routes/descriptive-means.tsx"),
 ] satisfies RouteConfig;

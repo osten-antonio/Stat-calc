@@ -39,7 +39,8 @@ const CATEGORIES = [
     tools: [
       { name: "T-Tests", path: "/stats-stuff/t-tests" },
       { name: "Chi-Square", path: "/stats-stuff/chi-square" },
-      { name: "ANOVA", path: "/stats-stuff/anova" },
+      { name: "One-Way ANOVA", path: "/stats-stuff/anova/one-way" },
+      { name: "Two-Way ANOVA", path: "/stats-stuff/anova/two-way" },
     ],
   },
   {
@@ -47,7 +48,8 @@ const CATEGORIES = [
     color: "var(--color-accent-blue)",
     dot: "var(--color-dot-blue)",
     tools: [
-      { name: "Descriptive Stats", path: "/stats-stuff/descriptive" },
+      { name: "Descriptive Stats", path: "/stats-stuff/descriptive/basic" },
+      { name: "Special Means", path: "/stats-stuff/descriptive/means" },
       { name: "Regression", path: "/stats-stuff/regression" },
     ],
   },
