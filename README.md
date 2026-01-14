@@ -34,7 +34,6 @@
 | **Reference** | Statistical Tables (Z, T, Chi-Square, F) |
 
 - Step-by-step calculations with formulas
-- Copy-friendly exam answers
 - Clean, minimal UI with pastel theming
 - Mobile responsive
 
@@ -67,11 +66,7 @@ Open [http://localhost:5173](http://localhost:5173)
 - **Math Rendering**: KaTeX
 - **Deployment**: Vercel
 
-## License
 
-MIT
-
----
 
 <p align="center">
   <sub>Built for students who need to show their work</sub>
