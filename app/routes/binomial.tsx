@@ -2,7 +2,12 @@ import { useState } from "react";
 import type { Route } from "./+types/binomial";
 import { Link } from "react-router";
 
-import { binomialWithSteps, type BinomialResult } from "~/lib/math/probability";
+import {
+  binomialRangeWithSteps,
+  normalApproximationWithSteps,
+  type BinomialRangeResult,
+  type NormalApproxResult
+} from "~/lib/math/probability";
 import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
 import { Input } from "~/components/ui/Input";
 import { Button } from "~/components/ui/Button";
@@ -11,7 +16,7 @@ import { MathBlock } from "~/components/math/MathBlock";
 import type { ExamAnswer } from "~/lib/format/examAnswer";
 import type { CalculationResult } from "~/lib/types/calculation";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Binomial Distribution" },
     {
@@ -28,10 +33,26 @@ function formatNum(num: number, decimals = 6): string {
 }
 
 function resultToExamAnswer(
-  calc: CalculationResult<BinomialResult>,
+  calc: CalculationResult<BinomialRangeResult | NormalApproxResult>,
 ): ExamAnswer {
+  const isNormal = 'mean' in calc.value && 'stdDev' in calc.value;
+  const title = isNormal ? "Binomial Probability (Normal Approximation)" : "Binomial Probability Calculation";
+
+  // Safe access to min/max which exist in both but TS might complain if specific range logic differs
+  // Both result types have min, max, probability.
+  // NormalApproxResult has min/max in the interface I defined? 
+  // Wait, I defined NormalApproxResult WITHOUT min/max in probability.ts?
+  // Let me check my previous edit.
+  // In step 127 I defined NormalApproxResult:
+  // export interface NormalApproxResult { probability: number; mean: number; stdDev: number; zLow: number; zHigh: number; correction: boolean; }
+  // Converting to exam answer needs min/max from inputs or value.
+  // The 'inputs' field of CalculationResult has them.
+
+  const min = calc.inputs?.min ?? 0;
+  const max = calc.inputs?.max ?? 0;
+
   return {
-    title: "Binomial Probability Calculation",
+    title,
     sections: calc.steps.map((step) => ({
       title: step.title,
       lines: [
@@ -42,16 +63,19 @@ function resultToExamAnswer(
         step.result ? `= ${step.result}` : "",
       ].filter(Boolean),
     })),
-    finalAnswer: `P(X = ${calc.value.k}) = ${formatNum(calc.value.probability)} (${formatNum(calc.value.probability * 100, 2)}%)`,
+    finalAnswer: `P(${min} ≤ X ≤ ${max}) ≈ ${formatNum(calc.value.probability)} (${formatNum(calc.value.probability * 100, 2)}%)`,
   };
 }
 
 export default function BinomialCalculator() {
   const [n, setN] = useState("");
-  const [k, setK] = useState("");
+  const [min, setMin] = useState("");
+  const [max, setMax] = useState("");
   const [p, setP] = useState("");
+  const [useNormalApprox, setUseNormalApprox] = useState(false);
+
   const [result, setResult] =
-    useState<CalculationResult<BinomialResult> | null>(null);
+    useState<CalculationResult<BinomialRangeResult | NormalApproxResult> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function calculate() {
@@ -59,36 +83,55 @@ export default function BinomialCalculator() {
     setResult(null);
 
     const nVal = parseInt(n, 10);
-    const kVal = parseInt(k, 10);
+    const minVal = parseInt(min, 10);
+    const maxVal = parseInt(max, 10);
     const pVal = parseFloat(p);
 
-    if (isNaN(nVal) || isNaN(kVal)) {
+    if (isNaN(nVal) || isNaN(minVal) || isNaN(maxVal)) {
       setError(
-        "n and k must be valid integers. Try using numbers instead of hopes and dreams.",
+        "n, min, and max must be valid integers. Numbers only, please.",
       );
       return;
     }
     if (isNaN(pVal)) {
       setError(
-        "p must be a valid probability (0 to 1). Not 'maybe' or 'probably'.",
+        "p must be a valid probability (0 to 1).",
       );
       return;
     }
-    if (nVal < 0 || kVal < 0) {
-      setError("Negative trials? That's not how probability works.");
+    if (nVal < 0 || minVal < 0 || maxVal < 0) {
+      setError("Negative values? Not in this universe.");
       return;
     }
     if (pVal < 0 || pVal > 1) {
-      setError("Probability must be between 0 and 1. This isn't Calvinball.");
+      setError("Probability must be between 0 and 1.");
       return;
     }
-    if (nVal > 170) {
-      setError("n is too large (factorial overflow). Keep n ≤ 170.");
+    if (minVal > maxVal) {
+      setError("Min cannot be greater than Max. Logic still applies here.");
+      return;
+    }
+    if (maxVal > nVal) {
+      setError("Max successes cannot exceed n (trials).");
+      return;
+    }
+    if (nVal > 10000 && !useNormalApprox) {
+      setError("n is too large for exact calculation. Use Normal Approximation.");
+      return;
+    }
+    if (!useNormalApprox && nVal > 170) {
+      // Allow larger n for normal approx, but limit for exact
+      setError("n is too large (factorial overflow). Use Normal Approximation for n > 170.");
       return;
     }
 
-    const calc = binomialWithSteps(nVal, kVal, pVal);
-    setResult(calc);
+    if (useNormalApprox) {
+      const calc = normalApproximationWithSteps(nVal, minVal, maxVal, pVal);
+      setResult(calc);
+    } else {
+      const calc = binomialRangeWithSteps(nVal, minVal, maxVal, pVal);
+      setResult(calc);
+    }
   }
 
   return (
@@ -109,8 +152,7 @@ export default function BinomialCalculator() {
             Binomial Distribution
           </h1>
           <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
-            Calculate the probability of exactly k successes in n independent
-            trials.
+            Range Probability P(min ≤ X ≤ max) with step-by-step workings.
           </p>
         </header>
 
@@ -118,9 +160,9 @@ export default function BinomialCalculator() {
           className="mb-10 bg-[var(--color-accent-pink)] border-none fade-in"
           style={{ animationDelay: "50ms" }}
         >
-          <MathBlock formula="P(X = k) = C(n, k) \cdot p^k \cdot (1-p)^{n-k}" />
+          <MathBlock formula="P(min \le X \le max) = \sum_{k=min}^{max} C(n, k) \cdot p^k \cdot (1-p)^{n-k}" />
           <p className="text-center text-xs text-[var(--color-ink-light)] mt-2">
-            n = trials, k = successes, p = probability of success
+            Summing individual probabilities for each k in the range
           </p>
         </Card>
 
@@ -135,12 +177,20 @@ export default function BinomialCalculator() {
               placeholder="e.g. 10"
             />
             <Input
-              label="k (successes)"
+              label="min successes (k_min)"
               type="number"
               min={0}
-              value={k}
-              onChange={(e) => setK(e.target.value)}
-              placeholder="e.g. 3"
+              value={min}
+              onChange={(e) => setMin(e.target.value)}
+              placeholder="e.g. 4"
+            />
+            <Input
+              label="max successes (k_max)"
+              type="number"
+              min={0}
+              value={max}
+              onChange={(e) => setMax(e.target.value)}
+              placeholder="e.g. 6"
             />
             <Input
               label="p (probability)"
@@ -154,6 +204,19 @@ export default function BinomialCalculator() {
             />
           </div>
 
+          <div className="mt-6 flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="useNormalApprox"
+              className="w-5 h-5 accent-[var(--color-dot-pink)] rounded border-gray-300 focus:ring-[var(--color-dot-pink)]"
+              checked={useNormalApprox}
+              onChange={(e) => setUseNormalApprox(e.target.checked)}
+            />
+            <label htmlFor="useNormalApprox" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
+              Use Normal Approximation (for large n, applies continuity correction)
+            </label>
+          </div>
+
           {error && (
             <p className="text-red-600 mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
               {error}
@@ -165,7 +228,7 @@ export default function BinomialCalculator() {
             tone="pink"
             onClick={calculate}
           >
-            Calculate P(X = k)
+            {useNormalApprox ? "Calculate Approximation" : "Calculate Probability"}
           </Button>
         </section>
 

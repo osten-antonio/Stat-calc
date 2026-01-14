@@ -214,7 +214,7 @@ export default function OneWay() {
                                             <div className="font-semibold text-[var(--color-ink)]">= <strong>{result.totalSS.toFixed(4)}</strong></div>
                                         </div>
                                     </div>
-                                    
+
                                     {/* SS Between */}
                                     <div className="p-4 border border-gray-100 rounded-xl bg-white">
                                         <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Between (Treatment)</div>
@@ -240,7 +240,7 @@ export default function OneWay() {
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     {/* SS Within */}
                                     <div className="p-4 border border-gray-100 rounded-xl bg-white">
                                         <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Within (Error)</div>
@@ -282,14 +282,40 @@ export default function OneWay() {
 
                             {/* Step 4: Decision */}
                             <div>
-                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 4: Decision Rule</h5>
-                                <div className="p-4 rounded-xl border border-l-4 border-l-[var(--color-dot-mint)] border-gray-100 bg-white text-sm">
-                                    <p className="mb-2">
-                                        Compare F = <strong>{result.fStat.toFixed(4)}</strong> with F_critical (df1={result.dfBetween}, df2={result.dfWithin}) at your chosen α level.
-                                    </p>
-                                    <p className="text-[var(--color-ink-light)]">
-                                        If F {'>'} F_critical, reject the null hypothesis (at least one group mean is different).
-                                    </p>
+                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 4: Hypothesis Test & Decision</h5>
+                                <div className="space-y-4">
+                                    <div className="bg-white p-4 rounded-xl border border-gray-100">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">Hypotheses</div>
+                                        <div className="text-sm space-y-1">
+                                            <div><strong>Null Hypothesis (H₀):</strong> μ₁ = μ₂ = ... = μₖ (All group means are equal)</div>
+                                            <div><strong>Alternative Hypothesis (H₁):</strong> At least one group mean is different</div>
+                                        </div>
+                                    </div>
+
+                                    <div className={`p-4 rounded-xl border border-l-4 ${result.fCritical && result.fStat > result.fCritical ? "border-l-red-500 bg-red-50" : "border-l-green-500 bg-green-50"} text-sm`}>
+                                        <div className="font-semibold mb-2 text-[var(--color-ink)]">
+                                            Conclusion (α = 0.05)
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div>
+                                                Compare F = <strong>{result.fStat.toFixed(4)}</strong> vs F_critical (df={result.dfBetween},{result.dfWithin}) = <strong>{result.fCritical?.toFixed(4) ?? "N/A"}</strong>
+                                            </div>
+                                            <div className="italic">
+                                                {result.fCritical ? (
+                                                    result.fStat > result.fCritical
+                                                        ? `Since ${result.fStat.toFixed(4)} > ${result.fCritical.toFixed(4)}, we Reject H₀.`
+                                                        : `Since ${result.fStat.toFixed(4)} ≤ ${result.fCritical.toFixed(4)}, we Fail to Reject H₀.`
+                                                ) : "Critical values available for standard degrees of freedom."}
+                                            </div>
+                                            <div className="font-medium mt-1">
+                                                {result.fCritical ? (
+                                                    result.fStat > result.fCritical
+                                                        ? "There is significant evidence that at least one group mean is different."
+                                                        : "There is not enough evidence to conclude the means are different."
+                                                ) : ""}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -37,12 +37,10 @@ export function oneSampleTTestWithSteps(
 
   steps.push({
     id: "identify",
-    title: "Identify the Hypothesis Test",
+    title: "1. State Null and Alternative Hypotheses",
     description: [
-      `H₀: μ = ${mu0} (null hypothesis)`,
-      `H₁: μ ≠ ${mu0} (alternative hypothesis - two-tailed)`,
-      `α = ${alpha} (significance level)`,
-      `n = ${n} (sample size)`,
+      `Null Hypothesis (H₀): The mean is ${mu0} (μ = ${mu0})`,
+      `Alternative Hypothesis (H₁): The mean is not ${mu0} (μ ≠ ${mu0})`,
     ].join("\n"),
   });
 
@@ -68,10 +66,10 @@ export function oneSampleTTestWithSteps(
   const t = (xBar - mu0) / se;
 
   const sum = data.reduce((a, b) => a + b, 0);
-  const sumDisplay = data.length <= 8 
+  const sumDisplay = data.length <= 8
     ? data.map(x => formatNumber(x)).join(" + ")
     : data.slice(0, 5).map(x => formatNumber(x)).join(" + ") + " + ... + " + formatNumber(data[data.length - 1]);
-  
+
   const squaredDeviations = data.map(x => Math.pow(x - xBar, 2));
   const sumSquaredDev = squaredDeviations.reduce((a, b) => a + b, 0);
   const variance = sumSquaredDev / (n - 1);
@@ -84,19 +82,19 @@ export function oneSampleTTestWithSteps(
 
   steps.push({
     id: "sample-mean",
-    title: "Step 2a: Calculate Sample Mean",
+    title: "2. Calculate Sample Mean",
     formula: "\\bar{x} = \\frac{\\sum x_i}{n}",
-    calculation: `\\bar{x} = \\frac{${sumDisplay}}{${n}} = \\frac{${formatNumber(sum)}}{${n}} = ${formatNumber(xBar)}`,
+    calculation: `\\text{Sample Mean} = \\frac{${sumDisplay}}{${n}} = ${formatNumber(xBar)}`,
     result: formatNumber(xBar),
   });
 
   steps.push({
     id: "sample-sd",
-    title: "Step 2b: Calculate Sample Standard Deviation",
+    title: "3. Calculate Sample Standard Deviation",
     formula: "s = \\sqrt{\\frac{\\sum(x_i - \\bar{x})^2}{n-1}}",
     description: `Sum of squared deviations: Σ(xᵢ - ${formatNumber(xBar)})² = ${formatNumber(sumSquaredDev)}`,
-    calculation: `s = \\sqrt{\\frac{${formatNumber(sumSquaredDev)}}{${n - 1}}} = \\sqrt{${formatNumber(variance)}} = ${formatNumber(s)}`,
-    result: formatNumber(s),
+    calculation: `s \\approx ${formatNumber(s, 2)}`,
+    result: formatNumber(s, 2),
   });
 
   steps.push({
@@ -108,57 +106,40 @@ export function oneSampleTTestWithSteps(
   });
 
   steps.push({
-    id: "formula",
-    title: "State the t-Test Formula",
-    formula: "t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}",
-  });
-
-  steps.push({
-    id: "standard-error",
-    title: "Calculate Standard Error",
-    formula: "SE = \\frac{s}{\\sqrt{n}}",
-    calculation: `SE = \\frac{${formatNumber(s)}}{\\sqrt{${n}}} = \\frac{${formatNumber(s)}}{${formatNumber(Math.sqrt(n))}} = ${formatNumber(se)}`,
-    result: formatNumber(se),
-  });
-
-  steps.push({
     id: "t-statistic",
-    title: "Calculate t-Statistic",
-    calculation: `t = \\frac{${formatNumber(xBar)} - ${mu0}}{${formatNumber(se)}} = \\frac{${formatNumber(xBar - mu0)}}{${formatNumber(se)}} = ${formatNumber(t)}`,
-    result: formatNumber(t),
+    title: "4. Calculate t-statistic",
+    formula: "t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}",
+    calculation: `t = \\frac{${formatNumber(xBar)} - ${mu0}}{${formatNumber(s, 2)}/\\sqrt{${n}}} \\approx \\frac{${formatNumber(xBar - mu0)}}{${formatNumber(se, 2)}} \\approx ${formatNumber(t, 2)}`,
+    result: formatNumber(t, 2),
   });
 
   const tCritical = lookupTValue(df, alpha / 2);
+  const absTCrit = tCritical ? Math.abs(tCritical) : null;
+
   steps.push({
     id: "critical-value",
-    title: "Find Critical Value",
-    description: `For α = ${alpha} (two-tailed), α/2 = ${alpha / 2}, df = ${df}`,
-    result: tCritical !== null ? `t-critical = ±${formatNumber(tCritical)}` : "Not in table",
+    title: "5. Compare t-statistic with Critical Value",
+    description: [
+      `Degrees of freedom: n - 1 = ${n} - 1 = ${df}.`,
+      tCritical !== null
+        ? `At α = ${alpha} (two-tailed), the critical t-value is approximately ±${formatNumber(absTCrit!, 3)} (from the t-distribution table).`
+        : "Critical value not found in table."
+    ].join("\n"),
   });
 
   const absT = Math.abs(t);
-  const reject = tCritical !== null && absT > tCritical;
-  steps.push({
-    id: "decision",
-    title: "Make Decision",
-    description: tCritical !== null
-      ? `|t| = ${formatNumber(absT)} ${reject ? ">" : "≤"} ${formatNumber(tCritical)} = t-critical`
-      : "Cannot determine without critical value",
-    result: reject ? "Reject H₀" : "Fail to reject H₀",
-    note: reject
-      ? `There is sufficient evidence at α = ${alpha} to conclude that the population mean differs from ${mu0}.`
-      : `There is insufficient evidence at α = ${alpha} to conclude that the population mean differs from ${mu0}.`,
-  });
+  const reject = tCritical !== null && absT > absTCrit!;
 
   steps.push({
-    id: "summary",
-    title: "Conclusion",
-    description: [
-      `t-statistic = ${formatNumber(t)}`,
-      `df = ${df}`,
-      tCritical !== null ? `t-critical (α=${alpha}, two-tailed) = ±${formatNumber(tCritical)}` : "",
-      `Decision: ${reject ? "Reject H₀" : "Fail to reject H₀"}`,
-    ].filter(Boolean).join("\n"),
+    id: "conclusion",
+    title: "6. Conclusion",
+    description: tCritical !== null
+      ? `Since t = ${formatNumber(t, 2)} ${reject ? "falls outside" : "falls within"} the range [-${formatNumber(absTCrit!, 3)}, ${formatNumber(absTCrit!, 3)}], we ${reject ? "reject" : "fail to reject"} the null hypothesis.`
+      : "Cannot determine conclusion without critical value.",
+    result: reject ? "Reject H₀" : "Fail to reject H₀",
+    note: reject
+      ? "There is significant evidence to suggest the mean differs."
+      : "There is not enough evidence to suggest the mean differs."
   });
 
   return {
@@ -246,7 +227,7 @@ export function pairedTTestWithSteps(
   const sumDiffDisplay = differences.length <= 8
     ? differences.map(d => formatNumber(d)).join(" + ")
     : differences.slice(0, 5).map(d => formatNumber(d)).join(" + ") + " + ... + " + formatNumber(differences[differences.length - 1]);
-  
+
   const squaredDevDiff = differences.map(d => Math.pow(d - dBar, 2));
   const sumSquaredDevDiff = squaredDevDiff.reduce((a, b) => a + b, 0);
   const varianceDiff = sumSquaredDevDiff / (n - 1);
