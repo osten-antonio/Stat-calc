@@ -227,15 +227,15 @@ export const F_CRITICAL_001: Record<number, Record<number, number>> = {
 
 export function lookupFValue(df1: number, df2: number, alpha: number = 0.05): number | null {
   const table = alpha === 0.01 ? F_CRITICAL_001 : F_CRITICAL_005;
-  
-  // Find closest df1
+
+  // Find closest df1 (Inner Key)
   let closestDf1: number = F_TABLE_DF1[0];
   for (const d of F_TABLE_DF1) {
     if (d <= df1) closestDf1 = d;
     else break;
   }
-  
-  // Find closest df2
+
+  // Find closest df2 (Outer Key)
   let closestDf2: number = F_TABLE_DF2[0];
   for (const d of F_TABLE_DF2) {
     if (d === Infinity) {
@@ -245,10 +245,10 @@ export function lookupFValue(df1: number, df2: number, alpha: number = 0.05): nu
     if (d <= df2) closestDf2 = d;
     else break;
   }
-  
-  const row = table[closestDf1];
+
+  const row = table[closestDf2];
   if (!row) return null;
-  return row[closestDf2] ?? null;
+  return row[closestDf1] ?? null;
 }
 
 export function findClosestFDf1(df: number): number {

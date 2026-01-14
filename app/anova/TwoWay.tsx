@@ -281,7 +281,7 @@ export default function TwoWay() {
                                 const n = result.grandN / (R * C);
                                 const nRow = C * n;
                                 const nCol = R * n;
-                                
+
                                 return (
                                     <>
                                         <div>
@@ -321,7 +321,7 @@ export default function TwoWay() {
                                                     <MathBlock formula={`\\bar{X} = \\frac{\\sum X}{N}`} />
                                                     <div className="mt-2">= {result.grandSum.toFixed(2)} / {result.grandN} = <strong className="text-[var(--color-ink)]">{result.grandMean.toFixed(4)}</strong></div>
                                                 </div>
-                                                
+
                                                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)]">
                                                     <div className="text-xs uppercase tracking-wide mb-2">Factor A Means (Rows)</div>
                                                     <div className="space-y-1">
@@ -332,7 +332,7 @@ export default function TwoWay() {
                                                         ))}
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)]">
                                                     <div className="text-xs uppercase tracking-wide mb-2">Factor B Means (Columns)</div>
                                                     <div className="space-y-1">
@@ -343,14 +343,14 @@ export default function TwoWay() {
                                                         ))}
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)]">
                                                     <div className="text-xs uppercase tracking-wide mb-2">Cell Means (Interaction)</div>
                                                     <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${C}, 1fr)` }}>
                                                         {result.cellMeans.flatMap((row, i) =>
                                                             row.map((cellMean, j) => (
                                                                 <div key={`${i}-${j}`} className="p-2 bg-white rounded border border-gray-100">
-                                                                    <div className="text-xs text-[var(--color-ink-light)]">R{i+1} × C{j+1}</div>
+                                                                    <div className="text-xs text-[var(--color-ink-light)]">R{i + 1} × C{j + 1}</div>
                                                                     <div>{result.cellSums[i][j].toFixed(2)} / {n} = <strong className="text-[var(--color-ink)]">{cellMean.toFixed(4)}</strong></div>
                                                                 </div>
                                                             ))
@@ -382,7 +382,7 @@ export default function TwoWay() {
                                                         <div className="font-semibold text-[var(--color-ink)]">SS_A = <strong>{result.ssRow.toFixed(4)}</strong></div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="p-4 border border-gray-100 rounded-xl bg-white">
                                                     <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Factor B (Columns)</div>
                                                     <MathBlock formula={`SS_B = \\sum n_{col} \\times (\\bar{X}_{col} - \\bar{X}_{grand})^2`} />
@@ -402,7 +402,7 @@ export default function TwoWay() {
                                                         <div className="font-semibold text-[var(--color-ink)]">SS_B = <strong>{result.ssCol.toFixed(4)}</strong></div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="p-4 border border-gray-100 rounded-xl bg-white">
                                                     <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Within (Error)</div>
                                                     <MathBlock formula={`SS_E = \\sum (X - \\bar{X}_{cell})^2`} />
@@ -412,7 +412,7 @@ export default function TwoWay() {
                                                             {result.ssPerCell.flatMap((row, i) =>
                                                                 row.map((cellSS, j) => (
                                                                     <div key={`${i}-${j}`} className="p-2 bg-white rounded border border-gray-100 text-xs">
-                                                                        SS(R{i+1}, C{j+1}) = {cellSS.toFixed(4)}
+                                                                        SS(R{i + 1}, C{j + 1}) = {cellSS.toFixed(4)}
                                                                     </div>
                                                                 ))
                                                             )}
@@ -423,7 +423,7 @@ export default function TwoWay() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="p-4 border border-gray-100 rounded-xl bg-white">
                                                     <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Total</div>
                                                     <MathBlock formula={`SS_{Total} = \\sum (X - \\bar{X}_{grand})^2`} />
@@ -432,7 +432,7 @@ export default function TwoWay() {
                                                         <div className="font-semibold text-[var(--color-ink)] mt-1">SS_Total = <strong>{result.ssTotal.toFixed(4)}</strong></div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div className="p-4 border border-gray-100 rounded-xl bg-white">
                                                     <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Interaction</div>
                                                     <MathBlock formula={`SS_{AB} = SS_{Total} - SS_A - SS_B - SS_E`} />
@@ -493,6 +493,53 @@ export default function TwoWay() {
                                                         = {result.msInter.toFixed(4)} / {result.msError.toFixed(4)}
                                                     </div>
                                                     <div className="text-2xl font-bold text-[var(--color-dot-mint)] mt-1">{result.fInter.toFixed(4)}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 6: Conclusions (α = 0.05)</h5>
+                                            <div className="space-y-4">
+                                                {/* Factor A Decision */}
+                                                <div className={`p-4 rounded-xl border border-l-4 ${result.fCriticalRow && result.fRow > result.fCriticalRow ? "border-l-red-500 bg-red-50" : "border-l-green-500 bg-green-50"} text-sm`}>
+                                                    <div className="font-semibold mb-2 text-[var(--color-ink)]">Factor A (Rows) Effect</div>
+                                                    <div className="space-y-1">
+                                                        <div><strong>H₀:</strong> No difference between row means.</div>
+                                                        <div>F = <strong>{result.fRow.toFixed(4)}</strong> vs F_crit = {result.fCriticalRow?.toFixed(4) ?? "N/A"}</div>
+                                                        <div className="font-medium mt-1">
+                                                            {result.fCriticalRow && result.fRow > result.fCriticalRow
+                                                                ? "Reject H₀: Significant difference between row means."
+                                                                : "Fail to Reject H₀: No significant difference between row means."}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Factor B Decision */}
+                                                <div className={`p-4 rounded-xl border border-l-4 ${result.fCriticalCol && result.fCol > result.fCriticalCol ? "border-l-red-500 bg-red-50" : "border-l-green-500 bg-green-50"} text-sm`}>
+                                                    <div className="font-semibold mb-2 text-[var(--color-ink)]">Factor B (Columns) Effect</div>
+                                                    <div className="space-y-1">
+                                                        <div><strong>H₀:</strong> No difference between column means.</div>
+                                                        <div>F = <strong>{result.fCol.toFixed(4)}</strong> vs F_crit = {result.fCriticalCol?.toFixed(4) ?? "N/A"}</div>
+                                                        <div className="font-medium mt-1">
+                                                            {result.fCriticalCol && result.fCol > result.fCriticalCol
+                                                                ? "Reject H₀: Significant difference between column means."
+                                                                : "Fail to Reject H₀: No significant difference between column means."}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Interaction Decision */}
+                                                <div className={`p-4 rounded-xl border border-l-4 ${result.fCriticalInter && result.fInter > result.fCriticalInter ? "border-l-red-500 bg-red-50" : "border-l-green-500 bg-green-50"} text-sm`}>
+                                                    <div className="font-semibold mb-2 text-[var(--color-ink)]">Interaction (A×B) Effect</div>
+                                                    <div className="space-y-1">
+                                                        <div><strong>H₀:</strong> No interaction between factors.</div>
+                                                        <div>F = <strong>{result.fInter.toFixed(4)}</strong> vs F_crit = {result.fCriticalInter?.toFixed(4) ?? "N/A"}</div>
+                                                        <div className="font-medium mt-1">
+                                                            {result.fCriticalInter && result.fInter > result.fCriticalInter
+                                                                ? "Reject H₀: Significant interaction effect exists."
+                                                                : "Fail to Reject H₀: No significant interaction effect."}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

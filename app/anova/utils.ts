@@ -1,3 +1,5 @@
+import { lookupFValue } from "~/lib/tables/statistical-tables";
+
 export type OneWayResult = {
     ssBetween: number;
     dfBetween: number;
@@ -19,6 +21,7 @@ export type OneWayResult = {
         n: number;
         sumSq: number; // Sum of (X^2) for this group
     }[];
+    fCritical: number | null;
 };
 
 export type TwoWayResult = {
@@ -56,6 +59,9 @@ export type TwoWayResult = {
     colMeans: number[];
     cellMeans: number[][];
     ssPerCell: number[][]; // SS Within for each cell
+    fCriticalRow: number | null;
+    fCriticalCol: number | null;
+    fCriticalInter: number | null;
 };
 
 // --- One-Way ANOVA Utils ---
@@ -114,6 +120,7 @@ export const calculateOneWayAnova = (groups: number[][]): OneWayResult | null =>
     const msWithin = dfWithin > 0 ? ssWithin / dfWithin : 0;
 
     const fStat = msWithin > 0 ? msBetween / msWithin : 0;
+    const fCritical = lookupFValue(dfBetween, dfWithin, 0.05);
 
     return {
         ssBetween,
@@ -129,7 +136,8 @@ export const calculateOneWayAnova = (groups: number[][]): OneWayResult | null =>
         grandSum,
         grandN: N,
         sumOfSquaresRaw,
-        groupStats
+        groupStats,
+        fCritical
     };
 };
 
@@ -248,6 +256,10 @@ export const calculateTwoWayAnova = (data: number[][][]): TwoWayResult | null =>
     const fCol = msError > 1e-9 ? msCol / msError : 0;
     const fInter = msError > 1e-9 ? msInter / msError : 0;
 
+    const fCriticalRow = lookupFValue(dfRow, dfError, 0.05);
+    const fCriticalCol = lookupFValue(dfCol, dfError, 0.05);
+    const fCriticalInter = lookupFValue(dfInter, dfError, 0.05);
+
     return {
         ssRow, dfRow, msRow, fRow,
         ssCol, dfCol, msCol, fCol,
@@ -268,6 +280,9 @@ export const calculateTwoWayAnova = (data: number[][][]): TwoWayResult | null =>
         rowMeans,
         colMeans,
         cellMeans,
-        ssPerCell
+        ssPerCell,
+        fCriticalRow,
+        fCriticalCol,
+        fCriticalInter
     };
 };

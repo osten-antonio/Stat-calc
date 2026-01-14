@@ -19,7 +19,7 @@ import { MathBlock } from "~/components/math/MathBlock";
 import type { ExamAnswer } from "~/lib/format/examAnswer";
 import type { CalculationResult } from "~/lib/types/calculation";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "T-Tests" },
     { name: "description", content: "One-sample, paired, and independent t-tests with step-by-step workings." },
@@ -38,10 +38,15 @@ function parseData(tableValue: DataTableValue, colIndex: number = 0): number[] {
   const values: number[] = [];
   for (const row of tableValue.rows) {
     if (!row[colIndex]) continue;
-    const trimmed = row[colIndex]!.trim();
-    if (trimmed === "") continue;
-    const num = Number(trimmed);
-    if (Number.isFinite(num)) values.push(num);
+
+    // Support comma or space separated values in a single cell
+    const cellContent = row[colIndex]!;
+    const parts = cellContent.split(/[\s,]+/).filter(Boolean);
+
+    for (const part of parts) {
+      const num = Number(part);
+      if (Number.isFinite(num)) values.push(num);
+    }
   }
   return values;
 }
@@ -59,7 +64,7 @@ function resultToExamAnswer<T>(calc: CalculationResult<T>, title: string): ExamA
         step.result ? `= ${step.result}` : "",
       ].filter(Boolean),
     })),
-    finalAnswer: calc.steps.find((s) => s.id === "decision")?.result ?? "See above",
+    finalAnswer: calc.steps.find((s) => s.id === "decision" || s.id === "conclusion")?.result ?? "See above",
   };
 }
 
@@ -235,7 +240,7 @@ export default function TTestsPage() {
               >
                 One-Sample t-Test
               </h2>
-               <MathBlock formula="t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}" />
+              <MathBlock formula="t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}" />
 
               <p className="text-sm text-[var(--color-ink-light)] mt-2">
                 Tests if the sample mean differs from a hypothesized population mean.
@@ -251,25 +256,25 @@ export default function TTestsPage() {
                   onChange={(e) => setMu0(e.target.value)}
                   placeholder="e.g. 100"
                 />
-               <p className="text-xs text-[var(--color-ink-light)] mt-2">
-                 {oneSampleParsed.length} values detected
-               </p>
-               <p className="text-xs text-[var(--color-ink-light)]">
-                 Formula: t = (x̄ − μ₀) / (s / √n)
-               </p>
+                <p className="text-xs text-[var(--color-ink-light)] mt-2">
+                  {oneSampleParsed.length} values detected
+                </p>
+                <p className="text-xs text-[var(--color-ink-light)]">
+                  Formula: t = (x̄ − μ₀) / (s / √n)
+                </p>
 
               </div>
 
               <Card className="p-4 border border-gray-100 shadow-sm">
-              <DataTableInput
-                label="Sample Data"
-                helpText="Enter your sample values"
-                value={oneSampleData}
-                onChange={setOneSampleData}
-                minRows={5}
-                tone="mint"
-                controlsPlacement="bottom"
-              />
+                <DataTableInput
+                  label="Sample Data"
+                  helpText="Enter your sample values"
+                  value={oneSampleData}
+                  onChange={setOneSampleData}
+                  minRows={5}
+                  tone="mint"
+                  controlsPlacement="bottom"
+                />
 
               </Card>
             </div>
@@ -366,7 +371,7 @@ export default function TTestsPage() {
               >
                 Paired t-Test
               </h2>
-               <MathBlock formula="t = \frac{\bar{d}}{s_d / \sqrt{n}}" />
+              <MathBlock formula="t = \frac{\bar{d}}{s_d / \sqrt{n}}" />
 
               <p className="text-sm text-[var(--color-ink-light)] mt-2">
                 Tests if there's a significant difference between paired observations (before/after).
@@ -487,7 +492,7 @@ export default function TTestsPage() {
               >
                 Independent Samples t-Test
               </h2>
-               <MathBlock formula="t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_p^2\left(\tfrac{1}{n_1} + \tfrac{1}{n_2}\right)}}" />
+              <MathBlock formula="t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_p^2\left(\tfrac{1}{n_1} + \tfrac{1}{n_2}\right)}}" />
 
               <p className="text-sm text-[var(--color-ink-light)] mt-2">
                 Tests if two independent groups have different means.
