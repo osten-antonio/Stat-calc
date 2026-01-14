@@ -275,74 +275,230 @@ export default function TwoWay() {
                         </h4>
 
                         <div className="space-y-8">
-                            <div>
-                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 1: Calculate Means</h5>
-                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)] space-y-4">
-                                    <div><strong>Grand Mean:</strong> {result.grandMean.toFixed(4)}</div>
-                                    <div className="grid md:grid-cols-2 gap-4">
+                            {(() => {
+                                const R = result.rowMeans.length;
+                                const C = result.colMeans.length;
+                                const n = result.grandN / (R * C);
+                                const nRow = C * n;
+                                const nCol = R * n;
+                                
+                                return (
+                                    <>
                                         <div>
-                                            <strong>Row Means:</strong>
-                                            <ul className="list-disc list-inside ml-2 mt-1">
-                                                {result.rowMeans.map((m, i) => (
-                                                    <li key={i}>Row {i + 1}: {m.toFixed(4)}</li>
-                                                ))}
-                                            </ul>
+                                            <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 1: Compute Degrees of Freedom</h5>
+                                            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)] space-y-3">
+                                                <div className="grid md:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <div className="text-xs uppercase tracking-wide mb-1">df Factor A (Rows)</div>
+                                                        <div>R - 1 = {R} - 1 = <strong className="text-[var(--color-ink)]">{result.dfRow}</strong></div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-xs uppercase tracking-wide mb-1">df Factor B (Columns)</div>
+                                                        <div>C - 1 = {C} - 1 = <strong className="text-[var(--color-ink)]">{result.dfCol}</strong></div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-xs uppercase tracking-wide mb-1">df Interaction (A×B)</div>
+                                                        <div>(R - 1)(C - 1) = {result.dfRow} × {result.dfCol} = <strong className="text-[var(--color-ink)]">{result.dfInter}</strong></div>
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-xs uppercase tracking-wide mb-1">df Within (Error)</div>
+                                                        <div>RC(n - 1) = {R} × {C} × ({n} - 1) = <strong className="text-[var(--color-ink)]">{result.dfError}</strong></div>
+                                                    </div>
+                                                </div>
+                                                <div className="h-px bg-gray-200" />
+                                                <div>
+                                                    <div className="text-xs uppercase tracking-wide mb-1">df Total</div>
+                                                    <div>N - 1 = {result.grandN} - 1 = <strong className="text-[var(--color-ink)]">{result.dfTotal}</strong></div>
+                                                </div>
+                                            </div>
                                         </div>
+
                                         <div>
-                                            <strong>Column Means:</strong>
-                                            <ul className="list-disc list-inside ml-2 mt-1">
-                                                {result.colMeans.map((m, j) => (
-                                                    <li key={j}>Col {j + 1}: {m.toFixed(4)}</li>
-                                                ))}
-                                            </ul>
+                                            <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 2: Calculate Means</h5>
+                                            <div className="space-y-4">
+                                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)]">
+                                                    <div className="text-xs uppercase tracking-wide mb-2">Grand Mean (X̄)</div>
+                                                    <MathBlock formula={`\\bar{X} = \\frac{\\sum X}{N}`} />
+                                                    <div className="mt-2">= {result.grandSum.toFixed(2)} / {result.grandN} = <strong className="text-[var(--color-ink)]">{result.grandMean.toFixed(4)}</strong></div>
+                                                </div>
+                                                
+                                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)]">
+                                                    <div className="text-xs uppercase tracking-wide mb-2">Factor A Means (Rows)</div>
+                                                    <div className="space-y-1">
+                                                        {result.rowMeans.map((m, i) => (
+                                                            <div key={i}>
+                                                                Row {i + 1}: {result.rowSums[i].toFixed(2)} / {nRow} = <strong className="text-[var(--color-ink)]">{m.toFixed(4)}</strong>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)]">
+                                                    <div className="text-xs uppercase tracking-wide mb-2">Factor B Means (Columns)</div>
+                                                    <div className="space-y-1">
+                                                        {result.colMeans.map((m, j) => (
+                                                            <div key={j}>
+                                                                Col {j + 1}: {result.colSums[j].toFixed(2)} / {nCol} = <strong className="text-[var(--color-ink)]">{m.toFixed(4)}</strong>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)]">
+                                                    <div className="text-xs uppercase tracking-wide mb-2">Cell Means (Interaction)</div>
+                                                    <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${C}, 1fr)` }}>
+                                                        {result.cellMeans.flatMap((row, i) =>
+                                                            row.map((cellMean, j) => (
+                                                                <div key={`${i}-${j}`} className="p-2 bg-white rounded border border-gray-100">
+                                                                    <div className="text-xs text-[var(--color-ink-light)]">R{i+1} × C{j+1}</div>
+                                                                    <div>{result.cellSums[i][j].toFixed(2)} / {n} = <strong className="text-[var(--color-ink)]">{cellMean.toFixed(4)}</strong></div>
+                                                                </div>
+                                                            ))
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div>
-                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 2: Sum of Squares</h5>
-                                <div className="space-y-3">
-                                    <div className="p-3 border border-gray-100 rounded-lg">
-                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Rows (Main Effect A)</div>
-                                        <div className="font-mono text-sm mt-1">{result.ssRow.toFixed(4)}</div>
-                                    </div>
-                                    <div className="p-3 border border-gray-100 rounded-lg">
-                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Columns (Main Effect B)</div>
-                                        <div className="font-mono text-sm mt-1">{result.ssCol.toFixed(4)}</div>
-                                    </div>
-                                    <div className="p-3 border border-gray-100 rounded-lg">
-                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Interaction</div>
-                                        <div className="font-mono text-sm mt-1">{result.ssInter.toFixed(4)}</div>
-                                    </div>
-                                    <div className="p-3 border border-gray-100 rounded-lg">
-                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Error (Within)</div>
-                                        <div className="font-mono text-sm mt-1">{result.ssError.toFixed(4)}</div>
-                                    </div>
-                                    <div className="p-3 border border-gray-100 rounded-lg bg-gray-50">
-                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Total</div>
-                                        <div className="font-mono text-sm mt-1">{result.ssTotal.toFixed(4)}</div>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div>
+                                            <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 3: Compute Sum of Squares (Deviation Method)</h5>
+                                            <div className="space-y-4">
+                                                <div className="p-4 border border-gray-100 rounded-xl bg-white">
+                                                    <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Factor A (Rows)</div>
+                                                    <MathBlock formula={`SS_A = \\sum n_{row} \\times (\\bar{X}_{row} - \\bar{X}_{grand})^2`} />
+                                                    <div className="mt-3 text-sm font-mono text-[var(--color-ink-light)] bg-gray-50 p-3 rounded-lg">
+                                                        <div className="mb-1">Constant: n_row = C × n = {C} × {n} = {nRow}</div>
+                                                        <div className="space-y-1 mt-2">
+                                                            {result.rowMeans.map((m, i) => {
+                                                                const term = nRow * Math.pow(m - result.grandMean, 2);
+                                                                return (
+                                                                    <div key={i}>
+                                                                        = {nRow} × ({m.toFixed(2)} - {result.grandMean.toFixed(2)})² = {term.toFixed(4)}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                        <div className="h-px bg-gray-200 my-2" />
+                                                        <div className="font-semibold text-[var(--color-ink)]">SS_A = <strong>{result.ssRow.toFixed(4)}</strong></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="p-4 border border-gray-100 rounded-xl bg-white">
+                                                    <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Factor B (Columns)</div>
+                                                    <MathBlock formula={`SS_B = \\sum n_{col} \\times (\\bar{X}_{col} - \\bar{X}_{grand})^2`} />
+                                                    <div className="mt-3 text-sm font-mono text-[var(--color-ink-light)] bg-gray-50 p-3 rounded-lg">
+                                                        <div className="mb-1">Constant: n_col = R × n = {R} × {n} = {nCol}</div>
+                                                        <div className="space-y-1 mt-2">
+                                                            {result.colMeans.map((m, j) => {
+                                                                const term = nCol * Math.pow(m - result.grandMean, 2);
+                                                                return (
+                                                                    <div key={j}>
+                                                                        = {nCol} × ({m.toFixed(2)} - {result.grandMean.toFixed(2)})² = {term.toFixed(4)}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                        <div className="h-px bg-gray-200 my-2" />
+                                                        <div className="font-semibold text-[var(--color-ink)]">SS_B = <strong>{result.ssCol.toFixed(4)}</strong></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="p-4 border border-gray-100 rounded-xl bg-white">
+                                                    <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Within (Error)</div>
+                                                    <MathBlock formula={`SS_E = \\sum (X - \\bar{X}_{cell})^2`} />
+                                                    <div className="mt-3 text-sm font-mono text-[var(--color-ink-light)] bg-gray-50 p-3 rounded-lg">
+                                                        <div className="mb-2">Individual Cell SS values:</div>
+                                                        <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(C, 3)}, 1fr)` }}>
+                                                            {result.ssPerCell.flatMap((row, i) =>
+                                                                row.map((cellSS, j) => (
+                                                                    <div key={`${i}-${j}`} className="p-2 bg-white rounded border border-gray-100 text-xs">
+                                                                        SS(R{i+1}, C{j+1}) = {cellSS.toFixed(4)}
+                                                                    </div>
+                                                                ))
+                                                            )}
+                                                        </div>
+                                                        <div className="h-px bg-gray-200 my-2" />
+                                                        <div className="font-semibold text-[var(--color-ink)]">
+                                                            Sum = {result.ssPerCell.flat().map(s => s.toFixed(2)).join(' + ')} = <strong>{result.ssError.toFixed(4)}</strong>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="p-4 border border-gray-100 rounded-xl bg-white">
+                                                    <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Total</div>
+                                                    <MathBlock formula={`SS_{Total} = \\sum (X - \\bar{X}_{grand})^2`} />
+                                                    <div className="mt-3 text-sm font-mono text-[var(--color-ink-light)] bg-gray-50 p-3 rounded-lg">
+                                                        <div>= Σ(x - {result.grandMean.toFixed(2)})² for all observations</div>
+                                                        <div className="font-semibold text-[var(--color-ink)] mt-1">SS_Total = <strong>{result.ssTotal.toFixed(4)}</strong></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="p-4 border border-gray-100 rounded-xl bg-white">
+                                                    <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Interaction</div>
+                                                    <MathBlock formula={`SS_{AB} = SS_{Total} - SS_A - SS_B - SS_E`} />
+                                                    <div className="mt-3 text-sm font-mono text-[var(--color-ink-light)] bg-gray-50 p-3 rounded-lg">
+                                                        <div>= {result.ssTotal.toFixed(4)} - {result.ssRow.toFixed(4)} - {result.ssCol.toFixed(4)} - {result.ssError.toFixed(4)}</div>
+                                                        <div className="font-semibold text-[var(--color-ink)] mt-1">SS_AB = <strong>{result.ssInter.toFixed(4)}</strong></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                            <div>
-                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 3: F-Statistics</h5>
-                                <div className="grid gap-4 md:grid-cols-3">
-                                    <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl text-center">
-                                        <div className="text-xs text-[var(--color-ink-light)] uppercase mb-1">Row Effect</div>
-                                        <div className="text-xl font-bold text-[var(--color-dot-mint)]">{result.fRow.toFixed(4)}</div>
-                                    </div>
-                                    <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl text-center">
-                                        <div className="text-xs text-[var(--color-ink-light)] uppercase mb-1">Col Effect</div>
-                                        <div className="text-xl font-bold text-[var(--color-dot-mint)]">{result.fCol.toFixed(4)}</div>
-                                    </div>
-                                    <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl text-center">
-                                        <div className="text-xs text-[var(--color-ink-light)] uppercase mb-1">Interaction</div>
-                                        <div className="text-xl font-bold text-[var(--color-dot-mint)]">{result.fInter.toFixed(4)}</div>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div>
+                                            <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 4: Compute Mean Squares</h5>
+                                            <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)] space-y-3">
+                                                <div>
+                                                    <div className="text-xs uppercase tracking-wide mb-1">MS Factor A (Rows)</div>
+                                                    <div>SS_A / df_A = {result.ssRow.toFixed(4)} / {result.dfRow} = <strong className="text-[var(--color-ink)]">{result.msRow.toFixed(4)}</strong></div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs uppercase tracking-wide mb-1">MS Factor B (Columns)</div>
+                                                    <div>SS_B / df_B = {result.ssCol.toFixed(4)} / {result.dfCol} = <strong className="text-[var(--color-ink)]">{result.msCol.toFixed(4)}</strong></div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs uppercase tracking-wide mb-1">MS Interaction</div>
+                                                    <div>SS_AB / df_AB = {result.ssInter.toFixed(4)} / {result.dfInter} = <strong className="text-[var(--color-ink)]">{result.msInter.toFixed(4)}</strong></div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-xs uppercase tracking-wide mb-1">MS Error (MSE)</div>
+                                                    <div>SS_E / df_E = {result.ssError.toFixed(4)} / {result.dfError} = <strong className="text-[var(--color-ink)]">{result.msError.toFixed(4)}</strong></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 5: Compute F-Statistics</h5>
+                                            <div className="text-xs text-[var(--color-ink-light)] mb-3 italic">Note: All F-ratios use MSE as the denominator</div>
+                                            <div className="grid gap-4 md:grid-cols-3">
+                                                <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl">
+                                                    <div className="text-xs text-[var(--color-ink-light)] uppercase mb-2">F (Factor A)</div>
+                                                    <MathBlock formula={`F_A = \\frac{MS_A}{MS_E}`} />
+                                                    <div className="text-sm font-mono mt-2 text-[var(--color-ink-light)]">
+                                                        = {result.msRow.toFixed(4)} / {result.msError.toFixed(4)}
+                                                    </div>
+                                                    <div className="text-2xl font-bold text-[var(--color-dot-mint)] mt-1">{result.fRow.toFixed(4)}</div>
+                                                </div>
+                                                <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl">
+                                                    <div className="text-xs text-[var(--color-ink-light)] uppercase mb-2">F (Factor B)</div>
+                                                    <MathBlock formula={`F_B = \\frac{MS_B}{MS_E}`} />
+                                                    <div className="text-sm font-mono mt-2 text-[var(--color-ink-light)]">
+                                                        = {result.msCol.toFixed(4)} / {result.msError.toFixed(4)}
+                                                    </div>
+                                                    <div className="text-2xl font-bold text-[var(--color-dot-mint)] mt-1">{result.fCol.toFixed(4)}</div>
+                                                </div>
+                                                <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl">
+                                                    <div className="text-xs text-[var(--color-ink-light)] uppercase mb-2">F (Interaction)</div>
+                                                    <MathBlock formula={`F_{AB} = \\frac{MS_{AB}}{MS_E}`} />
+                                                    <div className="text-sm font-mono mt-2 text-[var(--color-ink-light)]">
+                                                        = {result.msInter.toFixed(4)} / {result.msError.toFixed(4)}
+                                                    </div>
+                                                    <div className="text-2xl font-bold text-[var(--color-dot-mint)] mt-1">{result.fInter.toFixed(4)}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                );
+                            })()}
                         </div>
                     </Card>
                 </div>

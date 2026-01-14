@@ -196,17 +196,59 @@ export default function OneWay() {
                             <div>
                                 <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 2: Sum of Squares</h5>
                                 <div className="space-y-4">
-                                    <div>
-                                        <div className="text-sm font-medium mb-1">SS Total</div>
-                                        <MathBlock formula={`\\sum (X - \\bar{X}_{grand})^2 = ${result.totalSS.toFixed(4)}`} />
+                                    {/* SS Total */}
+                                    <div className="p-4 border border-gray-100 rounded-xl bg-white">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Total</div>
+                                        <MathBlock formula={`\\sum (X - \\bar{X}_{grand})^2`} />
+                                        <div className="mt-3 text-sm font-mono text-[var(--color-ink-light)] bg-gray-50 p-3 rounded-lg">
+                                            <div className="mb-2">
+                                                = {result.groupStats.flatMap((g, groupIdx) => {
+                                                    const grandMean = result.grandSum / result.grandN;
+                                                    // We need raw data - reconstruct from groupStats
+                                                    return `Group ${groupIdx + 1} terms`;
+                                                }).join(' + ')}
+                                            </div>
+                                            <div className="text-xs text-[var(--color-ink-light)] mb-2">
+                                                Each term: (observation - {(result.grandSum / result.grandN).toFixed(2)})²
+                                            </div>
+                                            <div className="font-semibold text-[var(--color-ink)]">= <strong>{result.totalSS.toFixed(4)}</strong></div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div className="text-sm font-medium mb-1">SS Between</div>
-                                        <MathBlock formula={`\\sum n_i (\\bar{X}_i - \\bar{X}_{grand})^2 = ${result.ssBetween.toFixed(4)}`} />
+                                    
+                                    {/* SS Between */}
+                                    <div className="p-4 border border-gray-100 rounded-xl bg-white">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Between (Treatment)</div>
+                                        <MathBlock formula={`\\sum n_i (\\bar{X}_i - \\bar{X}_{grand})^2`} />
+                                        <div className="mt-3 text-sm font-mono text-[var(--color-ink-light)] bg-gray-50 p-3 rounded-lg">
+                                            <div className="space-y-1">
+                                                {result.groupStats.map((g, i) => {
+                                                    const grandMean = result.grandSum / result.grandN;
+                                                    const term = g.n * Math.pow(g.mean - grandMean, 2);
+                                                    return (
+                                                        <div key={i}>
+                                                            Group {i + 1}: {g.n} × ({g.mean.toFixed(2)} - {grandMean.toFixed(2)})² = {g.n} × {Math.pow(g.mean - grandMean, 2).toFixed(4)} = {term.toFixed(4)}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                            <div className="h-px bg-gray-200 my-2" />
+                                            <div className="font-semibold text-[var(--color-ink)]">
+                                                = {result.groupStats.map((g, i) => {
+                                                    const grandMean = result.grandSum / result.grandN;
+                                                    return (g.n * Math.pow(g.mean - grandMean, 2)).toFixed(4);
+                                                }).join(' + ')} = <strong>{result.ssBetween.toFixed(4)}</strong>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div className="text-sm font-medium mb-1">SS Within</div>
-                                        <MathBlock formula={`SS_{total} - SS_{between} = ${result.ssWithin.toFixed(4)}`} />
+                                    
+                                    {/* SS Within */}
+                                    <div className="p-4 border border-gray-100 rounded-xl bg-white">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-2">SS Within (Error)</div>
+                                        <MathBlock formula={`SS_{total} - SS_{between}`} />
+                                        <div className="mt-3 text-sm font-mono text-[var(--color-ink-light)] bg-gray-50 p-3 rounded-lg">
+                                            <div>= {result.totalSS.toFixed(4)} - {result.ssBetween.toFixed(4)}</div>
+                                            <div className="font-semibold text-[var(--color-ink)]">= <strong>{result.ssWithin.toFixed(4)}</strong></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
