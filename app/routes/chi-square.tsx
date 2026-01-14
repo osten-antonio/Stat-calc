@@ -85,84 +85,96 @@ export default function ChiSquareCalculator() {
     const liveGrandTotal = liveRowTotals.reduce((a, b) => a + b, 0);
 
     return (
-        <div className="min-h-screen w-full px-6 py-12 relative overflow-hidden font-sans text-gray-800 dark:text-gray-100">
+        <div className="min-h-screen w-full px-6 py-16 sm:py-20 relative overflow-hidden">
             <BackgroundGraph />
 
             <div className="max-w-5xl mx-auto relative z-10">
-                <div className="mb-6 fade-in">
-                    <h1 className="text-3xl font-bold mb-6">Chi-Square Test Calculator</h1>
+                <div className="mb-8 fade-in text-center">
+                    <h1 className="text-4xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 dark:from-teal-400 dark:to-blue-500">
+                        Chi-Square Test Calculator
+                    </h1>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                        Determine if there is a significant association between two categorical variables.
+                    </p>
                 </div>
 
-                <div className="mb-8 p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 fade-in delay-100">
-                    <div className="flex gap-6 mb-6 items-center flex-wrap">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            Rows:
+                <div className="mb-8 p-8 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 fade-in delay-100">
+                    <div className="flex flex-wrap gap-8 mb-8 items-center justify-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                Rows
+                            </label>
                             <input
                                 type="number"
                                 min="2"
                                 max="10"
                                 value={rows}
                                 onChange={(e) => updateDimensions(parseInt(e.target.value) || 2, cols)}
-                                className="ml-2 p-2 border rounded w-20 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                className="w-20 p-2 text-center text-lg font-bold rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-teal-500 focus:ring-0 transition-colors"
                             />
-                        </label>
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            Columns:
+                        </div>
+                        <div className="text-gray-300 dark:text-gray-600 text-xl font-light">×</div>
+                        <div className="flex items-center gap-3">
+                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                Columns
+                            </label>
                             <input
                                 type="number"
                                 min="2"
                                 max="10"
                                 value={cols}
                                 onChange={(e) => updateDimensions(rows, parseInt(e.target.value) || 2)}
-                                className="ml-2 p-2 border rounded w-20 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                className="w-20 p-2 text-center text-lg font-bold rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-teal-500 focus:ring-0 transition-colors"
                             />
-                        </label>
+                        </div>
                     </div>
 
-                    <h3 className="text-lg font-semibold mb-3 dark:text-gray-200">Observed Frequencies</h3>
-                    <div className="overflow-x-auto mb-6">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                        <span className="w-2 h-8 bg-teal-500 rounded-full"></span>
+                        Observed Frequencies
+                    </h3>
+                    <div className="overflow-x-auto mb-8 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                         <table className="w-full border-collapse text-sm">
                             <thead>
                                 <tr>
-                                    <th className="p-2 border dark:border-gray-600"></th>
+                                    <th className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700"></th>
                                     {Array(cols).fill(0).map((_, c) => (
-                                        <th key={c} className="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 min-w-[80px]">
-                                            {String.fromCharCode(65 + c)} {/* A, B, C... */}
+                                        <th key={c} className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700 min-w-[100px] text-gray-600 dark:text-gray-400 font-bold">
+                                            {String.fromCharCode(65 + c)}
                                         </th>
                                     ))}
-                                    <th className="p-2 border dark:border-gray-600 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200">Total</th>
+                                    <th className="p-3 bg-gray-100 dark:bg-gray-800 border-b dark:border-gray-700 text-gray-800 dark:text-gray-200 font-bold">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {data.map((row, r) => (
-                                    <tr key={r}>
-                                        <td className="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 font-medium text-center">
-                                            {/* X, Y, Z... */}
+                                    <tr key={r} className="group hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                                        <td className="p-3 bg-gray-50 dark:bg-gray-800/50 border-r border-b dark:border-gray-700 font-bold text-center text-gray-600 dark:text-gray-400">
                                             {String.fromCharCode(88 + r) || `Row ${r + 1}`}
                                         </td>
                                         {row.map((val, c) => (
-                                            <td key={c} className="p-2 border dark:border-gray-600 text-center">
+                                            <td key={c} className="p-0 border-r border-b dark:border-gray-700">
                                                 <input
                                                     type="number"
                                                     value={val}
                                                     onChange={(e) => handleDataChange(r, c, e.target.value)}
-                                                    className="w-full h-full text-center p-1 bg-transparent focus:outline-none dark:text-white"
+                                                    className="w-full h-full text-center p-3 bg-transparent focus:outline-none focus:bg-teal-50 dark:focus:bg-teal-900/20 font-medium text-lg text-gray-800 dark:text-gray-200 transition-colors"
                                                 />
                                             </td>
                                         ))}
-                                        <td className="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center font-bold text-gray-700 dark:text-gray-200">
+                                        <td className="p-3 border-b dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 text-center font-bold text-gray-500 dark:text-gray-400">
                                             {liveRowTotals[r].toFixed(0)}
                                         </td>
                                     </tr>
                                 ))}
                                 <tr>
-                                    <td className="p-2 border dark:border-gray-600 bg-gray-100 dark:bg-gray-600 font-bold text-center text-gray-700 dark:text-gray-200">Total</td>
+                                    <td className="p-3 bg-gray-100 dark:bg-gray-800 font-bold text-center text-gray-800 dark:text-gray-200 border-r dark:border-gray-700">Total</td>
                                     {liveColTotals.map((tot, c) => (
-                                        <td key={c} className="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-center font-bold text-gray-700 dark:text-gray-200">
+                                        <td key={c} className="p-3 bg-gray-50/50 dark:bg-gray-800/30 text-center font-bold text-gray-500 dark:text-gray-400 border-r dark:border-gray-700">
                                             {tot.toFixed(0)}
                                         </td>
                                     ))}
-                                    <td className="p-2 border dark:border-gray-600 bg-gray-200 dark:bg-gray-500 text-center font-bold text-blue-800 dark:text-blue-100">
+                                    <td className="p-3 bg-teal-50 dark:bg-teal-900/20 text-center font-bold text-teal-700 dark:text-teal-300 text-lg">
                                         {liveGrandTotal.toFixed(0)}
                                     </td>
                                 </tr>
@@ -170,12 +182,12 @@ export default function ChiSquareCalculator() {
                         </table>
                     </div>
 
-                    <div className="flex justify-end">
+                    <div className="flex justify-center">
                         <button
                             onClick={handleCalculate}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-8 rounded-lg shadow-md transition-colors transform active:scale-95"
+                            className="bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-bold py-3 px-12 rounded-full shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all transform hover:-translate-y-0.5 active:scale-95 text-lg"
                         >
-                            Calculate
+                            Calculate Chi-Square
                         </button>
                     </div>
                 </div>
