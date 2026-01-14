@@ -2,6 +2,8 @@ import { Link } from "react-router";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
+  console.log("Glory to all Monkeys!");
+  console.log("http://bit.ly/4pCHsoj");
   return [
     { title: "Stats Hell" },
     {
