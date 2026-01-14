@@ -1,12 +1,47 @@
 import { useState, useMemo } from "react";
 import type { Route } from "./+types/regression";
-import { BackgroundGraph } from "../components/background-graph";
 
 export function meta({ }: Route.MetaArgs) {
     return [
         { title: "Regression Analysis Calculator" },
         { name: "description", content: "Linear Regression Calculator (Y' = bX + A)" },
     ];
+}
+
+function BackgroundGraph() {
+    return (
+        <svg
+            className="absolute inset-0 w-full h-full opacity-[0.04] pointer-events-none"
+            preserveAspectRatio="xMidYMid slice"
+        >
+            <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path
+                        d="M 40 0 L 0 0 0 40"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                    />
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+            <path
+                className="graph-line"
+                d="M0,300 Q100,280 150,200 T250,180 T350,220 T450,100 T550,150 T650,80 T750,120 T850,60 T950,100 T1050,40 T1150,80 T1250,30 T1350,60 T1450,20 T1550,50 T1650,15 T1750,40 T1850,10 T1950,30"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+            />
+            <path
+                className="graph-line-2"
+                d="M0,350 Q80,340 120,320 T200,350 T280,300 T360,330 T440,280 T520,310 T600,250 T680,290 T760,230 T840,270 T920,200 T1000,250 T1080,180 T1160,220 T1240,160 T1320,200 T1400,140 T1480,180 T1560,120 T1640,160 T1720,100 T1800,140 T1880,80 T1960,120"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeDasharray="4 4"
+            />
+        </svg>
+    );
 }
 
 type DataPoint = {
@@ -104,49 +139,54 @@ export default function RegressionCalculator() {
     }, [submittedData, predictX]);
 
     return (
-        <div className="min-h-screen w-full px-6 py-12 relative overflow-hidden font-sans text-gray-800 dark:text-gray-100">
+        <div className="min-h-screen w-full px-6 py-12 relative overflow-hidden font-sans">
             <BackgroundGraph />
 
             <div className="max-w-4xl mx-auto relative z-10">
-                <div className="mb-6 fade-in">
-                    <h1 className="text-3xl font-bold mb-6">Regression Analysis Calculator</h1>
+                <div className="mb-6 fade-in text-center">
+                    <h1 className="text-3xl font-extrabold mb-6 text-[var(--color-ink)]" style={{ fontFamily: "var(--font-serif)" }}>Regression Analysis Calculator</h1>
                 </div>
 
                 {/* Input Section */}
-                <div className="mb-8 p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 fade-in delay-100">
-                    <h2 className="text-xl font-semibold mb-4">Input Data</h2>
-                    <div className="overflow-x-auto">
-                        <table className="w-full max-w-lg mb-4 text-sm">
+                <div
+                    className="mb-8 p-6 rounded-lg shadow-sm fade-in delay-100"
+                    style={{ backgroundColor: "var(--color-accent-blue)" }}
+                >
+                    <h2 className="text-xl font-semibold mb-4 text-[var(--color-ink)]">Input Data</h2>
+                    <div className="overflow-x-auto rounded-xl border bg-white/50" style={{ borderColor: "var(--color-dot-blue)" }}>
+                        <table className="w-full mb-4 text-sm">
                             <thead>
-                                <tr className="bg-gray-100 dark:bg-gray-700">
-                                    <th className="p-2 border dark:border-gray-600 text-left">X</th>
-                                    <th className="p-2 border dark:border-gray-600 text-left">Y</th>
-                                    <th className="p-2 border dark:border-gray-600 w-16">Action</th>
+                                <tr className="bg-[var(--color-accent-blue)]">
+                                    <th className="p-2 border-b text-left text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>X</th>
+                                    <th className="p-2 border-b text-left text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>Y</th>
+                                    <th className="p-2 border-b w-16 text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {data.map((row) => (
                                     <tr key={row.id}>
-                                        <td className="p-2 border dark:border-gray-600">
+                                        <td className="p-2 border-b" style={{ borderColor: "var(--color-dot-blue)" }}>
                                             <input
                                                 type="number"
                                                 value={row.x || ""}
                                                 onChange={(e) => updateRow(row.id, "x", e.target.value)}
-                                                className="w-full p-1 bg-transparent border rounded dark:border-gray-600"
+                                                className="w-full p-1 bg-white border rounded outline-none focus:ring-2"
+                                                style={{ borderColor: "var(--color-dot-blue)" }}
                                             />
                                         </td>
-                                        <td className="p-2 border dark:border-gray-600">
+                                        <td className="p-2 border-b" style={{ borderColor: "var(--color-dot-blue)" }}>
                                             <input
                                                 type="number"
                                                 value={row.y || ""}
                                                 onChange={(e) => updateRow(row.id, "y", e.target.value)}
-                                                className="w-full p-1 bg-transparent border rounded dark:border-gray-600"
+                                                className="w-full p-1 bg-white border rounded outline-none focus:ring-2"
+                                                style={{ borderColor: "var(--color-dot-blue)" }}
                                             />
                                         </td>
-                                        <td className="p-2 border dark:border-gray-600 text-center">
+                                        <td className="p-2 border-b text-center" style={{ borderColor: "var(--color-dot-blue)" }}>
                                             <button
                                                 onClick={() => removeRow(row.id)}
-                                                className="text-red-500 hover:text-red-700 px-2"
+                                                className="text-red-500 hover:text-red-700 px-2 font-bold"
                                                 disabled={data.length <= 2}
                                             >
                                                 ×
@@ -157,16 +197,18 @@ export default function RegressionCalculator() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mt-4">
                         <button
                             onClick={addRow}
-                            className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-2 px-4 rounded transition-colors text-sm"
+                            className="text-[var(--color-ink)] font-semibold py-2 px-4 rounded transition-colors text-sm bg-white border hover:bg-gray-50"
+                            style={{ borderColor: "var(--color-dot-blue)" }}
                         >
                             + Add Row
                         </button>
                         <button
                             onClick={handleCalculate}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow transition-colors"
+                            className="text-white font-bold py-2 px-6 rounded shadow transition-colors"
+                            style={{ backgroundColor: "var(--color-dot-blue)" }}
                         >
                             Calculate
                         </button>
@@ -176,25 +218,28 @@ export default function RegressionCalculator() {
                 {stats && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         {/* Step 1 */}
-                        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-2xl font-semibold mb-4">Step 1: Write down the data</h2>
-                            <div className="overflow-x-auto">
+                        <section
+                            className="p-6 rounded-lg shadow-sm border"
+                            style={{ backgroundColor: "var(--color-accent-blue)", borderColor: "var(--color-dot-blue)" }}
+                        >
+                            <h2 className="text-2xl font-semibold mb-4 text-[var(--color-ink)]">Step 1: Write down the data</h2>
+                            <div className="overflow-x-auto rounded-xl border bg-white" style={{ borderColor: "var(--color-dot-blue)" }}>
                                 <table className="w-full border-collapse text-sm text-center">
                                     <thead>
-                                        <tr className="bg-gray-100 dark:bg-gray-700">
-                                            <th className="p-2 border dark:border-gray-600">X</th>
-                                            <th className="p-2 border dark:border-gray-600">Y</th>
-                                            <th className="p-2 border dark:border-gray-600">X²</th>
-                                            <th className="p-2 border dark:border-gray-600">XY</th>
+                                        <tr style={{ backgroundColor: "var(--color-accent-blue)" }}>
+                                            <th className="p-2 border-b border-r text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>X</th>
+                                            <th className="p-2 border-b border-r text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>Y</th>
+                                            <th className="p-2 border-b border-r text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>X²</th>
+                                            <th className="p-2 border-b text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>XY</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {stats.detailedData.map((row) => (
                                             <tr key={row.id}>
-                                                <td className="p-2 border dark:border-gray-600">{row.x}</td>
-                                                <td className="p-2 border dark:border-gray-600">{row.y}</td>
-                                                <td className="p-2 border dark:border-gray-600 font-mono text-gray-600 dark:text-gray-400">{row.x2}</td>
-                                                <td className="p-2 border dark:border-gray-600 font-mono text-gray-600 dark:text-gray-400">{row.xy}</td>
+                                                <td className="p-2 border-b border-r text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>{row.x}</td>
+                                                <td className="p-2 border-b border-r text-[var(--color-ink)]" style={{ borderColor: "var(--color-dot-blue)" }}>{row.y}</td>
+                                                <td className="p-2 border-b border-r font-mono text-[var(--color-ink-light)]" style={{ borderColor: "var(--color-dot-blue)" }}>{row.x2}</td>
+                                                <td className="p-2 border-b font-mono text-[var(--color-ink-light)]" style={{ borderColor: "var(--color-dot-blue)" }}>{row.xy}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -203,90 +248,106 @@ export default function RegressionCalculator() {
                         </section>
 
                         {/* Step 2 */}
-                        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-2xl font-semibold mb-4">Step 2: Compute totals</h2>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 font-mono text-lg bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border dark:border-gray-700">
-                                <div>∑X = <span className="font-bold text-blue-600 dark:text-blue-400">{stats.sumX}</span></div>
-                                <div>∑Y = <span className="font-bold text-blue-600 dark:text-blue-400">{stats.sumY}</span></div>
-                                <div>∑X² = <span className="font-bold text-blue-600 dark:text-blue-400">{stats.sumX2}</span></div>
-                                <div>∑XY = <span className="font-bold text-blue-600 dark:text-blue-400">{stats.sumXY}</span></div>
-                                <div>n = <span className="font-bold text-blue-600 dark:text-blue-400">{stats.n}</span></div>
+                        <section
+                            className="p-6 rounded-lg shadow-sm border"
+                            style={{ backgroundColor: "var(--color-accent-blue)", borderColor: "var(--color-dot-blue)" }}
+                        >
+                            <h2 className="text-2xl font-semibold mb-4 text-[var(--color-ink)]">Step 2: Compute totals</h2>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 font-mono text-lg bg-white/50 p-6 rounded-lg border" style={{ borderColor: "var(--color-dot-blue)" }}>
+                                <div className="text-[var(--color-ink)]">∑X = <span className="font-bold" style={{ color: "var(--color-dot-blue)" }}>{stats.sumX}</span></div>
+                                <div className="text-[var(--color-ink)]">∑Y = <span className="font-bold" style={{ color: "var(--color-dot-blue)" }}>{stats.sumY}</span></div>
+                                <div className="text-[var(--color-ink)]">∑X² = <span className="font-bold" style={{ color: "var(--color-dot-blue)" }}>{stats.sumX2}</span></div>
+                                <div className="text-[var(--color-ink)]">∑XY = <span className="font-bold" style={{ color: "var(--color-dot-blue)" }}>{stats.sumXY}</span></div>
+                                <div className="text-[var(--color-ink)]">n = <span className="font-bold" style={{ color: "var(--color-dot-blue)" }}>{stats.n}</span></div>
                             </div>
                         </section>
 
                         {/* Step 3 */}
-                        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-2xl font-semibold mb-4">Step 3: Calculate slope (b)</h2>
-                            <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
-                                <div className="flex items-center gap-4 text-lg font-serif mb-4 flex-wrap">
+                        <section
+                            className="p-6 rounded-lg shadow-sm border"
+                            style={{ backgroundColor: "var(--color-accent-blue)", borderColor: "var(--color-dot-blue)" }}
+                        >
+                            <h2 className="text-2xl font-semibold mb-4 text-[var(--color-ink)]">Step 3: Calculate slope (b)</h2>
+                            <div className="mb-4 p-4 bg-white/50 rounded border" style={{ borderColor: "var(--color-dot-blue)" }}>
+                                <div className="flex items-center gap-4 text-lg font-serif mb-4 flex-wrap text-[var(--color-ink)]">
                                     <span>b =</span>
                                     <div className="flex flex-col items-center">
-                                        <span className="border-b border-gray-400 dark:border-gray-500 px-2 text-center">n(∑XY) - (∑X)(∑Y)</span>
+                                        <span className="border-b border-gray-400 px-2 text-center">n(∑XY) - (∑X)(∑Y)</span>
                                         <span className="text-center">n(∑X²) - (∑X)²</span>
                                     </div>
                                 </div>
 
-                                <div className="space-y-2 font-mono text-gray-700 dark:text-gray-300">
+                                <div className="space-y-2 font-mono text-[var(--color-ink)]">
                                     <div>b = ({stats.n})({stats.sumXY}) - ({stats.sumX})({stats.sumY}) / ({stats.n})({stats.sumX2}) - ({stats.sumX})²</div>
                                     <div>b = {stats.numeratorB} / {stats.denominatorB}</div>
-                                    <div className="text-xl font-bold text-blue-700 dark:text-blue-300">b = {stats.b.toFixed(2)}</div>
+                                    <div className="text-xl font-bold" style={{ color: "var(--color-dot-blue)" }}>b = {stats.b.toFixed(2)}</div>
                                 </div>
                             </div>
                         </section>
 
                         {/* Step 4 */}
-                        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-2xl font-semibold mb-4">Step 4: Calculate intercept (A)</h2>
-                            <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
-                                <div className="flex items-center gap-4 text-lg font-serif mb-4">
+                        <section
+                            className="p-6 rounded-lg shadow-sm border"
+                            style={{ backgroundColor: "var(--color-accent-blue)", borderColor: "var(--color-dot-blue)" }}
+                        >
+                            <h2 className="text-2xl font-semibold mb-4 text-[var(--color-ink)]">Step 4: Calculate intercept (A)</h2>
+                            <div className="mb-4 p-4 bg-white/50 rounded border" style={{ borderColor: "var(--color-dot-blue)" }}>
+                                <div className="flex items-center gap-4 text-lg font-serif mb-4 text-[var(--color-ink)]">
                                     <span>A =</span>
                                     <div className="flex flex-col items-center">
-                                        <span className="border-b border-gray-400 dark:border-gray-500 px-2">∑Y - b(∑X)</span>
+                                        <span className="border-b border-gray-400 px-2">∑Y - b(∑X)</span>
                                         <span>n</span>
                                     </div>
                                 </div>
-                                <div className="space-y-2 font-mono text-gray-700 dark:text-gray-300">
+                                <div className="space-y-2 font-mono text-[var(--color-ink)]">
                                     <div>A = {stats.sumY} - ({stats.b.toFixed(2)})({stats.sumX}) / {stats.n}</div>
                                     <div>A = {stats.numeratorA.toFixed(2)} / {stats.n}</div>
-                                    <div className="text-xl font-bold text-blue-700 dark:text-blue-300">A = {stats.A.toFixed(2)}</div>
+                                    <div className="text-xl font-bold" style={{ color: "var(--color-dot-blue)" }}>A = {stats.A.toFixed(2)}</div>
                                 </div>
                             </div>
                         </section>
 
                         {/* Step 5 */}
-                        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-2xl font-semibold mb-4">Step 5: Regression equation</h2>
-                            <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800/30 text-center">
-                                <div className="text-3xl font-bold text-blue-800 dark:text-blue-300 font-serif">
+                        <section
+                            className="p-6 rounded-lg shadow-sm border"
+                            style={{ backgroundColor: "var(--color-accent-blue)", borderColor: "var(--color-dot-blue)" }}
+                        >
+                            <h2 className="text-2xl font-semibold mb-4 text-[var(--color-ink)]">Step 5: Regression equation</h2>
+                            <div className="p-6 bg-white rounded-lg border text-center" style={{ borderColor: "var(--color-dot-blue)" }}>
+                                <div className="text-3xl font-bold font-serif" style={{ color: "var(--color-dot-blue)" }}>
                                     Y' = {stats.b.toFixed(2)}X {stats.A >= 0 ? "+" : "-"} {Math.abs(stats.A).toFixed(2)}
                                 </div>
                             </div>
                         </section>
 
                         {/* Step 6 */}
-                        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-2xl font-semibold mb-4">Step 6: Predict Y for X</h2>
-                            <div className="flex flex-col sm:flex-row gap-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 items-start sm:items-center">
+                        <section
+                            className="p-6 rounded-lg shadow-sm border"
+                            style={{ backgroundColor: "var(--color-accent-blue)", borderColor: "var(--color-dot-blue)" }}
+                        >
+                            <h2 className="text-2xl font-semibold mb-4 text-[var(--color-ink)]">Step 6: Predict Y for X</h2>
+                            <div className="flex flex-col sm:flex-row gap-6 p-6 bg-white rounded-lg shadow-sm border items-start sm:items-center" style={{ borderColor: "var(--color-dot-blue)" }}>
                                 <div>
-                                    <label className="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Enter X:</label>
+                                    <label className="block text-sm font-medium mb-1 text-[var(--color-ink)]">Enter X:</label>
                                     <input
                                         type="number"
                                         value={predictX}
                                         onChange={(e) => setPredictX(parseFloat(e.target.value) || 0)}
-                                        className="p-2 border rounded text-lg w-32 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                        className="p-2 border rounded text-lg w-32 outline-none focus:ring-2"
+                                        style={{ borderColor: "var(--color-dot-blue)" }}
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center gap-4 text-[var(--color-ink)]">
                                     <span className="text-2xl">→</span>
                                 </div>
 
                                 <div>
-                                    <div className="text-sm font-medium mb-1 text-gray-600 dark:text-gray-300">Predicted Y':</div>
-                                    <div className="text-lg font-mono mb-1">
+                                    <div className="text-sm font-medium mb-1 text-[var(--color-ink)]">Predicted Y':</div>
+                                    <div className="text-lg font-mono mb-1 text-[var(--color-ink)]">
                                         {stats.b.toFixed(2)}({predictX}) {stats.A >= 0 ? "+" : "-"} {Math.abs(stats.A).toFixed(2)}
                                     </div>
-                                    <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                                    <div className="text-3xl font-bold text-green-600">
                                         = {stats.predictedY.toFixed(2)}
                                     </div>
                                 </div>
