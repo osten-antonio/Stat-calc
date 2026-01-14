@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { calculateOneWayAnova, type OneWayResult } from "./utils";
+import { calculateOneWayAnova, type OneWayResult } from "./anova-utils";
 
 export default function OneWay() {
     const [groups, setGroups] = useState<string[]>(["", ""]); // Start with 2 groups
