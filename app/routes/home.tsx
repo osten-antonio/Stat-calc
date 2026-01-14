@@ -4,12 +4,26 @@ import type { Route } from "./+types/home";
 export function meta({}: Route.MetaArgs) {
   console.log("Glory to all Monkeys!");
   console.log("http://bit.ly/4pCHsoj");
+  
+  const title = "Stats Stuff | Statistical Calculators";
+  const description = "Free statistical calculators for probability, hypothesis testing, ANOVA, regression, and more. Step-by-step solutions for students and professionals.";
+  const url = "https://stats-stuff.vercel.app";
+  const image = `${url}/og-image.png`;
+  
   return [
-    { title: "Stats Hell" },
-    {
-      name: "description",
-      content: "A collection of statistical calculators.",
-    },
+    { title },
+    { name: "description", content: description },
+    { property: "og:type", content: "website" },
+    { property: "og:url", content: url },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:image", content: image },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
+    { name: "twitter:image", content: image },
   ];
 }
 
