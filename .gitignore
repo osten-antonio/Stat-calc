@@ -9,3 +9,12 @@
 # Playwright
 /playwright-report/
 /test-results/
+
+# Stats Hell local-only
+/documentation/
+/.opencode/
+/.sisyphus/
+
+# Agentic notes / internal docs
+*agent*.md
+*CLAUDE*.md
