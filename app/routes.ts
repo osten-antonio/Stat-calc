@@ -1,7 +1,7 @@
 import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 export default [
-    
+
     index("routes/home.tsx"),
     route("stats-stuff/anova/one-way", "routes/anova-oneway.tsx"),
     route("stats-stuff/anova/two-way", "routes/anova-twoway.tsx"),
@@ -12,5 +12,6 @@ export default [
     route("stats-stuff/combinations", "routes/combinations.tsx"),
     route("stats-stuff/descriptive/basic", "routes/descriptive-basic.tsx"),
     route("stats-stuff/descriptive/means", "routes/descriptive-means.tsx"),
+    route("stats-stuff/descriptive/box-plot", "routes/box-plot.tsx"),
     route("stats-stuff/regression", "routes/regression.tsx"),
 ] satisfies RouteConfig;

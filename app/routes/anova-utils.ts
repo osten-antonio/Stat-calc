@@ -55,8 +55,83 @@ export type TwoWayResult = {
     rowMeans: number[];
     colMeans: number[];
     cellMeans: number[][];
-    ssPerCell: number[][]; // SS Within for each cell
+    // P-values
+    pRow: number;
+    pCol: number;
+    pInter: number;
+    ssPerCell: number[][];
 };
+
+// --- Statistical Utils ---
+
+// Beta function approximation for F-distribution CDF
+function logGamma(z: number): number {
+    const c = [
+        76.18009172947146,
+        -86.50532032941677,
+        24.01409824083091,
+        -1.231739572450155,
+        0.1208650973866179e-2,
+        -0.5395239384953e-5
+    ];
+    let x = z;
+    let y = z;
+    let tmp = x + 5.5;
+    tmp -= (x + 0.5) * Math.log(tmp);
+    let ser = 1.000000000190015;
+    for (let j = 0; j < 6; j++) ser += c[j] / ++y;
+    return -tmp + Math.log(2.5066282746310005 * ser / x);
+}
+
+function betai(a: number, b: number, x: number): number {
+    let bt;
+    if (x === 0.0 || x === 1.0) bt = 0.0;
+    else bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1.0 - x));
+
+    if (x < (a + 1.0) / (a + b + 2.0)) return bt * betacf(a, b, x) / a;
+    else return 1.0 - bt * betacf(b, a, 1.0 - x) / b;
+}
+
+function betacf(a: number, b: number, x: number): number {
+    const MAXIT = 100;
+    const EPS = 3.0e-7;
+    const FPMIN = 1.0e-30;
+
+    let qab = a + b;
+    let qap = a + 1.0;
+    let qam = a - 1.0;
+    let c = 1.0;
+    let d = 1.0 - qab * x / qap;
+    if (Math.abs(d) < FPMIN) d = FPMIN;
+    d = 1.0 / d;
+    let h = d;
+
+    for (let m = 1; m <= MAXIT; m++) {
+        let m2 = 2 * m;
+        let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1.0 / d;
+        h *= d * c;
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+        d = 1.0 + aa * d;
+        if (Math.abs(d) < FPMIN) d = FPMIN;
+        c = 1.0 + aa / c;
+        if (Math.abs(c) < FPMIN) c = FPMIN;
+        d = 1.0 / d;
+        h *= d * c;
+    }
+    return h;
+}
+
+export const calculateFPValue = (f: number, df1: number, df2: number): number => {
+    if (f <= 0) return 1.0;
+    const x = df2 / (df2 + df1 * f);
+    return betai(0.5 * df2, 0.5 * df1, x);
+}
+
 
 // --- One-Way ANOVA Utils ---
 
@@ -220,15 +295,12 @@ export const calculateTwoWayAnova = (data: number[][][]): TwoWayResult | null =>
     }
 
     // SS Interaction = SS Total - SS Row - SS Col - SS Error
-    // Alternatively: Sum(n * (CellMean - RowMean - ColMean + GrandMean)^2)
     const ssInter = ssTotal - ssRow - ssCol - ssError;
 
     // Legacy raw SS for debug/display if needed (optional)
     let ssRowRaw = 0;
     let ssColRaw = 0;
     let ssCellsRaw = 0;
-    // ... (omitted since we are switching methods, but can calculate if strictly required)
-
 
     // Degrees of Freedom
     const dfRow = R - 1;
@@ -248,6 +320,11 @@ export const calculateTwoWayAnova = (data: number[][][]): TwoWayResult | null =>
     const fCol = msError > 1e-9 ? msCol / msError : 0;
     const fInter = msError > 1e-9 ? msInter / msError : 0;
 
+    // Calculate P-values
+    const pRow = calculateFPValue(fRow, dfRow, dfError);
+    const pCol = calculateFPValue(fCol, dfCol, dfError);
+    const pInter = calculateFPValue(fInter, dfInter, dfError);
+
     return {
         ssRow, dfRow, msRow, fRow,
         ssCol, dfCol, msCol, fCol,
@@ -261,13 +338,16 @@ export const calculateTwoWayAnova = (data: number[][][]): TwoWayResult | null =>
         rowSums,
         colSums,
         cellSums,
-        ssCellsRaw, // Placeholder/Legacy
-        ssRowRaw,   // Placeholder/Legacy
-        ssColRaw,   // Placeholder/Legacy
+        ssCellsRaw,
+        ssRowRaw,
+        ssColRaw,
         grandMean,
         rowMeans,
         colMeans,
         cellMeans,
-        ssPerCell
+        ssPerCell,
+        pRow,
+        pCol,
+        pInter
     };
 };
