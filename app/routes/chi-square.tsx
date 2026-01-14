@@ -90,18 +90,21 @@ export default function ChiSquareCalculator() {
 
             <div className="max-w-5xl mx-auto relative z-10">
                 <div className="mb-8 fade-in text-center">
-                    <h1 className="text-4xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-teal-500 to-blue-600 dark:from-teal-400 dark:to-blue-500">
+                    <h1 className="text-4xl font-extrabold mb-4 text-[var(--color-ink)]" style={{ fontFamily: "var(--font-serif)" }}>
                         Chi-Square Test Calculator
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    <p className="max-w-2xl mx-auto text-[var(--color-ink-light)]">
                         Determine if there is a significant association between two categorical variables.
                     </p>
                 </div>
 
-                <div className="mb-8 p-8 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 fade-in delay-100">
-                    <div className="flex flex-wrap gap-8 mb-8 items-center justify-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                <div
+                    className="mb-8 p-8 rounded-2xl shadow-sm fade-in delay-100"
+                    style={{ backgroundColor: "var(--color-accent-mint)" }}
+                >
+                    <div className="flex flex-wrap gap-8 mb-8 items-center justify-center p-4 rounded-xl border border-[var(--color-dot-mint)] bg-white/50">
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                            <label className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink)]">
                                 Rows
                             </label>
                             <input
@@ -110,12 +113,12 @@ export default function ChiSquareCalculator() {
                                 max="10"
                                 value={rows}
                                 onChange={(e) => updateDimensions(parseInt(e.target.value) || 2, cols)}
-                                className="w-20 p-2 text-center text-lg font-bold rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-teal-500 focus:ring-0 transition-colors"
+                                className="w-20 p-2 text-center text-lg font-bold rounded-lg border-2 border-[var(--color-dot-mint)] focus:ring-0 transition-colors outline-none bg-white text-[var(--color-ink)]"
                             />
                         </div>
-                        <div className="text-gray-300 dark:text-gray-600 text-xl font-light">×</div>
+                        <div className="text-xl font-light text-[var(--color-ink-light)]">×</div>
                         <div className="flex items-center gap-3">
-                            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                            <label className="text-sm font-semibold uppercase tracking-wide text-[var(--color-ink)]">
                                 Columns
                             </label>
                             <input
@@ -124,57 +127,57 @@ export default function ChiSquareCalculator() {
                                 max="10"
                                 value={cols}
                                 onChange={(e) => updateDimensions(rows, parseInt(e.target.value) || 2)}
-                                className="w-20 p-2 text-center text-lg font-bold rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-teal-500 focus:ring-0 transition-colors"
+                                className="w-20 p-2 text-center text-lg font-bold rounded-lg border-2 border-[var(--color-dot-mint)] focus:ring-0 transition-colors outline-none bg-white text-[var(--color-ink)]"
                             />
                         </div>
                     </div>
 
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                        <span className="w-2 h-8 bg-teal-500 rounded-full"></span>
+                    <h3 className="text-lg font-semibold mb-4 flex items-center gap-2 text-[var(--color-ink)]">
+                        <span className="w-2 h-8 rounded-full bg-[var(--color-dot-mint)]"></span>
                         Observed Frequencies
                     </h3>
-                    <div className="overflow-x-auto mb-8 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <div className="overflow-x-auto mb-8 rounded-xl border border-[var(--color-dot-mint)] bg-white shadow-sm">
                         <table className="w-full border-collapse text-sm">
                             <thead>
                                 <tr>
-                                    <th className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700"></th>
+                                    <th className="p-3 border-b border-r border-[var(--color-dot-mint)] bg-[var(--color-accent-mint)]"></th>
                                     {Array(cols).fill(0).map((_, c) => (
-                                        <th key={c} className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700 min-w-[100px] text-gray-600 dark:text-gray-400 font-bold">
+                                        <th key={c} className="p-3 border-b border-r border-[var(--color-dot-mint)] min-w-[100px] font-bold bg-[var(--color-accent-mint)] text-[var(--color-ink)]">
                                             {String.fromCharCode(65 + c)}
                                         </th>
                                     ))}
-                                    <th className="p-3 bg-gray-100 dark:bg-gray-800 border-b dark:border-gray-700 text-gray-800 dark:text-gray-200 font-bold">Total</th>
+                                    <th className="p-3 border-b border-[var(--color-dot-mint)] font-bold bg-[var(--color-accent-mint)] text-[var(--color-ink)]">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {data.map((row, r) => (
-                                    <tr key={r} className="group hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
-                                        <td className="p-3 bg-gray-50 dark:bg-gray-800/50 border-r border-b dark:border-gray-700 font-bold text-center text-gray-600 dark:text-gray-400">
+                                    <tr key={r} className="group hover:bg-[var(--color-accent-mint)]/30 transition-colors">
+                                        <td className="p-3 border-r border-b border-[var(--color-dot-mint)] font-bold text-center bg-[var(--color-accent-mint)] text-[var(--color-ink)]">
                                             {String.fromCharCode(88 + r) || `Row ${r + 1}`}
                                         </td>
                                         {row.map((val, c) => (
-                                            <td key={c} className="p-0 border-r border-b dark:border-gray-700">
+                                            <td key={c} className="p-0 border-r border-b border-[var(--color-dot-mint)]">
                                                 <input
                                                     type="number"
                                                     value={val}
                                                     onChange={(e) => handleDataChange(r, c, e.target.value)}
-                                                    className="w-full h-full text-center p-3 bg-transparent focus:outline-none focus:bg-teal-50 dark:focus:bg-teal-900/20 font-medium text-lg text-gray-800 dark:text-gray-200 transition-colors"
+                                                    className="w-full h-full text-center p-3 bg-transparent focus:outline-none focus:bg-[var(--color-accent-mint)]/30 font-medium text-lg text-[var(--color-ink)] transition-colors"
                                                 />
                                             </td>
                                         ))}
-                                        <td className="p-3 border-b dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 text-center font-bold text-gray-500 dark:text-gray-400">
+                                        <td className="p-3 border-b border-[var(--color-dot-mint)] text-center font-bold text-[var(--color-ink-light)] bg-white">
                                             {liveRowTotals[r].toFixed(0)}
                                         </td>
                                     </tr>
                                 ))}
                                 <tr>
-                                    <td className="p-3 bg-gray-100 dark:bg-gray-800 font-bold text-center text-gray-800 dark:text-gray-200 border-r dark:border-gray-700">Total</td>
+                                    <td className="p-3 font-bold text-center border-r border-[var(--color-dot-mint)] bg-[var(--color-accent-mint)] text-[var(--color-ink)]">Total</td>
                                     {liveColTotals.map((tot, c) => (
-                                        <td key={c} className="p-3 bg-gray-50/50 dark:bg-gray-800/30 text-center font-bold text-gray-500 dark:text-gray-400 border-r dark:border-gray-700">
+                                        <td key={c} className="p-3 text-center font-bold text-[var(--color-ink-light)] border-r border-[var(--color-dot-mint)] bg-white">
                                             {tot.toFixed(0)}
                                         </td>
                                     ))}
-                                    <td className="p-3 bg-teal-50 dark:bg-teal-900/20 text-center font-bold text-teal-700 dark:text-teal-300 text-lg">
+                                    <td className="p-3 text-center font-bold text-lg text-[var(--color-dot-mint)] bg-[var(--color-accent-mint)]">
                                         {liveGrandTotal.toFixed(0)}
                                     </td>
                                 </tr>
@@ -185,7 +188,8 @@ export default function ChiSquareCalculator() {
                     <div className="flex justify-center">
                         <button
                             onClick={handleCalculate}
-                            className="bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-bold py-3 px-12 rounded-full shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all transform hover:-translate-y-0.5 active:scale-95 text-lg"
+                            className="text-white font-bold py-3 px-12 rounded-full shadow-md transition-all transform hover:-translate-y-0.5 active:scale-95 text-lg"
+                            style={{ backgroundColor: "var(--color-dot-mint)" }}
                         >
                             Calculate Chi-Square
                         </button>
@@ -197,11 +201,11 @@ export default function ChiSquareCalculator() {
                         {/* Section 1: Expected Frequencies */}
                         <section className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
                             <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 flex items-center gap-3">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-sm">1</span>
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold bg-[var(--color-accent-mint)] text-[var(--color-dot-mint)]">1</span>
                                 Expected Frequencies
                             </h2>
 
-                            <div className="mb-6 p-4 bg-blue-50/50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                            <div className="mb-6 p-4 rounded-xl border border-[var(--color-accent-mint)] bg-[var(--color-accent-mint)]/30">
                                 <div className="flex items-center gap-4 text-gray-700 dark:text-gray-200 font-serif flex-wrap justify-center">
                                     <span className="font-semibold italic">E<sub>ij</sub> = </span>
                                     <div className="flex flex-col items-center">
@@ -215,9 +219,9 @@ export default function ChiSquareCalculator() {
                                 <table className="w-full border-collapse text-sm">
                                     <thead>
                                         <tr>
-                                            <th className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700"></th>
+                                            <th className="p-3 border-b border-r dark:border-gray-700 bg-[var(--color-accent-mint)]/50"></th>
                                             {Array(cols).fill(0).map((_, c) => (
-                                                <th key={c} className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700 font-bold text-gray-600 dark:text-gray-400">
+                                                <th key={c} className="p-3 border-b border-r dark:border-gray-700 font-bold text-gray-700 dark:text-gray-300 bg-[var(--color-accent-mint)]/50">
                                                     {String.fromCharCode(65 + c)} (E)
                                                 </th>
                                             ))}
@@ -225,14 +229,14 @@ export default function ChiSquareCalculator() {
                                     </thead>
                                     <tbody>
                                         {results.expected.map((row, r) => (
-                                            <tr key={r} className="hover:bg-gray-50/30 dark:hover:bg-gray-800/30 transition-colors">
-                                                <td className="p-3 bg-gray-50 dark:bg-gray-800/50 border-r border-b dark:border-gray-700 font-bold text-center text-gray-600 dark:text-gray-400">
+                                            <tr key={r} className="hover:bg-[var(--color-accent-mint)]/10 transition-colors">
+                                                <td className="p-3 border-r border-b dark:border-gray-700 font-bold text-center text-gray-700 dark:text-gray-300 bg-[var(--color-accent-mint)]/30">
                                                     {String.fromCharCode(88 + r)}
                                                 </td>
                                                 {row.map((val, c) => (
                                                     <td key={c} className="p-3 border-r border-b dark:border-gray-700 text-center">
                                                         <div className="flex flex-col items-center">
-                                                            <span className="font-bold text-blue-600 dark:text-blue-400 text-lg">{val.toFixed(2)}</span>
+                                                            <span className="font-bold text-lg text-[var(--color-dot-mint)]">{val.toFixed(2)}</span>
                                                             <span className="text-xs text-gray-400 mt-1">
                                                                 {results.rowTotals[r]} × {results.colTotals[c]} / {results.grandTotal}
                                                             </span>
@@ -249,11 +253,11 @@ export default function ChiSquareCalculator() {
                         {/* Section 2: Chi-Square Calculation */}
                         <section className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
                             <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 flex items-center gap-3">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300 text-sm">2</span>
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold bg-[var(--color-accent-mint)] text-[var(--color-dot-mint)]">2</span>
                                 Compute Chi-Square Statistic
                             </h2>
 
-                            <div className="mb-6 p-4 bg-teal-50/50 dark:bg-teal-900/20 rounded-xl border border-teal-100 dark:border-teal-800/30">
+                            <div className="mb-6 p-4 rounded-xl border border-[var(--color-accent-mint)] bg-[var(--color-accent-mint)]/30">
                                 <div className="flex items-center gap-3 text-gray-700 dark:text-gray-200 font-serif flex-wrap justify-center">
                                     <span className="font-semibold italic text-xl">χ² = ∑</span>
                                     <div className="flex flex-col items-center mx-2">
@@ -267,9 +271,9 @@ export default function ChiSquareCalculator() {
                                 <table className="w-full border-collapse text-sm">
                                     <thead>
                                         <tr>
-                                            <th className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700"></th>
+                                            <th className="p-3 border-b border-r dark:border-gray-700 bg-[var(--color-accent-mint)]/50"></th>
                                             {Array(cols).fill(0).map((_, c) => (
-                                                <th key={c} className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700 font-bold text-gray-600 dark:text-gray-400">
+                                                <th key={c} className="p-3 border-b border-r dark:border-gray-700 font-bold text-gray-700 dark:text-gray-300 bg-[var(--color-accent-mint)]/50">
                                                     {String.fromCharCode(65 + c)} (χ²)
                                                 </th>
                                             ))}
@@ -277,14 +281,14 @@ export default function ChiSquareCalculator() {
                                     </thead>
                                     <tbody>
                                         {results.chiSquareCells.map((row, r) => (
-                                            <tr key={r} className="hover:bg-gray-50/30 dark:hover:bg-gray-800/30 transition-colors">
-                                                <td className="p-3 bg-gray-50 dark:bg-gray-800/50 border-r border-b dark:border-gray-700 font-bold text-center text-gray-600 dark:text-gray-400">
+                                            <tr key={r} className="hover:bg-[var(--color-accent-mint)]/10 transition-colors">
+                                                <td className="p-3 border-r border-b dark:border-gray-700 font-bold text-center text-gray-700 dark:text-gray-300 bg-[var(--color-accent-mint)]/30">
                                                     {String.fromCharCode(88 + r)}
                                                 </td>
                                                 {row.map((val, c) => (
                                                     <td key={c} className="p-3 border-r border-b dark:border-gray-700 text-center">
                                                         <div className="flex flex-col items-center">
-                                                            <span className="font-bold text-teal-600 dark:text-teal-400 text-lg">{val.toFixed(2)}</span>
+                                                            <span className="font-bold text-lg text-[var(--color-dot-mint)]">{val.toFixed(2)}</span>
                                                             <span className="text-xs text-gray-400 mt-1">
                                                                 ({submittedData[r][c]} - {results.expected[r][c].toFixed(2)})² / {results.expected[r][c].toFixed(2)}
                                                             </span>
@@ -299,20 +303,20 @@ export default function ChiSquareCalculator() {
                         </section>
 
                         {/* Section 3: Results & Decision */}
-                        <section className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                        <section className="p-8 rounded-2xl shadow-xl border border-[var(--color-accent-mint)] bg-white dark:bg-gray-800 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 opacity-20 bg-[var(--color-accent-mint)] rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
                             <h2 className="text-2xl font-bold mb-8 text-gray-800 dark:text-gray-100 flex items-center gap-3 relative z-10">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 text-sm">3</span>
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold bg-[var(--color-accent-mint)] text-[var(--color-dot-mint)]">3</span>
                                 Results & Decision
                             </h2>
 
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
                                 <div className="space-y-6">
-                                    <div className="bg-white/80 dark:bg-gray-800/80 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                    <div className="bg-white/80 dark:bg-gray-800/80 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
                                         <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:mb-0 last:pb-0">
                                             <span className="text-gray-600 dark:text-gray-400 font-medium">Chi-Square Statistic (χ²)</span>
-                                            <span className="font-bold text-3xl text-blue-600 dark:text-blue-400 font-mono">{results.chiSquareStat.toFixed(4)}</span>
+                                            <span className="font-bold text-3xl font-mono text-[var(--color-dot-mint)]">{results.chiSquareStat.toFixed(4)}</span>
                                         </div>
                                         <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:mb-0 last:pb-0">
                                             <div className="flex flex-col">
@@ -323,14 +327,12 @@ export default function ChiSquareCalculator() {
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-gray-600 dark:text-gray-400 font-medium">Critical Value (α = 0.05)</span>
-                                            <span className="font-bold text-xl text-purple-600 dark:text-purple-400 font-mono">{results.criticalValue > 0 ? results.criticalValue : "N/A"}</span>
+                                            <span className="font-bold text-xl text-gray-800 dark:text-gray-200 font-mono">{results.criticalValue > 0 ? results.criticalValue : "N/A"}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col justify-center items-center p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-transparent relative">
-                                    <div className={`absolute inset-0 rounded-xl opacity-20 ${results.rejectNull ? 'bg-red-500' : 'bg-green-500'}`}></div>
-
+                                <div className="flex flex-col justify-center items-center p-8 bg-[var(--color-accent-mint)]/20 rounded-xl shadow-lg border border-[var(--color-accent-mint)] relative">
                                     <h3 className="text-sm font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-4 z-10">Conclusion</h3>
 
                                     <div className={`text-5xl font-extrabold mb-4 z-10 text-center ${results.rejectNull ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
