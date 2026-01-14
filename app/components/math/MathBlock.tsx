@@ -1,5 +1,6 @@
 import 'katex/dist/katex.min.css';
-import { BlockMath } from 'react-katex';
+import pkg from 'react-katex';
+const { BlockMath } = pkg;
 
 interface MathBlockProps {
   formula: string;
