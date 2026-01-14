@@ -505,7 +505,7 @@ export default function TwoWay() {
                                                     <div className="font-semibold mb-2 text-[var(--color-ink)]">Factor A (Rows) Effect</div>
                                                     <div className="space-y-1">
                                                         <div><strong>H₀:</strong> No difference between row means.</div>
-                                                        <div>F = <strong>{result.fRow.toFixed(4)}</strong> vs F_crit = {result.fCriticalRow?.toFixed(4) ?? "N/A"}</div>
+                                                        <div>F = <strong>{result.fRow.toFixed(4)}</strong> vs F_crit (df={result.dfRow}, {result.dfError}) = {result.fCriticalRow?.toFixed(4) ?? "N/A"}</div>
                                                         <div className="font-medium mt-1">
                                                             {result.fCriticalRow && result.fRow > result.fCriticalRow
                                                                 ? "Reject H₀: Significant difference between row means."
@@ -519,7 +519,7 @@ export default function TwoWay() {
                                                     <div className="font-semibold mb-2 text-[var(--color-ink)]">Factor B (Columns) Effect</div>
                                                     <div className="space-y-1">
                                                         <div><strong>H₀:</strong> No difference between column means.</div>
-                                                        <div>F = <strong>{result.fCol.toFixed(4)}</strong> vs F_crit = {result.fCriticalCol?.toFixed(4) ?? "N/A"}</div>
+                                                        <div>F = <strong>{result.fCol.toFixed(4)}</strong> vs F_crit (df={result.dfCol}, {result.dfError}) = {result.fCriticalCol?.toFixed(4) ?? "N/A"}</div>
                                                         <div className="font-medium mt-1">
                                                             {result.fCriticalCol && result.fCol > result.fCriticalCol
                                                                 ? "Reject H₀: Significant difference between column means."
@@ -533,7 +533,7 @@ export default function TwoWay() {
                                                     <div className="font-semibold mb-2 text-[var(--color-ink)]">Interaction (A×B) Effect</div>
                                                     <div className="space-y-1">
                                                         <div><strong>H₀:</strong> No interaction between factors.</div>
-                                                        <div>F = <strong>{result.fInter.toFixed(4)}</strong> vs F_crit = {result.fCriticalInter?.toFixed(4) ?? "N/A"}</div>
+                                                        <div>F = <strong>{result.fInter.toFixed(4)}</strong> vs F_crit (df={result.dfInter}, {result.dfError}) = {result.fCriticalInter?.toFixed(4) ?? "N/A"}</div>
                                                         <div className="font-medium mt-1">
                                                             {result.fCriticalInter && result.fInter > result.fCriticalInter
                                                                 ? "Reject H₀: Significant interaction effect exists."
