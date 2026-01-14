@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Linear Regression Calculator", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/stats-stuff/regression");
+    await page.goto("/regression");
   });
 
   test("displays page title and formula", async ({ page }) => {

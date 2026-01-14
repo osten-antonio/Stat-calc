@@ -11,6 +11,8 @@ export interface DataTableValue {
   rows: DataTableRow[];
 }
 
+type ButtonTone = "pink" | "peach" | "mint" | "blue" | "lavender";
+
 export interface DataTableInputProps {
   label: string;
   helpText?: string;
@@ -18,6 +20,9 @@ export interface DataTableInputProps {
   onChange: (next: DataTableValue) => void;
   minRows?: number;
   className?: string;
+  tone?: ButtonTone;
+  controlsPlacement?: "top" | "bottom";
+  maxColumns?: number;
 }
 
 function ensureRectangular(rows: DataTableRow[], cols: number): DataTableRow[] {
@@ -69,8 +74,14 @@ export function DataTableInput({
   onChange,
   minRows = 1,
   className = "",
+  tone,
+  controlsPlacement = "top",
+  maxColumns,
 }: DataTableInputProps) {
   const [mode, setMode] = useState<"grid" | "raw">("grid");
+  const accent = tone ?? "mint";
+  const ringClass = `focus:ring-1 focus:ring-[var(--color-dot-${accent})]`;
+  const hoverRowClass = `hover:bg-[var(--color-accent-${accent})]/15 focus-within:bg-[var(--color-accent-${accent})]/20`;
 
   const normalizedValue = useMemo(() => {
     const cols = Math.max(1, value.columns.length);
@@ -108,6 +119,7 @@ export function DataTableInput({
   }
 
   function addColumn() {
+    if (maxColumns && normalizedValue.columns.length >= maxColumns) return;
     const nextCols = [...normalizedValue.columns, `Col ${normalizedValue.columns.length + 1}`];
     const nextRows = normalizedValue.rows.map((r) => [...r, ""]);
     onChange({ columns: nextCols, rows: nextRows });
@@ -124,6 +136,10 @@ export function DataTableInput({
     const next = normalizedValue.rows.filter((_, i) => i !== idx);
     while (next.length < Math.max(1, minRows)) next.push(new Array(normalizedValue.columns.length).fill(""));
     onChange({ ...normalizedValue, rows: next });
+  }
+
+  function addRow() {
+    onChange({ ...normalizedValue, rows: [...normalizedValue.rows, new Array(normalizedValue.columns.length).fill("")] });
   }
 
   function handlePasteIntoGrid(e: React.ClipboardEvent<HTMLDivElement>) {
@@ -172,30 +188,44 @@ export function DataTableInput({
         ) : null}
       </div>
 
-      <div className="flex items-center justify-between mb-2">
+      <div className={`flex flex-wrap items-center justify-between mb-2 gap-2 ${controlsPlacement === "bottom" ? "order-2 mt-3" : ""}`}>
         <div className="flex items-center gap-2">
-          <Button type="button" variant={mode === "grid" ? "primary" : "outline"} onClick={() => setMode("grid")}
-            className="px-3 py-1 text-xs">
+          <Button
+            type="button"
+            tone={tone}
+            variant={mode === "grid" ? "primary" : "secondary"}
+            onClick={() => setMode("grid")}
+            className="px-3 py-1 text-xs"
+          >
             Grid
           </Button>
-          <Button type="button" variant={mode === "raw" ? "primary" : "outline"} onClick={() => setMode("raw")}
-            className="px-3 py-1 text-xs">
+          <Button
+            type="button"
+            tone={tone}
+            variant={mode === "raw" ? "primary" : "secondary"}
+            onClick={() => setMode("raw")}
+            className="px-3 py-1 text-xs"
+          >
             Raw (TSV/CSV)
           </Button>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button type="button" variant="outline" onClick={addColumn} className="px-3 py-1 text-xs">
+          <Button type="button" tone={tone} variant="secondary" onClick={addColumn} className="px-3 py-1 text-xs" disabled={Boolean(maxColumns && normalizedValue.columns.length >= maxColumns)}>
             + Col
           </Button>
           <Button
             type="button"
+            tone={tone}
             variant="outline"
             onClick={removeColumn}
             className="px-3 py-1 text-xs"
             disabled={normalizedValue.columns.length <= 1}
           >
             - Col
+          </Button>
+          <Button type="button" tone={tone} variant="secondary" onClick={addRow} className="px-3 py-1 text-xs">
+            + Row
           </Button>
         </div>
       </div>
@@ -210,15 +240,13 @@ export function DataTableInput({
         </Card>
       ) : (
         <div
-          className="border-2 border-slate-900 bg-white dark:bg-gray-900"
+          className="border border-gray-200 bg-white rounded-xl shadow-sm"
           onPaste={handlePasteIntoGrid}
         >
-          <div className="flex border-b-2 border-slate-900 bg-slate-100 dark:bg-gray-800 font-mono text-xs font-bold uppercase">
-            <div className="w-10 border-r border-slate-300 dark:border-gray-700 p-2 text-center text-slate-400">
-              #
-            </div>
+          <div className="flex border-b border-gray-200 bg-gray-50 font-mono text-xs font-semibold uppercase text-[var(--color-ink-light)]">
+            <div className="w-10 border-r border-gray-200 p-2 text-center">#</div>
             {normalizedValue.columns.map((col, c) => (
-              <div key={c} className="flex-1 min-w-0 border-r border-slate-300 dark:border-gray-700 last:border-r-0">
+              <div key={c} className="flex-1 min-w-0 border-r border-gray-200 last:border-r-0">
                 <input
                   className="w-full bg-transparent p-2 text-center outline-none"
                   value={col}
@@ -233,9 +261,9 @@ export function DataTableInput({
             {normalizedValue.rows.map((row, r) => (
               <div
                 key={r}
-                className="group flex border-b border-slate-200 dark:border-gray-800 last:border-b-0 hover:bg-yellow-50 dark:hover:bg-yellow-950"
+                className={`group flex border-b border-gray-100 last:border-b-0 ${hoverRowClass}`}
               >
-                <div className="w-10 select-none border-r border-slate-200 dark:border-gray-800 bg-slate-50 dark:bg-gray-950 p-2 text-center font-mono text-xs text-slate-400">
+                <div className="w-10 select-none border-r border-gray-100 bg-gray-50 p-2 text-center font-mono text-xs text-[var(--color-ink-light)]">
                   {r + 1}
                 </div>
 
@@ -247,9 +275,9 @@ export function DataTableInput({
                     <input
                       key={`${r}-${c}`}
                       className={
-                        "flex-1 min-w-0 bg-transparent p-2 text-right font-mono text-sm outline-none border-r border-slate-200 dark:border-gray-800 last:border-r-0 " +
-                        (isBad ? "text-red-700 bg-red-50 dark:text-red-300 dark:bg-red-950 " : "") +
-                        "focus:bg-blue-50 dark:focus:bg-blue-950 focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                        "flex-1 min-w-0 bg-transparent p-2 text-right font-mono text-sm outline-none border-r border-gray-100 last:border-r-0 " +
+                        (isBad ? "text-red-700 bg-red-50 " : "") +
+                        `focus:bg-white ${ringClass}`
                       }
                       value={cell}
                       onChange={(e) => setCell(r, c, e.target.value)}
@@ -262,7 +290,7 @@ export function DataTableInput({
                   <button
                     type="button"
                     title="Remove Row"
-                    className="text-slate-400 hover:text-red-600"
+                    className="text-[var(--color-ink-light)] hover:text-red-600"
                     tabIndex={-1}
                     onClick={() => deleteRow(r)}
                   >
@@ -275,7 +303,7 @@ export function DataTableInput({
         </div>
       )}
 
-      <div className="mt-2 flex justify-between font-mono text-xs text-slate-500">
+      <div className={`mt-2 flex justify-between font-mono text-xs text-[var(--color-ink-light)] ${controlsPlacement === "bottom" ? "order-1" : ""}`}>
         <span>{normalizedValue.rows.length} rows</span>
         <span>Tip: paste directly from Excel/Sheets</span>
       </div>

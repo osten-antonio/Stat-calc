@@ -66,31 +66,35 @@ export default function CombinationsCalculator() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-12">
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
       <div className="max-w-4xl mx-auto">
-        <header className="mb-8 fade-in">
+        <header className="mb-12 fade-in">
           <Link
             to="/"
-            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-peach)] transition-colors mb-4 inline-block"
           >
             ← Back to Home
           </Link>
+
           <h1
-            className="text-4xl font-medium tracking-tight mb-2"
+            className="text-5xl font-medium tracking-tight mb-4"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             Combinations
           </h1>
-          <p className="text-[var(--color-ink-light)]">
-            Calculate C(n, r) — the number of ways to choose r items from n (order doesn't matter).
+          <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
+            Calculate C(n, r)  the number of ways to choose r items from n (order doesn't matter).
           </p>
         </header>
 
-        <Card className="mb-8 bg-[var(--color-accent-peach)] fade-in" style={{ animationDelay: "50ms" }}>
+        <Card
+          className="mb-10 bg-[var(--color-accent-peach)] border-none fade-in"
+          style={{ animationDelay: "50ms" }}
+        >
           <MathBlock formula="C(n, r) = \frac{n!}{r!(n - r)!}" />
         </Card>
 
-        <section className="mb-8 fade-in" style={{ animationDelay: "100ms" }}>
+        <section className="mb-12 fade-in" style={{ animationDelay: "100ms" }}>
           <div className="grid grid-cols-2 gap-4 max-w-lg">
             <Input
               label="n (total items)"
@@ -116,41 +120,41 @@ export default function CombinationsCalculator() {
             </p>
           )}
 
-          <Button className="mt-4" onClick={calculate}>
+          <Button className="mt-6 w-full md:w-auto" tone="peach" onClick={calculate}>
             Calculate
           </Button>
         </section>
 
         {result && (
-          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+          <section className="fade-in space-y-6" style={{ animationDelay: "150ms" }}>
             <h2
-              className="text-2xl font-medium mb-6"
+              className="text-3xl font-medium"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               Step-by-Step Working
             </h2>
 
-            <div className="space-y-4 mb-6">
+            <div className="space-y-4">
               {result.steps.map((step) => (
                 <div
                   key={step.id}
-                  className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                  className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm"
                 >
-                  <h3 className="font-semibold text-sm mb-2">{step.title}</h3>
+                  <h3 className="font-semibold text-lg mb-3">{step.title}</h3>
                   {step.description && (
-                    <p className="text-xs text-[var(--color-ink-light)] mb-2">
+                    <p className="text-sm text-[var(--color-ink-light)] mb-2">
                       {step.description}
                     </p>
                   )}
                   {step.formula && <MathBlock formula={step.formula} className="my-2" />}
                   {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
                   {step.note && (
-                    <p className="text-xs text-[var(--color-ink-light)] mt-1">
+                    <p className="text-sm text-[var(--color-ink-light)] mt-1">
                       {step.note}
                     </p>
                   )}
                   {step.result && (
-                    <p className="text-lg font-bold mt-2 text-[var(--color-dot-peach)]">
+                    <p className="text-xl font-bold mt-3 text-[var(--color-dot-peach)]">
                       = {step.result}
                     </p>
                   )}
@@ -165,3 +169,4 @@ export default function CombinationsCalculator() {
     </main>
   );
 }
+

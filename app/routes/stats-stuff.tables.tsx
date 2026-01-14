@@ -101,53 +101,62 @@ export default function TablesPage() {
     }
   }
 
-  const tabButtonStyle = (isActive: boolean) =>
-    `px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-      isActive
-        ? "bg-[var(--color-accent-blue)] text-[var(--color-ink)]"
-        : "bg-[var(--color-paper)] border border-[var(--color-ink)]/10 text-[var(--color-ink-light)] hover:border-[var(--color-ink)]/30"
-    }`;
-
   return (
-    <main className="min-h-screen px-6 py-12">
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
       <div className="max-w-6xl mx-auto">
         <header className="mb-8 fade-in">
           <Link
             to="/"
-            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-lavender)] transition-colors mb-4 inline-block"
           >
             ← Back to Home
           </Link>
           <h1
-            className="text-4xl font-medium tracking-tight mb-2"
+            className="text-5xl font-medium tracking-tight mb-4"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             Statistical Tables
           </h1>
-          <p className="text-[var(--color-ink-light)]">
+          <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
             Look up critical values from t, z, χ², and F distributions.
           </p>
         </header>
 
         <div className="flex flex-wrap gap-2 mb-8 fade-in" style={{ animationDelay: "50ms" }}>
-          <button className={tabButtonStyle(activeTable === "t")} onClick={() => setActiveTable("t")}>
+          <Button
+            tone={activeTable === "t" ? "lavender" : undefined}
+            variant={activeTable === "t" ? "primary" : "secondary"}
+            onClick={() => setActiveTable("t")}
+          >
             t-Distribution
-          </button>
-          <button className={tabButtonStyle(activeTable === "z")} onClick={() => setActiveTable("z")}>
+          </Button>
+          <Button
+            tone={activeTable === "z" ? "lavender" : undefined}
+            variant={activeTable === "z" ? "primary" : "secondary"}
+            onClick={() => setActiveTable("z")}
+          >
             z-Distribution
-          </button>
-          <button className={tabButtonStyle(activeTable === "chi")} onClick={() => setActiveTable("chi")}>
+          </Button>
+          <Button
+            tone={activeTable === "chi" ? "lavender" : undefined}
+            variant={activeTable === "chi" ? "primary" : "secondary"}
+            onClick={() => setActiveTable("chi")}
+          >
             χ² (Chi-Square)
-          </button>
-          <button className={tabButtonStyle(activeTable === "f")} onClick={() => setActiveTable("f")}>
+          </Button>
+          <Button
+            tone={activeTable === "f" ? "lavender" : undefined}
+            variant={activeTable === "f" ? "primary" : "secondary"}
+            onClick={() => setActiveTable("f")}
+          >
             F-Distribution
-          </button>
+          </Button>
         </div>
 
         {activeTable === "t" && (
           <section className="fade-in" style={{ animationDelay: "100ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-mint)]">
-              <h2 className="text-xl font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+            <Card className="mb-6 bg-[var(--color-accent-lavender)] border-none">
+              <h2 className="text-xl font-medium mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                 t-Distribution Lookup
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mb-4">
@@ -162,7 +171,7 @@ export default function TablesPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1 text-[var(--color-ink-light)]">α (one-tail)</label>
                   <select
-                    className="w-full p-2 border border-[var(--color-ink)]/10 rounded-lg bg-[var(--color-paper)]"
+                    className="w-full p-2 border border-[var(--color-border)] rounded-lg bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-lavender)]"
                     value={tAlpha}
                     onChange={(e) => setTAlpha(e.target.value)}
                   >
@@ -172,15 +181,15 @@ export default function TablesPage() {
                   </select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={lookupT}>Look Up</Button>
+                  <Button tone="lavender" onClick={lookupT}>Look Up</Button>
                 </div>
               </div>
 
               {tResult && (
-                <div className="bg-[var(--color-paper)] p-4 rounded-lg border border-[var(--color-ink)]/10">
+                <div className="bg-white/70 p-4 rounded-lg border border-[var(--color-ink)]/5">
                   <p className="text-lg">
                     <strong>t-critical</strong> (df={tResult.usedDf}, α={tAlpha}) = 
-                    <span className="text-2xl font-bold ml-2 text-[var(--color-accent-coral)]">{formatNum(tResult.value)}</span>
+                    <span className="text-2xl font-bold ml-2 text-[var(--color-dot-lavender)]">{formatNum(tResult.value)}</span>
                   </p>
                   {tResult.usedDf !== parseInt(tDf) && (
                     <p className="text-sm text-[var(--color-ink-light)]">
@@ -191,14 +200,14 @@ export default function TablesPage() {
               )}
             </Card>
 
-            <Card className="overflow-x-auto">
+            <Card className="overflow-x-auto border border-gray-100 shadow-sm">
               <h3 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>Full t-Distribution Table</h3>
               <table className="min-w-full text-xs font-mono">
                 <thead>
-                  <tr className="bg-[var(--color-accent-blue)]/30">
-                    <th className="p-2 border border-[var(--color-ink)]/10">df</th>
+                  <tr className="bg-[var(--color-accent-lavender)]/30">
+                    <th className="p-2 border border-gray-100">df</th>
                     {T_TABLE_ALPHA_ONE_TAIL.map((a, i) => (
-                      <th key={a} className="p-2 border border-[var(--color-ink)]/10 text-center">
+                      <th key={a} className="p-2 border border-gray-100 text-center">
                         <div>α={a}</div>
                         <div className="text-xs text-[var(--color-ink-light)]">(2-tail: {T_TABLE_ALPHA_TWO_TAIL[i]})</div>
                       </th>
@@ -207,10 +216,10 @@ export default function TablesPage() {
                 </thead>
                 <tbody>
                   {T_TABLE_DF.map((df) => (
-                    <tr key={df} className="hover:bg-[var(--color-accent-mint)]/30 transition-colors">
-                      <td className="p-2 border border-[var(--color-ink)]/10 font-bold">{df === Infinity ? "∞" : df}</td>
+                    <tr key={df} className="hover:bg-[var(--color-accent-lavender)]/10 transition-colors">
+                      <td className="p-2 border border-gray-100 font-bold">{df === Infinity ? "∞" : df}</td>
                       {T_CRITICAL_VALUES[df]?.map((val, i) => (
-                        <td key={i} className="p-2 border border-[var(--color-ink)]/10 text-right">{formatNum(val, 3)}</td>
+                        <td key={i} className="p-2 border border-gray-100 text-right">{formatNum(val, 3)}</td>
                       ))}
                     </tr>
                   ))}
@@ -222,8 +231,8 @@ export default function TablesPage() {
 
         {activeTable === "z" && (
           <section className="fade-in" style={{ animationDelay: "100ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-pink)]">
-              <h2 className="text-xl font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+            <Card className="mb-6 bg-[var(--color-accent-lavender)] border-none">
+              <h2 className="text-xl font-medium mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                 Standard Normal (z) Lookup
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mb-4">
@@ -236,15 +245,15 @@ export default function TablesPage() {
                   placeholder="e.g. 1.96"
                 />
                 <div className="flex items-end">
-                  <Button onClick={lookupZ}>Look Up P(Z ≤ z)</Button>
+                  <Button tone="lavender" onClick={lookupZ}>Look Up P(Z ≤ z)</Button>
                 </div>
               </div>
 
               {zResult !== null && (
-                <div className="bg-[var(--color-paper)] p-4 rounded-lg border border-[var(--color-ink)]/10">
+                <div className="bg-white/70 p-4 rounded-lg border border-[var(--color-ink)]/5">
                   <p className="text-lg">
                     <strong>P(Z ≤ {zValue})</strong> = 
-                    <span className="text-2xl font-bold ml-2 text-[var(--color-accent-coral)]">{formatNum(zResult, 5)}</span>
+                    <span className="text-2xl font-bold ml-2 text-[var(--color-dot-lavender)]">{formatNum(zResult, 5)}</span>
                   </p>
                   <p className="text-sm text-[var(--color-ink-light)]">
                     P(Z &gt; {zValue}) = {formatNum(1 - zResult, 5)}
@@ -253,23 +262,23 @@ export default function TablesPage() {
               )}
             </Card>
 
-            <Card className="overflow-x-auto">
+            <Card className="overflow-x-auto border border-gray-100 shadow-sm">
               <h3 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>Standard Normal Table (Cumulative from left)</h3>
               <table className="min-w-full text-xs font-mono">
                 <thead>
-                  <tr className="bg-[var(--color-accent-pink)]/30">
-                    <th className="p-1 border border-[var(--color-ink)]/10">z</th>
+                  <tr className="bg-[var(--color-accent-lavender)]/30">
+                    <th className="p-1 border border-gray-100">z</th>
                     {Z_TABLE_COLS.map((col) => (
-                      <th key={col} className="p-1 border border-[var(--color-ink)]/10">{col.toFixed(2)}</th>
+                      <th key={col} className="p-1 border border-gray-100">{col.toFixed(2)}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {Z_TABLE_ROWS.map((row, i) => (
-                    <tr key={row} className="hover:bg-[var(--color-accent-mint)]/30 transition-colors">
-                      <td className="p-1 border border-[var(--color-ink)]/10 font-bold">{row.toFixed(1)}</td>
+                    <tr key={row} className="hover:bg-[var(--color-accent-lavender)]/10 transition-colors">
+                      <td className="p-1 border border-gray-100 font-bold">{row.toFixed(1)}</td>
                       {Z_TABLE_VALUES[i]?.map((val, j) => (
-                        <td key={j} className="p-1 border border-[var(--color-ink)]/10 text-right">{val.toFixed(4)}</td>
+                        <td key={j} className="p-1 border border-gray-100 text-right">{val.toFixed(4)}</td>
                       ))}
                     </tr>
                   ))}
@@ -281,8 +290,8 @@ export default function TablesPage() {
 
         {activeTable === "chi" && (
           <section className="fade-in" style={{ animationDelay: "100ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-lavender)]">
-              <h2 className="text-xl font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+            <Card className="mb-6 bg-[var(--color-accent-lavender)] border-none">
+              <h2 className="text-xl font-medium mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                 Chi-Square (χ²) Lookup
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mb-4">
@@ -297,7 +306,7 @@ export default function TablesPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1 text-[var(--color-ink-light)]">α (right-tail)</label>
                   <select
-                    className="w-full p-2 border border-[var(--color-ink)]/10 rounded-lg bg-[var(--color-paper)]"
+                    className="w-full p-2 border border-[var(--color-border)] rounded-lg bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-lavender)]"
                     value={chiAlpha}
                     onChange={(e) => setChiAlpha(e.target.value)}
                   >
@@ -307,15 +316,15 @@ export default function TablesPage() {
                   </select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={lookupChi}>Look Up</Button>
+                  <Button tone="lavender" onClick={lookupChi}>Look Up</Button>
                 </div>
               </div>
 
               {chiResult && (
-                <div className="bg-[var(--color-paper)] p-4 rounded-lg border border-[var(--color-ink)]/10">
+                <div className="bg-white/70 p-4 rounded-lg border border-[var(--color-ink)]/5">
                   <p className="text-lg">
                     <strong>χ²-critical</strong> (df={chiResult.usedDf}, α={chiAlpha}) = 
-                    <span className="text-2xl font-bold ml-2 text-[var(--color-accent-coral)]">{formatNum(chiResult.value)}</span>
+                    <span className="text-2xl font-bold ml-2 text-[var(--color-dot-lavender)]">{formatNum(chiResult.value)}</span>
                   </p>
                   {chiResult.usedDf !== parseInt(chiDf) && (
                     <p className="text-sm text-[var(--color-ink-light)]">
@@ -326,23 +335,23 @@ export default function TablesPage() {
               )}
             </Card>
 
-            <Card className="overflow-x-auto">
+            <Card className="overflow-x-auto border border-gray-100 shadow-sm">
               <h3 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>Chi-Square Distribution Table</h3>
               <table className="min-w-full text-xs font-mono">
                 <thead>
                   <tr className="bg-[var(--color-accent-lavender)]/30">
-                    <th className="p-1 border border-[var(--color-ink)]/10">df</th>
+                    <th className="p-1 border border-gray-100">df</th>
                     {CHI_SQUARE_ALPHA.map((a) => (
-                      <th key={a} className="p-1 border border-[var(--color-ink)]/10">α={a}</th>
+                      <th key={a} className="p-1 border border-gray-100">α={a}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {CHI_SQUARE_DF.map((df) => (
-                    <tr key={df} className="hover:bg-[var(--color-accent-mint)]/30 transition-colors">
-                      <td className="p-1 border border-[var(--color-ink)]/10 font-bold">{df}</td>
+                    <tr key={df} className="hover:bg-[var(--color-accent-lavender)]/10 transition-colors">
+                      <td className="p-1 border border-gray-100 font-bold">{df}</td>
                       {CHI_SQUARE_VALUES[df]?.map((val, i) => (
-                        <td key={i} className="p-1 border border-[var(--color-ink)]/10 text-right">{formatNum(val, 3)}</td>
+                        <td key={i} className="p-1 border border-gray-100 text-right">{formatNum(val, 3)}</td>
                       ))}
                     </tr>
                   ))}
@@ -354,8 +363,8 @@ export default function TablesPage() {
 
         {activeTable === "f" && (
           <section className="fade-in" style={{ animationDelay: "100ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-coral)]/20">
-              <h2 className="text-xl font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+            <Card className="mb-6 bg-[var(--color-accent-lavender)] border-none">
+              <h2 className="text-xl font-medium mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                 F-Distribution Lookup
               </h2>
               <p className="text-sm text-[var(--color-ink-light)] mb-4">
@@ -381,7 +390,7 @@ export default function TablesPage() {
                 <div>
                   <label className="block text-sm font-medium mb-1 text-[var(--color-ink-light)]">α (right-tail)</label>
                   <select
-                    className="w-full p-2 border border-[var(--color-ink)]/10 rounded-lg bg-[var(--color-paper)]"
+                    className="w-full p-2 border border-[var(--color-border)] rounded-lg bg-white/70 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-lavender)]"
                     value={fAlpha}
                     onChange={(e) => setFAlpha(e.target.value)}
                   >
@@ -390,15 +399,15 @@ export default function TablesPage() {
                   </select>
                 </div>
                 <div className="flex items-end">
-                  <Button onClick={lookupF}>Look Up</Button>
+                  <Button tone="lavender" onClick={lookupF}>Look Up</Button>
                 </div>
               </div>
 
               {fResult && (
-                <div className="bg-[var(--color-paper)] p-4 rounded-lg border border-[var(--color-ink)]/10">
+                <div className="bg-white/70 p-4 rounded-lg border border-[var(--color-ink)]/5">
                   <p className="text-lg">
                     <strong>F-critical</strong> (df₁={fResult.usedDf1}, df₂={fResult.usedDf2 === Infinity ? "∞" : fResult.usedDf2}, α={fAlpha}) = 
-                    <span className="text-2xl font-bold ml-2 text-[var(--color-accent-coral)]">{formatNum(fResult.value)}</span>
+                    <span className="text-2xl font-bold ml-2 text-[var(--color-dot-lavender)]">{formatNum(fResult.value)}</span>
                   </p>
                   {(fResult.usedDf1 !== parseInt(fDf1) || fResult.usedDf2 !== parseInt(fDf2)) && (
                     <p className="text-sm text-[var(--color-ink-light)]">
@@ -409,7 +418,7 @@ export default function TablesPage() {
               )}
             </Card>
 
-            <Card className="overflow-x-auto mb-6">
+            <Card className="overflow-x-auto mb-6 border border-gray-100 shadow-sm">
               <h3 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                 F-Distribution Table (α = 0.05)
               </h3>
@@ -418,19 +427,19 @@ export default function TablesPage() {
               </p>
               <table className="min-w-full text-xs font-mono">
                 <thead>
-                  <tr className="bg-[var(--color-accent-coral)]/20">
-                    <th className="p-1 border border-[var(--color-ink)]/10">df₂\df₁</th>
+                  <tr className="bg-[var(--color-accent-lavender)]/30">
+                    <th className="p-1 border border-gray-100">df₂\df₁</th>
                     {F_TABLE_DF1.map((df1) => (
-                      <th key={df1} className="p-1 border border-[var(--color-ink)]/10">{df1}</th>
+                      <th key={df1} className="p-1 border border-gray-100">{df1}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {F_TABLE_DF2.slice(0, 20).map((df2) => (
-                    <tr key={df2.toString()} className="hover:bg-[var(--color-accent-mint)]/30 transition-colors">
-                      <td className="p-1 border border-[var(--color-ink)]/10 font-bold">{df2 === Infinity ? "∞" : df2}</td>
+                    <tr key={df2.toString()} className="hover:bg-[var(--color-accent-lavender)]/10 transition-colors">
+                      <td className="p-1 border border-gray-100 font-bold">{df2 === Infinity ? "∞" : df2}</td>
                       {F_TABLE_DF1.map((df1) => (
-                        <td key={df1} className="p-1 border border-[var(--color-ink)]/10 text-right">
+                        <td key={df1} className="p-1 border border-gray-100 text-right">
                           {F_CRITICAL_005[df1]?.[df2] !== undefined ? formatNum(F_CRITICAL_005[df1][df2], 2) : "-"}
                         </td>
                       ))}
@@ -443,7 +452,7 @@ export default function TablesPage() {
               </p>
             </Card>
 
-            <Card className="overflow-x-auto">
+            <Card className="overflow-x-auto border border-gray-100 shadow-sm">
               <h3 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                 F-Distribution Table (α = 0.01)
               </h3>
@@ -452,19 +461,19 @@ export default function TablesPage() {
               </p>
               <table className="min-w-full text-xs font-mono">
                 <thead>
-                  <tr className="bg-[var(--color-accent-coral)]/20">
-                    <th className="p-1 border border-[var(--color-ink)]/10">df₂\df₁</th>
+                  <tr className="bg-[var(--color-accent-lavender)]/30">
+                    <th className="p-1 border border-gray-100">df₂\df₁</th>
                     {F_TABLE_DF1.map((df1) => (
-                      <th key={df1} className="p-1 border border-[var(--color-ink)]/10">{df1}</th>
+                      <th key={df1} className="p-1 border border-gray-100">{df1}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {F_TABLE_DF2.slice(0, 20).map((df2) => (
-                    <tr key={df2.toString()} className="hover:bg-[var(--color-accent-mint)]/30 transition-colors">
-                      <td className="p-1 border border-[var(--color-ink)]/10 font-bold">{df2 === Infinity ? "∞" : df2}</td>
+                    <tr key={df2.toString()} className="hover:bg-[var(--color-accent-lavender)]/10 transition-colors">
+                      <td className="p-1 border border-gray-100 font-bold">{df2 === Infinity ? "∞" : df2}</td>
                       {F_TABLE_DF1.map((df1) => (
-                        <td key={df1} className="p-1 border border-[var(--color-ink)]/10 text-right">
+                        <td key={df1} className="p-1 border border-gray-100 text-right">
                           {F_CRITICAL_001[df1]?.[df2] !== undefined ? formatNum(F_CRITICAL_001[df1][df2], 2) : "-"}
                         </td>
                       ))}

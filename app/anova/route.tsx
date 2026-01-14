@@ -2,6 +2,8 @@ import { useState } from "react";
 import OneWay from "./OneWay";
 import TwoWay from "./TwoWay";
 import type { Route } from "./+types/route";
+import { Link } from "react-router";
+import { Button } from "~/components/ui/Button";
 
 export function meta({ }: Route.MetaArgs) {
     return [
@@ -14,44 +16,49 @@ export default function AnovaRoute() {
     const [mode, setMode] = useState<"one-way" | "two-way">("one-way");
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto space-y-8">
-                <div className="text-center">
-                    <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+        <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
+            <div className="max-w-5xl mx-auto">
+                <header className="mb-12 fade-in">
+                    <Link
+                        to="/"
+                        className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-mint)] transition-colors mb-4 inline-block"
+                    >
+                        ← Back to Home
+                    </Link>
+                    <h1
+                        className="text-5xl font-medium tracking-tight mb-4"
+                        style={{ fontFamily: "var(--font-serif)" }}
+                    >
                         ANOVA Calculator
                     </h1>
-                    <p className="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                        Statistical analysis made simple. Switch between methods below.
+                    <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
+                        Statistical analysis made simple. Switch between One-Way and Two-Way Analysis of Variance below.
                     </p>
-                </div>
+                </header>
 
-                <div className="flex justify-center mb-8">
-                    <div className="bg-white dark:bg-gray-800 p-1.5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm inline-flex">
-                        <button
+                <section className="mb-10 fade-in" style={{ animationDelay: "50ms" }}>
+                    <div className="flex gap-2 mb-6">
+                        <Button
+                            tone={mode === "one-way" ? "mint" : undefined}
+                            variant={mode === "one-way" ? "primary" : "secondary"}
                             onClick={() => setMode("one-way")}
-                            className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${mode === "one-way"
-                                    ? "bg-blue-600 text-white shadow-md"
-                                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                }`}
                         >
                             One-Way ANOVA
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            tone={mode === "two-way" ? "mint" : undefined}
+                            variant={mode === "two-way" ? "primary" : "secondary"}
                             onClick={() => setMode("two-way")}
-                            className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ml-1 ${mode === "two-way"
-                                    ? "bg-purple-600 text-white shadow-md"
-                                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                                }`}
                         >
                             Two-Way ANOVA
-                        </button>
+                        </Button>
                     </div>
-                </div>
 
-                <div className="transition-all duration-500 ease-in-out">
-                    {mode === "one-way" ? <OneWay /> : <TwoWay />}
-                </div>
+                    <div className="transition-all duration-500 ease-in-out">
+                        {mode === "one-way" ? <OneWay /> : <TwoWay />}
+                    </div>
+                </section>
             </div>
-        </div>
+        </main>
     );
 }

@@ -1,10 +1,16 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { Route } from "./+types/stats-stuff.descriptive";
 import { Link } from "react-router";
 
-import { descriptiveStatsWithSteps, type DescriptiveStats } from "~/lib/math/descriptive";
+import {
+  descriptiveStatsWithSteps,
+  type DescriptiveStats,
+} from "~/lib/math/descriptive";
 import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
-import { DataTableInput, type DataTableValue } from "~/components/calculator/DataTableInput";
+import {
+  DataTableInput,
+  type DataTableValue,
+} from "~/components/calculator/DataTableInput";
 import { Button } from "~/components/ui/Button";
 import { Card } from "~/components/ui/Card";
 import { MathBlock } from "~/components/math/MathBlock";
@@ -14,11 +20,17 @@ import type { CalculationResult } from "~/lib/types/calculation";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Stats Stuff | Descriptive Statistics" },
-    { name: "description", content: "Calculate mean, median, mode, variance, and standard deviation with step-by-step workings." },
+    {
+      name: "description",
+      content:
+        "Calculate mean, median, mode, variance, and standard deviation with step-by-step workings.",
+    },
   ];
 }
 
-function resultToExamAnswer(calc: CalculationResult<DescriptiveStats>): ExamAnswer {
+function resultToExamAnswer(
+  calc: CalculationResult<DescriptiveStats>,
+): ExamAnswer {
   return {
     title: "Descriptive Statistics Calculation",
     sections: calc.steps.map((step) => ({
@@ -54,9 +66,7 @@ function parseData(tableValue: DataTableValue): number[] {
       const trimmed = cell.trim();
       if (trimmed === "") continue;
       const num = Number(trimmed);
-      if (Number.isFinite(num)) {
-        values.push(num);
-      }
+      if (Number.isFinite(num)) values.push(num);
     }
   }
   return values;
@@ -68,7 +78,8 @@ export default function DescriptiveCalculator() {
     rows: [[""], [""], [""], [""], [""]],
   });
 
-  const [result, setResult] = useState<CalculationResult<DescriptiveStats> | null>(null);
+  const [result, setResult] =
+    useState<CalculationResult<DescriptiveStats> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const parsedData = useMemo(() => parseData(tableData), [tableData]);
@@ -78,12 +89,16 @@ export default function DescriptiveCalculator() {
     setResult(null);
 
     if (parsedData.length === 0) {
-      setError("Enter some numbers first, genius. The calculator can't read your mind.");
+      setError(
+        "Enter some numbers first, genius. The calculator can't read your mind.",
+      );
       return;
     }
 
     if (parsedData.length === 1) {
-      setError("One data point? That's not a dataset, that's loneliness. Enter at least 2 values.");
+      setError(
+        "One data point? That's not a dataset, that's loneliness. Enter at least 2 values.",
+      );
       return;
     }
 
@@ -94,67 +109,93 @@ export default function DescriptiveCalculator() {
   function loadSampleData() {
     setTableData({
       columns: ["Data"],
-      rows: [["12"], ["15"], ["18"], ["22"], ["25"], ["28"], ["30"], ["35"], [""]],
+      rows: [
+        ["12"],
+        ["15"],
+        ["18"],
+        ["22"],
+        ["25"],
+        ["28"],
+        ["30"],
+        ["35"],
+        [""],
+      ],
     });
     setResult(null);
     setError(null);
   }
 
   return (
-    <main className="min-h-screen px-6 py-12">
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
       <div className="max-w-4xl mx-auto">
-        <header className="mb-8 fade-in">
+        <header className="mb-12 fade-in">
           <Link
             to="/"
-            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-blue)] transition-colors mb-4 inline-block"
           >
             ← Back to Home
           </Link>
+
           <h1
-            className="text-4xl font-medium tracking-tight mb-2"
+            className="text-5xl font-medium tracking-tight mb-4"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             Descriptive Statistics
           </h1>
-          <p className="text-[var(--color-ink-light)]">
-            Calculate mean, median, mode, variance, and standard deviation with step-by-step workings.
+          <p className="text-lg text-[var(--color-ink-light)]">
+            Calculate mean, median, mode, variance, and standard deviation with
+            step-by-step workings.
           </p>
         </header>
 
-        <Card className="mb-8 bg-[var(--color-accent-blue)] fade-in" style={{ animationDelay: "50ms" }}>
+        <Card
+          className="mb-10 bg-[var(--color-accent-blue)] border-none fade-in"
+          style={{ animationDelay: "50ms" }}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
             <div>
-              <MathBlock formula="\bar{x} = \frac{\Sigma x}{n}" />
-              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">Mean</p>
+              <MathBlock formula="\bar{x} = \frac{\sum x}{n}" />
+              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">
+                Mean
+              </p>
             </div>
             <div>
-              <MathBlock formula="\sigma^2 = \frac{\Sigma(x - \bar{x})^2}{n}" />
-              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">Population Variance</p>
+              <MathBlock formula="\sigma^2 = \frac{\sum (x - \bar{x})^2}{n}" />
+              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">
+                Population Variance
+              </p>
             </div>
             <div>
-              <MathBlock formula="s^2 = \frac{\Sigma(x - \bar{x})^2}{n-1}" />
-              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">Sample Variance</p>
+              <MathBlock formula="s^2 = \frac{\sum (x - \bar{x})^2}{n-1}" />
+              <p className="text-center text-xs text-[var(--color-ink-light)] mt-1">
+                Sample Variance
+              </p>
             </div>
           </div>
         </Card>
 
-        <section className="mb-8 fade-in" style={{ animationDelay: "100ms" }}>
+        <section className="mb-12 fade-in" style={{ animationDelay: "100ms" }}>
           <div className="flex items-center gap-4 mb-4">
             <Button variant="secondary" onClick={loadSampleData}>
               Load Sample Data
             </Button>
             <span className="text-sm text-[var(--color-ink-light)]">
-              {parsedData.length} valid number{parsedData.length !== 1 ? "s" : ""} detected
+              {parsedData.length} valid number
+              {parsedData.length !== 1 ? "s" : ""} detected
             </span>
           </div>
 
-          <DataTableInput
-            label="Enter Your Data"
-            helpText="Type values directly or paste from Excel/Google Sheets. All numeric values will be used."
-            value={tableData}
-            onChange={setTableData}
-            minRows={5}
-          />
+          <Card className="p-4 border border-gray-100 shadow-sm">
+            <DataTableInput
+              label="Enter Your Data"
+              helpText="Type values directly or paste from Excel/Google Sheets. All numeric values will be used."
+              value={tableData}
+              onChange={setTableData}
+              minRows={5}
+              tone="blue"
+              controlsPlacement="bottom"
+            />
+          </Card>
 
           {error && (
             <p className="text-red-600 mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
@@ -162,73 +203,97 @@ export default function DescriptiveCalculator() {
             </p>
           )}
 
-          <Button className="mt-4" onClick={calculate}>
+          <Button
+            className="mt-6 w-full md:w-auto"
+            tone="blue"
+            onClick={calculate}
+          >
             Calculate Stats
           </Button>
         </section>
 
         {result && (
-          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+          <section
+            className="fade-in space-y-8"
+            style={{ animationDelay: "150ms" }}
+          >
             <h2
-              className="text-2xl font-medium mb-6"
+              className="text-3xl font-medium"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               Step-by-Step Working
             </h2>
 
-            <Card className="mb-6 bg-[var(--color-accent-mint)]">
-              <h3 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+            <Card className="mb-2 bg-[var(--color-accent-blue)] border-none">
+              <h3
+                className="font-semibold mb-4"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
                 Quick Summary
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
-                  <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
+                  <div className="text-3xl font-bold text-[var(--color-dot-blue)]">
                     {formatNum(result.value.mean)}
                   </div>
-                  <div className="text-xs text-[var(--color-ink-light)]">Mean (x̄)</div>
+                  <div className="text-xs text-[var(--color-ink-light)]">
+                    Mean (x)
+                  </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-[var(--color-ink)]">
                     {formatNum(result.value.median)}
                   </div>
-                  <div className="text-xs text-[var(--color-ink-light)]">Median</div>
+                  <div className="text-xs text-[var(--color-ink-light)]">
+                    Median
+                  </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-[var(--color-ink)]">
-                    {result.value.mode.length > 0 ? result.value.mode.join(", ") : "None"}
+                    {result.value.mode.length > 0
+                      ? result.value.mode.join(", ")
+                      : "None"}
                   </div>
-                  <div className="text-xs text-[var(--color-ink-light)]">Mode</div>
+                  <div className="text-xs text-[var(--color-ink-light)]">
+                    Mode
+                  </div>
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-[var(--color-ink)]">
                     {formatNum(result.value.standardDeviation.sample)}
                   </div>
-                  <div className="text-xs text-[var(--color-ink-light)]">Sample SD (s)</div>
+                  <div className="text-xs text-[var(--color-ink-light)]">
+                    Sample SD (s)
+                  </div>
                 </div>
               </div>
             </Card>
 
-            <div className="space-y-4 mb-6">
+            <div className="space-y-4">
               {result.steps.map((step) => (
                 <div
                   key={step.id}
-                  className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                  className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm"
                 >
-                  <h4 className="font-semibold text-sm mb-2">{step.title}</h4>
+                  <h4 className="font-semibold text-lg mb-2">{step.title}</h4>
                   {step.description && (
-                    <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                    <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
                       {step.description}
                     </pre>
                   )}
-                  {step.formula && <MathBlock formula={step.formula} className="my-2" />}
-                  {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                  {step.formula && (
+                    <MathBlock formula={step.formula} className="my-2" />
+                  )}
+                  {step.calculation && (
+                    <MathBlock formula={step.calculation} className="my-2" />
+                  )}
                   {step.note && (
-                    <p className="text-xs text-[var(--color-ink-light)] mt-1">
+                    <p className="text-sm text-[var(--color-ink-light)] mt-1">
                       {step.note}
                     </p>
                   )}
                   {step.result && (
-                    <p className="text-lg font-bold mt-2 text-[var(--color-dot-blue)]">
+                    <p className="text-xl font-bold mt-3 text-[var(--color-dot-blue)]">
                       = {step.result}
                     </p>
                   )}

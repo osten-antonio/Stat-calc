@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { calculateTwoWayAnova, type TwoWayResult } from "./utils";
+import { Button } from "~/components/ui/Button";
+import { Card } from "~/components/ui/Card";
+import { MathBlock } from "~/components/math/MathBlock";
 
 export default function TwoWay() {
     const [rows, setRows] = useState<number>(2);
@@ -86,17 +89,25 @@ export default function TwoWay() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+        <div className="space-y-6 animate-in fade-in duration-500">
+            <Card className="bg-[var(--color-accent-mint)] border-none">
+                <h2
+                    className="text-xl font-medium mb-2"
+                    style={{ fontFamily: "var(--font-serif)" }}
+                >
                     Two-Way ANOVA (With Replication)
                 </h2>
+                <MathBlock formula="F = \frac{\text{MS}_{\text{factor}}}{\text{MS}_{\text{error}}}" />
+                <p className="text-sm text-[var(--color-ink-light)] mt-2">
+                    Tests the effect of two independent independent variables on a dependent variable, including interaction effects.
+                </p>
+            </Card>
 
-                {/* Configuration */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <Card className="border border-gray-100 shadow-sm bg-gray-50/50">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Rows (Factor A Levels)
+                        <label className="block text-sm font-medium text-[var(--color-ink)] mb-2">
+                            Rows (Factor A)
                         </label>
                         <input
                             type="number"
@@ -104,12 +115,12 @@ export default function TwoWay() {
                             max="5"
                             value={rows}
                             onChange={(e) => handleConfigChange(parseInt(e.target.value) || 2, cols, reps)}
-                            className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
+                            className="w-full p-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)] transition-shadow"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Columns (Factor B Levels)
+                        <label className="block text-sm font-medium text-[var(--color-ink)] mb-2">
+                            Columns (Factor B)
                         </label>
                         <input
                             type="number"
@@ -117,11 +128,11 @@ export default function TwoWay() {
                             max="5"
                             value={cols}
                             onChange={(e) => handleConfigChange(rows, parseInt(e.target.value) || 2, reps)}
-                            className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
+                            className="w-full p-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)] transition-shadow"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label className="block text-sm font-medium text-[var(--color-ink)] mb-2">
                             Replications per Cell
                         </label>
                         <input
@@ -130,31 +141,28 @@ export default function TwoWay() {
                             max="10"
                             value={reps}
                             onChange={(e) => handleConfigChange(rows, cols, parseInt(e.target.value) || 2)}
-                            className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500"
+                            className="w-full p-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)] transition-shadow"
                         />
                     </div>
                 </div>
 
-                {/* Data Entry Grid */}
                 <div className="overflow-x-auto">
                     <div className="min-w-max">
                         <div className="grid gap-4" style={{ gridTemplateColumns: `auto repeat(${cols}, 1fr)` }}>
-                            {/* Header Row */}
                             <div className="p-2"></div>
                             {Array.from({ length: cols }).map((_, j) => (
-                                <div key={j} className="text-center font-bold text-gray-700 dark:text-gray-300 p-2 bg-gray-100 dark:bg-gray-700 rounded">
+                                <div key={j} className="text-center font-bold text-xs uppercase tracking-wide text-[var(--color-ink-light)] p-2 bg-white rounded border border-gray-100">
                                     Col {j + 1}
                                 </div>
                             ))}
 
-                            {/* Data Rows */}
                             {Array.from({ length: rows }).map((_, i) => (
                                 <React.Fragment key={i}>
-                                    <div className="flex items-center justify-center font-bold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded p-2">
+                                    <div className="flex items-center justify-center font-bold text-xs uppercase tracking-wide text-[var(--color-ink-light)] bg-white rounded p-2 border border-gray-100">
                                         Row {i + 1}
                                     </div>
                                     {Array.from({ length: cols }).map((_, j) => (
-                                        <div key={`${i}-${j}`} className="space-y-2 p-2 border border-gray-200 dark:border-gray-700 rounded-lg">
+                                        <div key={`${i}-${j}`} className="space-y-2 p-3 border border-gray-200 bg-white rounded-xl shadow-sm hover:border-[var(--color-dot-mint)] transition-colors">
                                             {Array.from({ length: reps }).map((_, k) => (
                                                 <input
                                                     key={`${i}-${j}-${k}`}
@@ -162,7 +170,7 @@ export default function TwoWay() {
                                                     placeholder={`Rep ${k + 1}`}
                                                     value={data[i][j][k]}
                                                     onChange={(e) => handleDataChange(i, j, k, e.target.value)}
-                                                    className="w-full p-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 focus:ring-1 focus:ring-purple-500"
+                                                    className="w-full p-1.5 text-sm rounded border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[var(--color-dot-mint)] transition-all"
                                                 />
                                             ))}
                                         </div>
@@ -176,250 +184,167 @@ export default function TwoWay() {
                 <div className="mt-8 flex justify-between items-center">
                     <button
                         onClick={autoFillSample}
-                        className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 underline decoration-dotted"
+                        className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-dot-mint)] transition-colors underline decoration-dotted"
                     >
                         Autofill Sample Data
                     </button>
-                    <button
-                        onClick={handleCalculate}
-                        className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg transform active:scale-95 transition-all text-sm uppercase tracking-wide"
-                    >
+                    <Button tone="mint" onClick={handleCalculate}>
                         Calculate F-Statistics
-                    </button>
+                    </Button>
                 </div>
+            </Card>
 
-                {error && (
-                    <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800 animate-pulse">
-                        {error}
-                    </div>
-                )}
-            </div>
+            {error && (
+                <div className="p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 text-sm">
+                    {error}
+                </div>
+            )}
 
             {result && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 mt-8">
 
-                    {/* Summary Table */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white border-b pb-2 dark:border-gray-700 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
+                    <h3
+                        className="text-2xl font-medium"
+                        style={{ fontFamily: "var(--font-serif)" }}
+                    >
+                        Results
+                    </h3>
+
+                    <Card className="bg-[var(--color-accent-mint)] border-none">
+                        <h4 className="font-semibold mb-4 text-[var(--color-ink)]">
                             ANOVA Summary Table
-                        </h3>
+                        </h4>
                         <div className="overflow-x-auto">
-                            <table className="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <table className="min-w-full text-sm text-left text-[var(--color-ink)]">
+                                <thead className="text-xs uppercase text-[var(--color-ink-light)] border-b border-[var(--color-ink-light)]/10">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3">Source of Variation</th>
-                                        <th scope="col" className="px-6 py-3">SS</th>
-                                        <th scope="col" className="px-6 py-3">df</th>
-                                        <th scope="col" className="px-6 py-3">MS</th>
-                                        <th scope="col" className="px-6 py-3">F</th>
+                                        <th className="px-4 py-2">Source</th>
+                                        <th className="px-4 py-2">SS</th>
+                                        <th className="px-4 py-2">df</th>
+                                        <th className="px-4 py-2">MS</th>
+                                        <th className="px-4 py-2">F</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* Row Factor */}
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                            Rows (Factor A)
-                                        </td>
-                                        <td className="px-6 py-4">{result.ssRow.toFixed(4)}</td>
-                                        <td className="px-6 py-4">{result.dfRow}</td>
-                                        <td className="px-6 py-4">{result.msRow.toFixed(4)}</td>
-                                        <td className="px-6 py-4 font-bold text-purple-600 dark:text-purple-400">{result.fRow.toFixed(4)}</td>
+                                    <tr className="border-b border-[var(--color-ink-light)]/10 bg-white/50">
+                                        <td className="px-4 py-3 font-medium">Rows (Factor A)</td>
+                                        <td className="px-4 py-3">{result.ssRow.toFixed(4)}</td>
+                                        <td className="px-4 py-3">{result.dfRow}</td>
+                                        <td className="px-4 py-3">{result.msRow.toFixed(4)}</td>
+                                        <td className="px-4 py-3 font-bold text-[var(--color-dot-mint)]">{result.fRow.toFixed(4)}</td>
                                     </tr>
-                                    {/* Col Factor */}
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                            Columns (Factor B)
-                                        </td>
-                                        <td className="px-6 py-4">{result.ssCol.toFixed(4)}</td>
-                                        <td className="px-6 py-4">{result.dfCol}</td>
-                                        <td className="px-6 py-4">{result.msCol.toFixed(4)}</td>
-                                        <td className="px-6 py-4 font-bold text-purple-600 dark:text-purple-400">{result.fCol.toFixed(4)}</td>
+                                    <tr className="border-b border-[var(--color-ink-light)]/10 bg-white/50">
+                                        <td className="px-4 py-3 font-medium">Cols (Factor B)</td>
+                                        <td className="px-4 py-3">{result.ssCol.toFixed(4)}</td>
+                                        <td className="px-4 py-3">{result.dfCol}</td>
+                                        <td className="px-4 py-3">{result.msCol.toFixed(4)}</td>
+                                        <td className="px-4 py-3 font-bold text-[var(--color-dot-mint)]">{result.fCol.toFixed(4)}</td>
                                     </tr>
-                                    {/* Interaction */}
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                            Interaction (AxB)
-                                        </td>
-                                        <td className="px-6 py-4">{result.ssInter.toFixed(4)}</td>
-                                        <td className="px-6 py-4">{result.dfInter}</td>
-                                        <td className="px-6 py-4">{result.msInter.toFixed(4)}</td>
-                                        <td className="px-6 py-4 font-bold text-purple-600 dark:text-purple-400">{result.fInter.toFixed(4)}</td>
+                                    <tr className="border-b border-[var(--color-ink-light)]/10 bg-white/50">
+                                        <td className="px-4 py-3 font-medium">Interaction (AxB)</td>
+                                        <td className="px-4 py-3">{result.ssInter.toFixed(4)}</td>
+                                        <td className="px-4 py-3">{result.dfInter}</td>
+                                        <td className="px-4 py-3">{result.msInter.toFixed(4)}</td>
+                                        <td className="px-4 py-3 font-bold text-[var(--color-dot-mint)]">{result.fInter.toFixed(4)}</td>
                                     </tr>
-                                    {/* Error */}
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                            Error (Within)
-                                        </td>
-                                        <td className="px-6 py-4">{result.ssError.toFixed(4)}</td>
-                                        <td className="px-6 py-4">{result.dfError}</td>
-                                        <td className="px-6 py-4">{result.msError.toFixed(4)}</td>
-                                        <td className="px-6 py-4">-</td>
+                                    <tr className="border-b border-[var(--color-ink-light)]/10">
+                                        <td className="px-4 py-3 font-medium">Error (Within)</td>
+                                        <td className="px-4 py-3">{result.ssError.toFixed(4)}</td>
+                                        <td className="px-4 py-3">{result.dfError}</td>
+                                        <td className="px-4 py-3">{result.msError.toFixed(4)}</td>
+                                        <td className="px-4 py-3">-</td>
                                     </tr>
-                                    {/* Total */}
-                                    <tr className="bg-gray-50 border-b dark:bg-gray-700 dark:border-gray-600">
-                                        <td className="px-6 py-4 font-bold text-gray-900 dark:text-white whitespace-nowrap">
-                                            Total
-                                        </td>
-                                        <td className="px-6 py-4 font-bold">{result.ssTotal.toFixed(4)}</td>
-                                        <td className="px-6 py-4 font-bold">{result.dfTotal}</td>
-                                        <td className="px-6 py-4"></td>
-                                        <td className="px-6 py-4"></td>
+                                    <tr>
+                                        <td className="px-4 py-3 font-bold">Total</td>
+                                        <td className="px-4 py-3 font-bold">{result.ssTotal.toFixed(4)}</td>
+                                        <td className="px-4 py-3 font-bold">{result.dfTotal}</td>
+                                        <td className="px-4 py-3"></td>
+                                        <td className="px-4 py-3"></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </Card>
 
-                    {/* Detailed Working */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white border-b pb-2 dark:border-gray-700 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                            </svg>
-                            Step-by-Step Calculation (Deviation Method)
-                        </h3>
+                    <Card className="border border-gray-100 shadow-sm">
+                        <h4
+                            className="font-semibold mb-6 text-lg"
+                            style={{ fontFamily: "var(--font-serif)" }}
+                        >
+                            Step-by-Step Calculation
+                        </h4>
 
-                        {/* Step 1: Calculate Means */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 1: Calculate Means</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                First, calculate the Grand Mean, and the means for each level of the factors.
-                            </p>
-                            <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 font-mono text-sm space-y-4">
-                                <div><strong>Grand Mean (X̄..):</strong> {result.grandMean.toFixed(4)}</div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <strong>Row Means (Factor A):</strong>
-                                        <ul className="list-disc list-inside ml-2">
-                                            {result.rowMeans.map((m, i) => (
-                                                <li key={i}>Row {i + 1}: {m.toFixed(4)}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div>
-                                        <strong>Column Means (Factor B):</strong>
-                                        <ul className="list-disc list-inside ml-2">
-                                            {result.colMeans.map((m, j) => (
-                                                <li key={j}>Col {j + 1}: {m.toFixed(4)}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div>
-                                    <strong>Cell Means (Interaction Means):</strong>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1 ml-2">
-                                        {result.cellMeans.map((rowArr, i) => (
-                                            rowArr.map((mean, j) => (
-                                                <div key={`${i}-${j}`}>
-                                                    Row {i + 1} & Col {j + 1}: {mean.toFixed(4)}
-                                                </div>
-                                            ))
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Step 2: SS Factor A (Rows) */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 2: Sum of Squares for Rows (Factor A)</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                Formula: ∑ n_row * (Mean_row - GrandMean)²
-                            </p>
-                            <div className="p-3 border rounded bg-white dark:bg-gray-800 text-sm">
-                                {result.rowMeans.map((m, i) => (
-                                    <span key={i}>
-                                        {cols * reps} * ({m.toFixed(3)} - {result.grandMean.toFixed(3)})²
-                                        {i < result.rowMeans.length - 1 ? " + " : ""}
-                                    </span>
-                                ))}
-                                <br />
-                                = <strong>{result.ssRow.toFixed(4)}</strong>
-                            </div>
-                        </div>
-
-                        {/* Step 3: SS Factor B (Cols) */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 3: Sum of Squares for Columns (Factor B)</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                Formula: ∑ n_col * (Mean_col - GrandMean)²
-                            </p>
-                            <div className="p-3 border rounded bg-white dark:bg-gray-800 text-sm">
-                                {result.colMeans.map((m, j) => (
-                                    <span key={j}>
-                                        {rows * reps} * ({m.toFixed(3)} - {result.grandMean.toFixed(3)})²
-                                        {j < result.colMeans.length - 1 ? " + " : ""}
-                                    </span>
-                                ))}
-                                <br />
-                                = <strong>{result.ssCol.toFixed(4)}</strong>
-                            </div>
-                        </div>
-
-                        {/* Step 4: SS Within (Error) */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 4: Sum of Squares Within (Error)</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                Formula: ∑ (X - Mean_cell)² (Sum of squared differences between each observation and its cell mean).
-                            </p>
-                            <div className="p-3 border rounded bg-white dark:bg-gray-800 text-sm space-y-2">
-                                {result.cellMeans.map((rowArr, i) => (
-                                    rowArr.map((mean, j) => (
-                                        <div key={`${i}-${j}`} className="pb-1 border-b border-gray-100 dark:border-gray-700 last:border-0">
-                                            <strong>SS Row {i + 1} & Col {j + 1}</strong> =
-                                            {data[i][j].map((val, k) => (
-                                                <span key={k}> ({Number(val)} - {mean.toFixed(3)})²{k < data[i][j].length - 1 ? " + " : ""}</span>
-                                            ))}
-                                            = <strong>{result.ssPerCell[i][j].toFixed(4)}</strong>
+                        <div className="space-y-8">
+                            <div>
+                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 1: Calculate Means</h5>
+                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)] space-y-4">
+                                    <div><strong>Grand Mean:</strong> {result.grandMean.toFixed(4)}</div>
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div>
+                                            <strong>Row Means:</strong>
+                                            <ul className="list-disc list-inside ml-2 mt-1">
+                                                {result.rowMeans.map((m, i) => (
+                                                    <li key={i}>Row {i + 1}: {m.toFixed(4)}</li>
+                                                ))}
+                                            </ul>
                                         </div>
-                                    ))
-                                ))}
-                                <div className="mt-4 pt-2 border-t border-gray-300 dark:border-gray-600">
-                                    <strong>SSE</strong> = {result.ssPerCell.flat().map(v => v.toFixed(3)).join(" + ")}
-                                    <br />
-                                    = <strong>{result.ssError.toFixed(4)}</strong>
+                                        <div>
+                                            <strong>Column Means:</strong>
+                                            <ul className="list-disc list-inside ml-2 mt-1">
+                                                {result.colMeans.map((m, j) => (
+                                                    <li key={j}>Col {j + 1}: {m.toFixed(4)}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 2: Sum of Squares</h5>
+                                <div className="space-y-3">
+                                    <div className="p-3 border border-gray-100 rounded-lg">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Rows (Main Effect A)</div>
+                                        <div className="font-mono text-sm mt-1">{result.ssRow.toFixed(4)}</div>
+                                    </div>
+                                    <div className="p-3 border border-gray-100 rounded-lg">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Columns (Main Effect B)</div>
+                                        <div className="font-mono text-sm mt-1">{result.ssCol.toFixed(4)}</div>
+                                    </div>
+                                    <div className="p-3 border border-gray-100 rounded-lg">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Interaction</div>
+                                        <div className="font-mono text-sm mt-1">{result.ssInter.toFixed(4)}</div>
+                                    </div>
+                                    <div className="p-3 border border-gray-100 rounded-lg">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Error (Within)</div>
+                                        <div className="font-mono text-sm mt-1">{result.ssError.toFixed(4)}</div>
+                                    </div>
+                                    <div className="p-3 border border-gray-100 rounded-lg bg-gray-50">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase">SS Total</div>
+                                        <div className="font-mono text-sm mt-1">{result.ssTotal.toFixed(4)}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 3: F-Statistics</h5>
+                                <div className="grid gap-4 md:grid-cols-3">
+                                    <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl text-center">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase mb-1">Row Effect</div>
+                                        <div className="text-xl font-bold text-[var(--color-dot-mint)]">{result.fRow.toFixed(4)}</div>
+                                    </div>
+                                    <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl text-center">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase mb-1">Col Effect</div>
+                                        <div className="text-xl font-bold text-[var(--color-dot-mint)]">{result.fCol.toFixed(4)}</div>
+                                    </div>
+                                    <div className="p-4 bg-[var(--color-accent-mint)]/30 rounded-xl text-center">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase mb-1">Interaction</div>
+                                        <div className="text-xl font-bold text-[var(--color-dot-mint)]">{result.fInter.toFixed(4)}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Step 5: SS Total */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 5: Total Sum of Squares</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                Formula: ∑ (X - GrandMean)² (Sum of squared differences from the grand mean).
-                            </p>
-                            <div className="p-3 border rounded bg-white dark:bg-gray-800 text-sm">
-                                Calculated directly from individual observations:
-                                <br />
-                                <strong>SS Total = {result.ssTotal.toFixed(4)}</strong>
-                            </div>
-                        </div>
-
-                        {/* Step 6: SS Interaction */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 6: Sum of Squares Interaction</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                Derived by subtraction: SS_Interaction = SS_Total - SS_Row - SS_Col - SS_Within
-                            </p>
-                            <div className="p-3 border rounded bg-white dark:bg-gray-800 text-sm">
-                                {result.ssTotal.toFixed(4)} (Total) - {result.ssRow.toFixed(4)} (Rows) - {result.ssCol.toFixed(4)} (Cols) - {result.ssError.toFixed(4)} (Within)
-                                <br />
-                                = <strong>{result.ssInter.toFixed(4)}</strong>
-                            </div>
-                        </div>
-
-                        {/* Step 7: Final Table Reference */}
-                        <div>
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 7: ANOVA Table</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Use the SS values calculated above to compute Mean Squares (SS/df) and F-ratios (MS/MS_Error). See the Summary Table at the top for final values.
-                            </p>
-                        </div>
-                    </div>
-
+                    </Card>
                 </div>
             )}
         </div>

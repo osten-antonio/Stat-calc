@@ -1,5 +1,6 @@
-import pkg from 'react-katex';
-const { InlineMath } = pkg;
+import 'katex/dist/katex.min.css';
+import * as ReactKatex from 'react-katex';
+const { InlineMath } = ReactKatex;
 
 interface MathInlineProps {
   formula: string;

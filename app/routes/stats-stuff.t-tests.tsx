@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Route } from "./+types/stats-stuff.t-tests";
 import { Link } from "react-router";
 
@@ -37,9 +37,8 @@ function formatNum(num: number, decimals = 4): string {
 function parseData(tableValue: DataTableValue, colIndex: number = 0): number[] {
   const values: number[] = [];
   for (const row of tableValue.rows) {
-    const cell = row[colIndex];
-    if (!cell) continue;
-    const trimmed = cell.trim();
+    if (!row[colIndex]) continue;
+    const trimmed = row[colIndex]!.trim();
     if (trimmed === "") continue;
     const num = Number(trimmed);
     if (Number.isFinite(num)) values.push(num);
@@ -85,6 +84,7 @@ export default function TTestsPage() {
     columns: ["Group 1", "Group 2"],
     rows: [["", ""], ["", ""], ["", ""], ["", ""], ["", ""]],
   });
+  const [selectedGroups, setSelectedGroups] = useState<[number, number]>([0, 1]);
   const [indepResult, setIndepResult] = useState<CalculationResult<IndependentTTestResult> | null>(null);
 
   const [error, setError] = useState<string | null>(null);
@@ -92,8 +92,10 @@ export default function TTestsPage() {
   const oneSampleParsed = useMemo(() => parseData(oneSampleData, 0), [oneSampleData]);
   const pairedBefore = useMemo(() => parseData(pairedData, 0), [pairedData]);
   const pairedAfter = useMemo(() => parseData(pairedData, 1), [pairedData]);
-  const indepGroup1 = useMemo(() => parseData(indepData, 0), [indepData]);
-  const indepGroup2 = useMemo(() => parseData(indepData, 1), [indepData]);
+  const indepParsedColumns = useMemo(() => indepData.columns.map((_, idx) => parseData(indepData, idx)), [indepData]);
+  const indepGroup1 = indepParsedColumns[selectedGroups[0]] ?? [];
+  const indepGroup2 = indepParsedColumns[selectedGroups[1]] ?? [];
+  const extraGroupsCount = Math.max(0, indepData.columns.length - 2);
 
   function runOneSample() {
     setError(null);
@@ -126,53 +128,81 @@ export default function TTestsPage() {
     setPairedResult(result);
   }
 
+  useEffect(() => {
+    setSelectedGroups((prev) => {
+      const maxIndex = Math.max(0, indepData.columns.length - 1);
+      const first = Math.min(prev[0], maxIndex);
+      const second = Math.min(prev[1], maxIndex);
+      if (first === second && maxIndex >= 1) {
+        return [0, 1];
+      }
+      if (first === second && maxIndex === 0) {
+        return [0, 0];
+      }
+      return [first, second];
+    });
+  }, [indepData.columns.length]);
+
   function runIndependent() {
     setError(null);
     setIndepResult(null);
-    if (indepGroup1.length < 2 || indepGroup2.length < 2) {
-      setError("Need at least 2 values in each group.");
+
+    if (indepData.columns.length < 2) {
+      setError("Add at least two columns to compare independent groups.");
       return;
     }
+    if (selectedGroups[0] === selectedGroups[1]) {
+      setError("Select two different columns to compare.");
+      return;
+    }
+    if (indepGroup1.length < 2 || indepGroup2.length < 2) {
+      setError("Need at least 2 values in each selected group.");
+      return;
+    }
+
     const result = independentTTestWithSteps(indepGroup1, indepGroup2, parseFloat(alpha));
     setIndepResult(result);
   }
 
   return (
-    <main className="min-h-screen px-6 py-12">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-8 fade-in">
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
+      <div className="max-w-5xl mx-auto">
+        <header className="mb-12 fade-in">
           <Link
             to="/"
-            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-mint)] transition-colors mb-4 inline-block"
           >
             ← Back to Home
           </Link>
           <h1
-            className="text-4xl font-medium tracking-tight mb-2"
+            className="text-5xl font-medium tracking-tight mb-4"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             T-Tests
           </h1>
-          <p className="text-[var(--color-ink-light)]">
+          <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
             One-sample, paired, and independent samples t-tests with full step-by-step workings.
           </p>
         </header>
 
-        <section className="mb-8 fade-in" style={{ animationDelay: "50ms" }}>
+        <section className="mb-10 fade-in" style={{ animationDelay: "50ms" }}>
           <div className="flex gap-2 mb-6 flex-wrap">
             <Button
+              tone={testType === "one-sample" ? "mint" : undefined}
               variant={testType === "one-sample" ? "primary" : "secondary"}
               onClick={() => setTestType("one-sample")}
             >
               One-Sample
             </Button>
             <Button
+              tone={testType === "paired" ? "mint" : undefined}
               variant={testType === "paired" ? "primary" : "secondary"}
               onClick={() => setTestType("paired")}
             >
               Paired
             </Button>
             <Button
+              tone={testType === "independent" ? "mint" : undefined}
               variant={testType === "independent" ? "primary" : "secondary"}
               onClick={() => setTestType("independent")}
             >
@@ -180,11 +210,11 @@ export default function TTestsPage() {
             </Button>
           </div>
 
-          <Card className="mb-6 bg-[var(--color-accent-blue)]">
+          <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
             <div className="flex items-center gap-4">
               <label className="text-sm font-medium">Significance Level (α):</label>
               <select
-                className="p-2 border rounded bg-white/50 border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-ink)]"
+                className="p-2 border rounded bg-white/70 border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
                 value={alpha}
                 onChange={(e) => setAlpha(e.target.value)}
               >
@@ -198,27 +228,21 @@ export default function TTestsPage() {
 
         {testType === "one-sample" && (
           <section className="fade-in" style={{ animationDelay: "100ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-mint)]">
+            <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
               <h2
                 className="text-xl font-medium mb-2"
                 style={{ fontFamily: "var(--font-serif)" }}
               >
                 One-Sample t-Test
               </h2>
-              <MathBlock formula="t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}" />
+               <MathBlock formula="t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}" />
+
               <p className="text-sm text-[var(--color-ink-light)] mt-2">
                 Tests if the sample mean differs from a hypothesized population mean.
               </p>
             </Card>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <DataTableInput
-                label="Sample Data"
-                helpText="Enter your sample values"
-                value={oneSampleData}
-                onChange={setOneSampleData}
-                minRows={5}
-              />
+            <div className="space-y-4 mb-6">
               <div>
                 <Input
                   label="Hypothesized Mean (μ₀)"
@@ -227,10 +251,27 @@ export default function TTestsPage() {
                   onChange={(e) => setMu0(e.target.value)}
                   placeholder="e.g. 100"
                 />
-                <p className="text-xs text-[var(--color-ink-light)] mt-2">
-                  {oneSampleParsed.length} values detected
-                </p>
+               <p className="text-xs text-[var(--color-ink-light)] mt-2">
+                 {oneSampleParsed.length} values detected
+               </p>
+               <p className="text-xs text-[var(--color-ink-light)]">
+                 Formula: t = (x̄ − μ₀) / (s / √n)
+               </p>
+
               </div>
+
+              <Card className="p-4 border border-gray-100 shadow-sm">
+              <DataTableInput
+                label="Sample Data"
+                helpText="Enter your sample values"
+                value={oneSampleData}
+                onChange={setOneSampleData}
+                minRows={5}
+                tone="mint"
+                controlsPlacement="bottom"
+              />
+
+              </Card>
             </div>
 
             {error && (
@@ -238,20 +279,22 @@ export default function TTestsPage() {
                 {error}
               </p>
             )}
-            <Button onClick={runOneSample}>Calculate One-Sample t-Test</Button>
+            <Button tone="mint" className="w-full md:w-auto" onClick={runOneSample}>
+              Calculate One-Sample t-Test
+            </Button>
 
             {oneSampleResult && (
-              <div className="mt-8 fade-in" style={{ animationDelay: "150ms" }}>
+              <div className="mt-8 fade-in space-y-6" style={{ animationDelay: "150ms" }}>
                 <h3
-                  className="text-2xl font-medium mb-6"
+                  className="text-2xl font-medium"
                   style={{ fontFamily: "var(--font-serif)" }}
                 >
                   Results
                 </h3>
-                <Card className="mb-6 bg-[var(--color-accent-lavender)]">
+                <Card className="bg-[var(--color-accent-mint)] border-none">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
-                      <div className="text-3xl font-bold text-[var(--color-dot-lavender)]">
+                      <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
                         {formatNum(oneSampleResult.value.tStatistic)}
                       </div>
                       <div className="text-xs text-[var(--color-ink-light)]">t-statistic</div>
@@ -273,7 +316,7 @@ export default function TTestsPage() {
                   </div>
                 </Card>
 
-                <Card className="mb-6">
+                <Card className="border border-gray-100 shadow-sm">
                   <h4
                     className="font-semibold mb-4"
                     style={{ fontFamily: "var(--font-serif)" }}
@@ -284,23 +327,23 @@ export default function TTestsPage() {
                     {oneSampleResult.steps.map((step) => (
                       <div
                         key={step.id}
-                        className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                        className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm"
                       >
-                        <h5 className="font-semibold text-sm mb-2">{step.title}</h5>
+                        <h5 className="font-semibold text-base mb-2">{step.title}</h5>
                         {step.description && (
-                          <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                          <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
                             {step.description}
                           </pre>
                         )}
                         {step.formula && <MathBlock formula={step.formula} className="my-2" />}
                         {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
                         {step.note && (
-                          <p className="text-xs text-[var(--color-ink-light)] mb-1">
+                          <p className="text-sm text-[var(--color-ink-light)] mb-1">
                             {step.note}
                           </p>
                         )}
                         {step.result && (
-                          <p className="font-bold text-[var(--color-dot-blue)]">
+                          <p className="font-bold text-[var(--color-dot-mint)]">
                             = {step.result}
                           </p>
                         )}
@@ -316,14 +359,15 @@ export default function TTestsPage() {
 
         {testType === "paired" && (
           <section className="fade-in" style={{ animationDelay: "100ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-peach)]">
+            <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
               <h2
                 className="text-xl font-medium mb-2"
                 style={{ fontFamily: "var(--font-serif)" }}
               >
                 Paired t-Test
               </h2>
-              <MathBlock formula="t = \frac{\bar{d}}{s_d / \sqrt{n}}" />
+               <MathBlock formula="t = \frac{\bar{d}}{s_d / \sqrt{n}}" />
+
               <p className="text-sm text-[var(--color-ink-light)] mt-2">
                 Tests if there's a significant difference between paired observations (before/after).
               </p>
@@ -336,6 +380,9 @@ export default function TTestsPage() {
                 value={pairedData}
                 onChange={setPairedData}
                 minRows={5}
+                tone="mint"
+                controlsPlacement="bottom"
+                maxColumns={2}
               />
               <p className="text-xs text-[var(--color-ink-light)] mt-2">
                 Before: {pairedBefore.length} values, After: {pairedAfter.length} values
@@ -347,20 +394,22 @@ export default function TTestsPage() {
                 {error}
               </p>
             )}
-            <Button onClick={runPaired}>Calculate Paired t-Test</Button>
+            <Button tone="mint" className="w-full md:w-auto" onClick={runPaired}>
+              Calculate Paired t-Test
+            </Button>
 
             {pairedResult && (
-              <div className="mt-8 fade-in" style={{ animationDelay: "150ms" }}>
+              <div className="mt-8 fade-in space-y-6" style={{ animationDelay: "150ms" }}>
                 <h3
-                  className="text-2xl font-medium mb-6"
+                  className="text-2xl font-medium"
                   style={{ fontFamily: "var(--font-serif)" }}
                 >
                   Results
                 </h3>
-                <Card className="mb-6 bg-[var(--color-accent-lavender)]">
+                <Card className="bg-[var(--color-accent-mint)] border-none">
                   <div className="grid grid-cols-4 gap-4 text-center">
                     <div>
-                      <div className="text-3xl font-bold text-[var(--color-dot-lavender)]">
+                      <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
                         {formatNum(pairedResult.value.tStatistic)}
                       </div>
                       <div className="text-xs text-[var(--color-ink-light)]">t-statistic</div>
@@ -388,7 +437,7 @@ export default function TTestsPage() {
                   </div>
                 </Card>
 
-                <Card className="mb-6">
+                <Card className="border border-gray-100 shadow-sm">
                   <h4
                     className="font-semibold mb-4"
                     style={{ fontFamily: "var(--font-serif)" }}
@@ -399,23 +448,23 @@ export default function TTestsPage() {
                     {pairedResult.steps.map((step) => (
                       <div
                         key={step.id}
-                        className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                        className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm"
                       >
-                        <h5 className="font-semibold text-sm mb-2">{step.title}</h5>
+                        <h5 className="font-semibold text-base mb-2">{step.title}</h5>
                         {step.description && (
-                          <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                          <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
                             {step.description}
                           </pre>
                         )}
                         {step.formula && <MathBlock formula={step.formula} className="my-2" />}
                         {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
                         {step.note && (
-                          <p className="text-xs text-[var(--color-ink-light)] mb-1">
+                          <p className="text-sm text-[var(--color-ink-light)] mb-1">
                             {step.note}
                           </p>
                         )}
                         {step.result && (
-                          <p className="font-bold text-[var(--color-dot-blue)]">
+                          <p className="font-bold text-[var(--color-dot-mint)]">
                             = {step.result}
                           </p>
                         )}
@@ -431,30 +480,71 @@ export default function TTestsPage() {
 
         {testType === "independent" && (
           <section className="fade-in" style={{ animationDelay: "100ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-pink)]">
+            <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
               <h2
                 className="text-xl font-medium mb-2"
                 style={{ fontFamily: "var(--font-serif)" }}
               >
                 Independent Samples t-Test
               </h2>
-              <MathBlock formula="t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_p^2(\frac{1}{n_1} + \frac{1}{n_2})}}" />
+               <MathBlock formula="t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_p^2\left(\tfrac{1}{n_1} + \tfrac{1}{n_2}\right)}}" />
+
               <p className="text-sm text-[var(--color-ink-light)] mt-2">
                 Tests if two independent groups have different means.
               </p>
             </Card>
 
-            <div className="mb-6">
+            <div className="mb-6 space-y-3">
               <DataTableInput
-                label="Two Groups"
-                helpText="Enter Group 1 in column 1, Group 2 in column 2 (can have different n)"
+                label="Groups"
+                helpText="Enter each group in its own column; add columns for more groups"
                 value={indepData}
                 onChange={setIndepData}
                 minRows={5}
+                tone="mint"
+                controlsPlacement="bottom"
               />
-              <p className="text-xs text-[var(--color-ink-light)] mt-2">
-                Group 1: {indepGroup1.length} values, Group 2: {indepGroup2.length} values
-              </p>
+
+              <Card className="p-4 border border-gray-100 shadow-sm">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div className="space-y-1 text-sm text-[var(--color-ink-light)]">
+                    <div>Group 1: {indepGroup1.length} values</div>
+                    <div>Group 2: {indepGroup2.length} values</div>
+                    {extraGroupsCount > 0 ? (
+                      <div className="text-[var(--color-ink-light)]">
+                        {extraGroupsCount} additional column{extraGroupsCount === 1 ? "" : "s"} captured; select which two to compare below.
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="text-sm font-medium">Compare:</label>
+                    <select
+                      className="p-2 border rounded bg-white border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
+                      value={selectedGroups[0]}
+                      onChange={(e) => setSelectedGroups([Number(e.target.value), selectedGroups[1]])}
+                    >
+                      {indepData.columns.map((col, idx) => (
+                        <option key={col || idx} value={idx}>
+                          {col || `Col ${idx + 1}`}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-sm text-[var(--color-ink-light)]">vs</span>
+                    <select
+                      className="p-2 border rounded bg-white border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
+                      value={selectedGroups[1]}
+                      onChange={(e) => setSelectedGroups([selectedGroups[0], Number(e.target.value)])}
+                    >
+                      {indepData.columns.map((col, idx) => (
+                        <option key={col || idx} value={idx} disabled={idx === selectedGroups[0]}>
+                          {col || `Col ${idx + 1}`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </Card>
             </div>
 
             {error && (
@@ -462,20 +552,22 @@ export default function TTestsPage() {
                 {error}
               </p>
             )}
-            <Button onClick={runIndependent}>Calculate Independent t-Test</Button>
+            <Button tone="mint" className="w-full md:w-auto" onClick={runIndependent}>
+              Calculate Independent t-Test
+            </Button>
 
             {indepResult && (
-              <div className="mt-8 fade-in" style={{ animationDelay: "150ms" }}>
+              <div className="mt-8 fade-in space-y-6" style={{ animationDelay: "150ms" }}>
                 <h3
-                  className="text-2xl font-medium mb-6"
+                  className="text-2xl font-medium"
                   style={{ fontFamily: "var(--font-serif)" }}
                 >
                   Results
                 </h3>
-                <Card className="mb-6 bg-[var(--color-accent-lavender)]">
+                <Card className="bg-[var(--color-accent-mint)] border-none">
                   <div className="grid grid-cols-4 gap-4 text-center">
                     <div>
-                      <div className="text-3xl font-bold text-[var(--color-dot-lavender)]">
+                      <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
                         {formatNum(indepResult.value.tStatistic)}
                       </div>
                       <div className="text-xs text-[var(--color-ink-light)]">t-statistic</div>
@@ -503,7 +595,7 @@ export default function TTestsPage() {
                   </div>
                 </Card>
 
-                <Card className="mb-6">
+                <Card className="border border-gray-100 shadow-sm">
                   <h4
                     className="font-semibold mb-4"
                     style={{ fontFamily: "var(--font-serif)" }}
@@ -514,23 +606,23 @@ export default function TTestsPage() {
                     {indepResult.steps.map((step) => (
                       <div
                         key={step.id}
-                        className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                        className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm"
                       >
-                        <h5 className="font-semibold text-sm mb-2">{step.title}</h5>
+                        <h5 className="font-semibold text-base mb-2">{step.title}</h5>
                         {step.description && (
-                          <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                          <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
                             {step.description}
                           </pre>
                         )}
                         {step.formula && <MathBlock formula={step.formula} className="my-2" />}
                         {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
                         {step.note && (
-                          <p className="text-xs text-[var(--color-ink-light)] mb-1">
+                          <p className="text-sm text-[var(--color-ink-light)] mb-1">
                             {step.note}
                           </p>
                         )}
                         {step.result && (
-                          <p className="font-bold text-[var(--color-dot-blue)]">
+                          <p className="font-bold text-[var(--color-dot-mint)]">
                             = {step.result}
                           </p>
                         )}

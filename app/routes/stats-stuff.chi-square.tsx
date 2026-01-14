@@ -133,63 +133,65 @@ export default function ChiSquarePage() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-12">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-8 fade-in">
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
+      <div className="max-w-5xl mx-auto">
+        <header className="mb-12 fade-in">
           <Link
             to="/"
-            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-mint)] transition-colors mb-4 inline-block"
           >
             ← Back to Home
           </Link>
           <h1
-            className="text-4xl font-medium tracking-tight mb-2"
+            className="text-5xl font-medium tracking-tight mb-4"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             Chi-Square Tests
           </h1>
-          <p className="text-[var(--color-ink-light)]">
+          <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
             Goodness-of-fit and test of independence with step-by-step workings.
           </p>
         </header>
 
-        <div className="flex gap-4 mb-8 fade-in" style={{ animationDelay: "50ms" }}>
-          <Button 
-            variant={testType === "goodness" ? "primary" : "outline"} 
-            onClick={() => setTestType("goodness")}
-            className={testType === "goodness" ? "bg-[var(--color-ink)] text-white" : ""}
-          >
-            Goodness-of-Fit
-          </Button>
-          <Button 
-            variant={testType === "independence" ? "primary" : "outline"} 
-            onClick={() => setTestType("independence")}
-            className={testType === "independence" ? "bg-[var(--color-ink)] text-white" : ""}
-          >
-            Test of Independence
-          </Button>
-        </div>
-
-        <Card className="mb-8 bg-[var(--color-accent-blue)] fade-in" style={{ animationDelay: "100ms" }}>
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium">Significance Level (α):</label>
-            <select
-              className="p-2 border rounded bg-white/50 border-[var(--color-border)] cursor-pointer hover:bg-white transition-colors"
-              value={alpha}
-              onChange={(e) => setAlpha(e.target.value)}
+        <section className="mb-10 fade-in" style={{ animationDelay: "50ms" }}>
+          <div className="flex gap-2 mb-6 flex-wrap">
+            <Button 
+              tone={testType === "goodness" ? "mint" : undefined}
+              variant={testType === "goodness" ? "primary" : "secondary"} 
+              onClick={() => setTestType("goodness")}
             >
-              <option value="0.01">0.01</option>
-              <option value="0.025">0.025</option>
-              <option value="0.05">0.05</option>
-              <option value="0.10">0.10</option>
-            </select>
+              Goodness-of-Fit
+            </Button>
+            <Button 
+              tone={testType === "independence" ? "mint" : undefined}
+              variant={testType === "independence" ? "primary" : "secondary"} 
+              onClick={() => setTestType("independence")}
+            >
+              Test of Independence
+            </Button>
           </div>
-        </Card>
+
+          <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
+            <div className="flex items-center gap-4">
+              <label className="text-sm font-medium">Significance Level (α):</label>
+              <select
+                className="p-2 border rounded bg-white/70 border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)] cursor-pointer"
+                value={alpha}
+                onChange={(e) => setAlpha(e.target.value)}
+              >
+                <option value="0.01">0.01 (1%)</option>
+                <option value="0.025">0.025 (2.5%)</option>
+                <option value="0.05">0.05 (5%)</option>
+                <option value="0.10">0.10 (10%)</option>
+              </select>
+            </div>
+          </Card>
+        </section>
 
         {testType === "goodness" && (
-          <section className="fade-in" style={{ animationDelay: "150ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-mint)]">
-              <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+          <section className="fade-in" style={{ animationDelay: "100ms" }}>
+            <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
+              <h2 className="text-xl font-medium mb-2" style={{ fontFamily: "var(--font-serif)" }}>
                 Goodness-of-Fit Test
               </h2>
               <MathBlock formula="\chi^2 = \sum \frac{(O_i - E_i)^2}{E_i}" />
@@ -202,6 +204,7 @@ export default function ChiSquarePage() {
               <div>
                 <label className="block text-sm font-medium mb-1">Observed Frequencies</label>
                 <Input
+                  label="Observed Frequencies"
                   type="text"
                   value={observedStr}
                   onChange={(e) => setObservedStr(e.target.value)}
@@ -213,6 +216,7 @@ export default function ChiSquarePage() {
               <div>
                 <label className="block text-sm font-medium mb-1">Expected Frequencies</label>
                 <Input
+                  label="Expected Frequencies"
                   type="text"
                   value={expectedStr}
                   onChange={(e) => setExpectedStr(e.target.value)}
@@ -229,21 +233,21 @@ export default function ChiSquarePage() {
               </p>
             )}
             
-            <Button onClick={runGoodnessOfFit}>Run Goodness-of-Fit Test</Button>
+            <Button tone="mint" onClick={runGoodnessOfFit}>Run Goodness-of-Fit Test</Button>
 
             {gofResult && (
-              <div className="mt-8 fade-in">
+              <div className="mt-8 fade-in space-y-6" style={{ animationDelay: "150ms" }}>
                 <h3 
-                  className="text-2xl font-medium mb-6"
+                  className="text-2xl font-medium"
                   style={{ fontFamily: "var(--font-serif)" }}
                 >
                   Results
                 </h3>
                 
-                <Card className="mb-6 bg-[var(--color-accent-peach)]">
+                <Card className="bg-[var(--color-accent-mint)] border-none">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
-                      <div className="text-3xl font-bold text-[var(--color-dot-peach)]">
+                      <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
                         {formatNum(gofResult.value.chiSquare)}
                       </div>
                       <div className="text-xs text-[var(--color-ink-light)]">χ²</div>
@@ -263,24 +267,24 @@ export default function ChiSquarePage() {
                   </div>
                 </Card>
 
-                <Card className="mb-6">
+                <Card className="border border-gray-100 shadow-sm">
                   <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                     Step-by-Step Working
                   </h4>
                   <div className="space-y-4">
                     {gofResult.steps.map((step) => (
-                      <div key={step.id} className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]">
-                        <h5 className="font-semibold text-sm mb-2">{step.title}</h5>
+                      <div key={step.id} className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm">
+                        <h5 className="font-semibold text-base mb-2">{step.title}</h5>
                         {step.description && (
-                          <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                          <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
                             {step.description}
                           </pre>
                         )}
                         {step.formula && <MathBlock formula={step.formula} className="my-2" />}
                         {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
-                        {step.note && <p className="text-xs text-[var(--color-ink-light)] mb-1">{step.note}</p>}
+                        {step.note && <p className="text-sm text-[var(--color-ink-light)] mb-1">{step.note}</p>}
                         {step.result && (
-                          <p className="font-bold text-[var(--color-dot-peach)] mt-1">= {step.result}</p>
+                          <p className="font-bold text-[var(--color-dot-mint)] mt-1">= {step.result}</p>
                         )}
                       </div>
                     ))}
@@ -294,9 +298,9 @@ export default function ChiSquarePage() {
         )}
 
         {testType === "independence" && (
-          <section className="fade-in" style={{ animationDelay: "150ms" }}>
-            <Card className="mb-6 bg-[var(--color-accent-mint)]">
-              <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+          <section className="fade-in" style={{ animationDelay: "100ms" }}>
+            <Card className="mb-6 bg-[var(--color-accent-mint)] border-none">
+              <h2 className="text-xl font-medium mb-2" style={{ fontFamily: "var(--font-serif)" }}>
                 Test of Independence
               </h2>
               <MathBlock formula="\chi^2 = \sum \frac{(O - E)^2}{E}" />
@@ -314,7 +318,7 @@ export default function ChiSquarePage() {
                   max={10}
                   value={tableRows}
                   onChange={(e) => updateTableSize(Math.max(2, parseInt(e.target.value) || 2), tableCols)}
-                  className="w-20 ml-2 p-2 border rounded border-[var(--color-border)] bg-white"
+                  className="w-20 ml-2 p-2 border rounded border-[var(--color-border)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
                 />
               </div>
               <div>
@@ -325,7 +329,7 @@ export default function ChiSquarePage() {
                   max={10}
                   value={tableCols}
                   onChange={(e) => updateTableSize(tableRows, Math.max(2, parseInt(e.target.value) || 2))}
-                  className="w-20 ml-2 p-2 border rounded border-[var(--color-border)] bg-white"
+                  className="w-20 ml-2 p-2 border rounded border-[var(--color-border)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
                 />
               </div>
             </div>
@@ -334,9 +338,9 @@ export default function ChiSquarePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr>
-                    <th className="p-3 border-b border-r border-[var(--color-border)] bg-[var(--color-accent-blue)]"></th>
+                    <th className="p-3 border-b border-r border-[var(--color-border)] bg-gray-50"></th>
                     {Array.from({ length: tableCols }, (_, c) => (
-                      <th key={c} className="p-3 border-b border-[var(--color-border)] bg-[var(--color-accent-blue)] font-medium">
+                      <th key={c} className="p-3 border-b border-[var(--color-border)] bg-gray-50 font-medium text-[var(--color-ink-light)]">
                         Col {c + 1}
                       </th>
                     ))}
@@ -345,14 +349,14 @@ export default function ChiSquarePage() {
                 <tbody>
                   {tableData.map((row, r) => (
                     <tr key={r}>
-                      <td className="p-3 border-r border-b border-[var(--color-border)] bg-[var(--color-accent-blue)] font-medium w-24">
+                      <td className="p-3 border-r border-b border-[var(--color-border)] bg-gray-50 font-medium w-24 text-[var(--color-ink-light)]">
                         Row {r + 1}
                       </td>
                       {row.map((cell, c) => (
                         <td key={c} className="p-2 border-b border-[var(--color-border)] bg-white">
                           <input
                             type="number"
-                            className="w-full p-2 text-center border rounded border-[var(--color-border)] focus:border-[var(--color-ink)] outline-none transition-colors"
+                            className="w-full p-2 text-center border rounded border-[var(--color-border)] focus:border-[var(--color-dot-mint)] focus:ring-1 focus:ring-[var(--color-dot-mint)] outline-none transition-colors"
                             value={cell}
                             onChange={(e) => setCell(r, c, e.target.value)}
                           />
@@ -370,21 +374,21 @@ export default function ChiSquarePage() {
               </p>
             )}
             
-            <Button onClick={runIndependence}>Run Test of Independence</Button>
+            <Button tone="mint" onClick={runIndependence}>Run Test of Independence</Button>
 
             {indepResult && (
-              <div className="mt-8 fade-in">
+              <div className="mt-8 fade-in space-y-6" style={{ animationDelay: "150ms" }}>
                 <h3 
-                  className="text-2xl font-medium mb-6"
+                  className="text-2xl font-medium"
                   style={{ fontFamily: "var(--font-serif)" }}
                 >
                   Results
                 </h3>
 
-                <Card className="mb-6 bg-[var(--color-accent-peach)]">
+                <Card className="bg-[var(--color-accent-mint)] border-none">
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
-                      <div className="text-3xl font-bold text-[var(--color-dot-peach)]">
+                      <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
                         {formatNum(indepResult.value.chiSquare)}
                       </div>
                       <div className="text-xs text-[var(--color-ink-light)]">χ²</div>
@@ -404,24 +408,24 @@ export default function ChiSquarePage() {
                   </div>
                 </Card>
 
-                <Card className="mb-6">
+                <Card className="border border-gray-100 shadow-sm">
                   <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                     Step-by-Step Working
                   </h4>
                   <div className="space-y-4">
                     {indepResult.steps.map((step) => (
-                      <div key={step.id} className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]">
-                        <h5 className="font-semibold text-sm mb-2">{step.title}</h5>
+                      <div key={step.id} className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm">
+                        <h5 className="font-semibold text-base mb-2">{step.title}</h5>
                         {step.description && (
-                          <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                          <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
                             {step.description}
                           </pre>
                         )}
                         {step.formula && <MathBlock formula={step.formula} className="my-2" />}
                         {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
-                        {step.note && <p className="text-xs text-[var(--color-ink-light)] mb-1">{step.note}</p>}
+                        {step.note && <p className="text-sm text-[var(--color-ink-light)] mb-1">{step.note}</p>}
                         {step.result && (
-                          <p className="font-bold text-[var(--color-dot-peach)] mt-1">= {step.result}</p>
+                          <p className="font-bold text-[var(--color-dot-mint)] mt-1">= {step.result}</p>
                         )}
                       </div>
                     ))}

@@ -31,7 +31,7 @@ test.describe("Landing Page", () => {
   test("links point to correct routes", async ({ page }) => {
     await page.goto("/");
     
-    await expect(page.getByRole("link", { name: "Binomial" })).toHaveAttribute("href", "/stats-stuff/binomial");
-    await expect(page.getByRole("link", { name: "ANOVA" })).toHaveAttribute("href", "/stats-stuff/anova");
+    await expect(page.getByRole("link", { name: "Binomial" })).toHaveAttribute("href", "/binomial");
+    await expect(page.getByRole("link", { name: "ANOVA" })).toHaveAttribute("href", "/anova");
   });
 });

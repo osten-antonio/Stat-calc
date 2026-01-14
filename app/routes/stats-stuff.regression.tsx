@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/stats-stuff.regression";
 
@@ -140,27 +140,31 @@ export default function RegressionPage() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-12">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-8 fade-in">
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
+      <div className="max-w-5xl mx-auto">
+        <header className="mb-12 fade-in">
           <Link
             to="/"
-            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-blue)] transition-colors mb-4 inline-block"
           >
             ← Back to Home
           </Link>
+
           <h1
-            className="text-4xl font-medium tracking-tight mb-2"
+            className="text-5xl font-medium tracking-tight mb-4"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             Linear Regression
           </h1>
-          <p className="text-[var(--color-ink-light)]">
+          <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
             Calculate slope, intercept, correlation (r), R-squared, and test for significance.
           </p>
         </header>
 
-        <Card className="mb-8 bg-[var(--color-accent-blue)] fade-in" style={{ animationDelay: "50ms" }}>
+        <Card
+          className="mb-10 bg-[var(--color-accent-blue)] border-none fade-in"
+          style={{ animationDelay: "50ms" }}
+        >
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <MathBlock formula="\\hat{y} = a + bx" />
@@ -173,7 +177,7 @@ export default function RegressionPage() {
           </div>
         </Card>
 
-        <section className="mb-8 fade-in" style={{ animationDelay: "100ms" }}>
+        <section className="mb-12 fade-in" style={{ animationDelay: "100ms" }}>
           <div className="flex items-center gap-4 mb-4">
             <Button variant="secondary" onClick={loadSampleData}>
               Load Sample Data
@@ -183,13 +187,18 @@ export default function RegressionPage() {
             </span>
           </div>
 
-          <DataTableInput
-            label="Enter X and Y Data"
-            helpText="X in first column, Y in second column. Paste from Excel/Sheets."
-            value={tableData}
-            onChange={setTableData}
-            minRows={5}
-          />
+          <Card className="p-4 border border-gray-100 shadow-sm">
+            <DataTableInput
+              label="Enter X and Y Data"
+              helpText="X in first column, Y in second column. Paste from Excel/Sheets."
+              value={tableData}
+              onChange={setTableData}
+              minRows={5}
+              tone="blue"
+              controlsPlacement="bottom"
+              maxColumns={2}
+            />
+          </Card>
 
           {error && (
             <p className="text-red-600 mt-4 p-3 bg-red-50 rounded-lg border border-red-200">
@@ -197,24 +206,24 @@ export default function RegressionPage() {
             </p>
           )}
 
-          <Button className="mt-4" onClick={runRegression}>
+          <Button className="mt-6 w-full md:w-auto" tone="blue" onClick={runRegression}>
             Calculate Regression
           </Button>
         </section>
 
         {result && (
-          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+          <section className="fade-in space-y-10" style={{ animationDelay: "150ms" }}>
             <h2
-              className="text-2xl font-medium mb-6"
+              className="text-3xl font-medium"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               Results
             </h2>
 
-            <Card className="mb-6 bg-[var(--color-accent-mint)]">
+            <Card className="bg-[var(--color-accent-blue)] border-none">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>
-                  <div className="text-3xl font-bold text-[var(--color-dot-mint)]">
+                  <div className="text-3xl font-bold text-[var(--color-dot-blue)]">
                     {formatNum(result.value.slope)}
                   </div>
                   <div className="text-xs text-[var(--color-ink-light)]">Slope (b)</div>
@@ -235,9 +244,10 @@ export default function RegressionPage() {
                   <div className="text-3xl font-bold text-[var(--color-ink)]">
                     {formatNum(result.value.rSquared)}
                   </div>
-                  <div className="text-xs text-[var(--color-ink-light)]">
-                    r² ({formatNum(result.value.rSquared * 100, 1)}%)
-                  </div>
+                   <div className="text-xs text-[var(--color-ink-light)]">
+                     r² ({formatNum(result.value.rSquared * 100, 1)}%)
+                   </div>
+
                 </div>
               </div>
               <div className="mt-6 text-center">
@@ -247,26 +257,27 @@ export default function RegressionPage() {
               </div>
             </Card>
 
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <Card className="bg-[var(--color-accent-peach)]">
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="bg-white border border-gray-100 shadow-sm">
                 <h3 className="font-semibold mb-3" style={{ fontFamily: "var(--font-serif)" }}>
                   Statistical Significance
                 </h3>
                 <div className="space-y-2 text-sm">
                   <p>t-statistic = {formatNum(result.value.tStatistic)}</p>
                   <p>df = {result.value.df}</p>
-                  {result.value.tCritical && (
-                    <p>t-critical = ±{formatNum(result.value.tCritical)}</p>
-                  )}
-                  <p className={`font-semibold ${result.value.isSignificant ? "text-green-700" : "text-orange-700"}`}>
-                    {result.value.isSignificant
-                      ? "✓ Statistically significant at α = 0.05"
-                      : "✗ Not statistically significant at α = 0.05"}
-                  </p>
+                   {result.value.tCritical && (
+                     <p>t-critical = ±{formatNum(result.value.tCritical)}</p>
+                   )}
+                   <p className={`font-semibold ${result.value.isSignificant ? "text-green-700" : "text-orange-700"}`}>
+                     {result.value.isSignificant
+                       ? "Statistically significant at α = 0.05"
+                       : "Not statistically significant at α = 0.05"}
+                   </p>
+
                 </div>
               </Card>
 
-              <Card className="bg-[var(--color-accent-lavender)]">
+              <Card className="bg-white border border-gray-100 shadow-sm">
                 <h3 className="font-semibold mb-3" style={{ fontFamily: "var(--font-serif)" }}>
                   Predict Y for X
                 </h3>
@@ -281,20 +292,23 @@ export default function RegressionPage() {
                     }}
                     placeholder="Enter X"
                   />
-                  <Button onClick={predict}>Predict</Button>
+                  <Button tone="blue" onClick={predict}>
+                    Predict
+                  </Button>
                 </div>
                 {predictedY !== null && (
-                  <div className="mt-4 p-3 bg-white rounded-lg">
-                    <p className="text-sm mb-1">{predictedY.equation}</p>
-                    <p className="text-lg font-bold">
-                      ŷ = <span className="text-[var(--color-dot-lavender)]">{formatNum(predictedY.yPred)}</span>
-                    </p>
+                  <div className="mt-4 p-4 bg-[var(--color-accent-blue)] rounded-lg border-none">
+                    <p className="text-sm mb-1 text-[var(--color-ink)]">{predictedY.equation}</p>
+                     <p className="text-lg font-bold">
+                       ŷ = <span className="text-[var(--color-dot-blue)]">{formatNum(predictedY.yPred)}</span>
+                     </p>
+
                   </div>
                 )}
               </Card>
             </div>
 
-            <Card className="mb-6">
+            <Card className="border border-gray-100 shadow-sm">
               <h3
                 className="font-semibold mb-4"
                 style={{ fontFamily: "var(--font-serif)" }}
@@ -302,25 +316,26 @@ export default function RegressionPage() {
                 Sum of Squares Breakdown
               </h3>
               <div className="grid grid-cols-3 gap-4 text-center">
-                <div className="p-3 bg-[var(--color-accent-blue)] rounded-lg">
+                <div className="p-4 bg-[var(--color-accent-blue)] rounded-lg">
                   <div className="text-xl font-bold">{formatNum(result.value.sst)}</div>
                   <div className="text-xs text-[var(--color-ink-light)]">SST (Total)</div>
                 </div>
-                <div className="p-3 bg-[var(--color-accent-mint)] rounded-lg">
+                <div className="p-4 bg-[var(--color-accent-blue)] rounded-lg">
                   <div className="text-xl font-bold">{formatNum(result.value.ssr)}</div>
                   <div className="text-xs text-[var(--color-ink-light)]">SSR (Regression)</div>
                 </div>
-                <div className="p-3 bg-[var(--color-accent-pink)] rounded-lg">
+                <div className="p-4 bg-[var(--color-accent-blue)] rounded-lg">
                   <div className="text-xl font-bold">{formatNum(result.value.sse)}</div>
                   <div className="text-xs text-[var(--color-ink-light)]">SSE (Error)</div>
                 </div>
               </div>
-              <p className="text-xs text-center text-[var(--color-ink-light)] mt-3">
-                SST = SSR + SSE → {formatNum(result.value.sst)} = {formatNum(result.value.ssr)} + {formatNum(result.value.sse)}
-              </p>
+                   <p className="text-xs text-center text-[var(--color-ink-light)] mt-3">
+                     SST = SSR + SSE  ⇒ {formatNum(result.value.sst)} = {formatNum(result.value.ssr)} + {formatNum(result.value.sse)}
+                   </p>
+
             </Card>
 
-            <Card className="mb-6">
+            <Card className="border border-gray-100 shadow-sm">
               <h3
                 className="font-semibold mb-4"
                 style={{ fontFamily: "var(--font-serif)" }}
@@ -331,20 +346,20 @@ export default function RegressionPage() {
                 {result.steps.map((step, idx) => (
                   <div
                     key={step.id}
-                    className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                    className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm"
                   >
-                    <h4 className="font-semibold text-sm mb-2">
+                    <h4 className="font-semibold text-base mb-2">
                       {step.title}
                     </h4>
                     {step.description && (
-                      <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                      <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
                         {step.description}
                       </pre>
                     )}
                     {step.formula && <MathBlock formula={step.formula} className="my-2" />}
                     {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
                     {step.note && (
-                      <p className="text-xs text-[var(--color-ink-light)] mb-1">
+                      <p className="text-sm text-[var(--color-ink-light)] mb-1">
                         {step.note.includes("\\") ? <MathBlock formula={step.note} /> : step.note}
                       </p>
                     )}
@@ -365,3 +380,4 @@ export default function RegressionPage() {
     </main>
   );
 }
+

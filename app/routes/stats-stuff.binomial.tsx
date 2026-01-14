@@ -14,7 +14,11 @@ import type { CalculationResult } from "~/lib/types/calculation";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Stats Stuff | Binomial Distribution" },
-    { name: "description", content: "Calculate binomial probability P(X = k) with step-by-step workings." },
+    {
+      name: "description",
+      content:
+        "Calculate binomial probability P(X = k) with step-by-step workings.",
+    },
   ];
 }
 
@@ -23,7 +27,9 @@ function formatNum(num: number, decimals = 6): string {
   return num.toFixed(decimals).replace(/\.?0+$/, "");
 }
 
-function resultToExamAnswer(calc: CalculationResult<BinomialResult>): ExamAnswer {
+function resultToExamAnswer(
+  calc: CalculationResult<BinomialResult>,
+): ExamAnswer {
   return {
     title: "Binomial Probability Calculation",
     sections: calc.steps.map((step) => ({
@@ -44,7 +50,8 @@ export default function BinomialCalculator() {
   const [n, setN] = useState("");
   const [k, setK] = useState("");
   const [p, setP] = useState("");
-  const [result, setResult] = useState<CalculationResult<BinomialResult> | null>(null);
+  const [result, setResult] =
+    useState<CalculationResult<BinomialResult> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function calculate() {
@@ -56,11 +63,15 @@ export default function BinomialCalculator() {
     const pVal = parseFloat(p);
 
     if (isNaN(nVal) || isNaN(kVal)) {
-      setError("n and k must be valid integers. Try using numbers instead of hopes and dreams.");
+      setError(
+        "n and k must be valid integers. Try using numbers instead of hopes and dreams.",
+      );
       return;
     }
     if (isNaN(pVal)) {
-      setError("p must be a valid probability (0 to 1). Not 'maybe' or 'probably'.");
+      setError(
+        "p must be a valid probability (0 to 1). Not 'maybe' or 'probably'.",
+      );
       return;
     }
     if (nVal < 0 || kVal < 0) {
@@ -81,34 +92,39 @@ export default function BinomialCalculator() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-12">
+    <main className="min-h-screen bg-white px-6 py-12 font-sans text-[var(--color-ink)]">
       <div className="max-w-4xl mx-auto">
-        <header className="mb-8 fade-in">
+        <header className="mb-12 fade-in">
           <Link
             to="/"
-            className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
+            className="text-sm font-medium text-[var(--color-ink-light)] hover:text-[var(--color-dot-pink)] transition-colors mb-4 inline-block"
           >
             ← Back to Home
           </Link>
+
           <h1
-            className="text-4xl font-medium tracking-tight mb-2"
+            className="text-5xl font-medium tracking-tight mb-4"
             style={{ fontFamily: "var(--font-serif)" }}
           >
             Binomial Distribution
           </h1>
-          <p className="text-[var(--color-ink-light)]">
-            Calculate the probability of exactly k successes in n independent trials.
+          <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
+            Calculate the probability of exactly k successes in n independent
+            trials.
           </p>
         </header>
 
-        <Card className="mb-8 bg-[var(--color-accent-pink)] fade-in" style={{ animationDelay: "50ms" }}>
+        <Card
+          className="mb-10 bg-[var(--color-accent-pink)] border-none fade-in"
+          style={{ animationDelay: "50ms" }}
+        >
           <MathBlock formula="P(X = k) = C(n, k) \cdot p^k \cdot (1-p)^{n-k}" />
           <p className="text-center text-xs text-[var(--color-ink-light)] mt-2">
             n = trials, k = successes, p = probability of success
           </p>
         </Card>
 
-        <section className="mb-8 fade-in" style={{ animationDelay: "100ms" }}>
+        <section className="mb-12 fade-in" style={{ animationDelay: "100ms" }}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
               label="n (trials)"
@@ -144,26 +160,36 @@ export default function BinomialCalculator() {
             </p>
           )}
 
-          <Button className="mt-4" onClick={calculate}>
+          <Button
+            className="mt-6 w-full md:w-auto"
+            tone="pink"
+            onClick={calculate}
+          >
             Calculate P(X = k)
           </Button>
         </section>
 
         {result && (
-          <section className="fade-in" style={{ animationDelay: "150ms" }}>
+          <section
+            className="fade-in space-y-8"
+            style={{ animationDelay: "150ms" }}
+          >
             <h2
-              className="text-2xl font-medium mb-6"
+              className="text-3xl font-medium"
               style={{ fontFamily: "var(--font-serif)" }}
             >
               Step-by-Step Working
             </h2>
 
-            <Card className="mb-6 bg-[var(--color-accent-mint)]">
-              <h3 className="font-semibold mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+            <Card className="mb-2 bg-[var(--color-accent-pink)] border-none">
+              <h3
+                className="font-semibold mb-2 opacity-75"
+                style={{ fontFamily: "var(--font-serif)" }}
+              >
                 Result
               </h3>
               <div className="text-center">
-                <div className="text-4xl font-bold text-[var(--color-dot-mint)] mb-1">
+                <div className="text-5xl font-bold text-[var(--color-dot-pink)] mb-2">
                   {formatNum(result.value.probability)}
                 </div>
                 <div className="text-sm text-[var(--color-ink-light)]">
@@ -172,27 +198,31 @@ export default function BinomialCalculator() {
               </div>
             </Card>
 
-            <div className="space-y-4 mb-6">
+            <div className="space-y-4">
               {result.steps.map((step) => (
                 <div
                   key={step.id}
-                  className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)]"
+                  className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm"
                 >
-                  <h4 className="font-semibold text-sm mb-2">{step.title}</h4>
+                  <h4 className="font-semibold text-lg mb-3">{step.title}</h4>
                   {step.description && (
-                    <pre className="text-xs whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
+                    <pre className="text-sm whitespace-pre-wrap font-sans text-[var(--color-ink-light)] mb-2">
                       {step.description}
                     </pre>
                   )}
-                  {step.formula && <MathBlock formula={step.formula} className="my-2" />}
-                  {step.calculation && <MathBlock formula={step.calculation} className="my-2" />}
+                  {step.formula && (
+                    <MathBlock formula={step.formula} className="my-2" />
+                  )}
+                  {step.calculation && (
+                    <MathBlock formula={step.calculation} className="my-2" />
+                  )}
                   {step.note && (
-                    <p className="text-xs text-[var(--color-ink-light)] mt-1">
+                    <p className="text-sm text-[var(--color-ink-light)] mt-1">
                       {step.note}
                     </p>
                   )}
                   {step.result && (
-                    <p className="text-lg font-bold mt-2 text-[var(--color-dot-blue)]">
+                    <p className="text-xl font-bold mt-3 text-[var(--color-dot-pink)]">
                       = {step.result}
                     </p>
                   )}

@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { calculateOneWayAnova, type OneWayResult } from "./utils";
+import { Button } from "~/components/ui/Button";
+import { Card } from "~/components/ui/Card";
+import { MathBlock } from "~/components/math/MathBlock";
 
 export default function OneWay() {
     const [groups, setGroups] = useState<string[]>(["", ""]); // Start with 2 groups
@@ -49,257 +52,206 @@ export default function OneWay() {
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+        <div className="space-y-6 animate-in fade-in duration-500">
+            <Card className="bg-[var(--color-accent-mint)] border-none">
+                <h2
+                    className="text-xl font-medium mb-2"
+                    style={{ fontFamily: "var(--font-serif)" }}
+                >
                     One-Way ANOVA
                 </h2>
+                <MathBlock formula="F = \frac{\text{MS}_{\text{between}}}{\text{MS}_{\text{within}}}" />
+                <p className="text-sm text-[var(--color-ink-light)] mt-2">
+                    Tests whether the means of three or more independent groups are significantly different.
+                </p>
+            </Card>
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {groups.map((group, index) => (
-                        <div key={index} className="relative group">
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {groups.map((group, index) => (
+                    <div key={index} className="relative group">
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="text-sm font-medium text-[var(--color-ink)]">
                                 Group {index + 1} Data
                             </label>
-                            <textarea
-                                value={group}
-                                onChange={(e) => handleGroupChange(index, e.target.value)}
-                                placeholder="10, 12, 15..."
-                                className="w-full h-32 p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 transition-all resize-none font-mono text-sm"
-                            />
                             {groups.length > 2 && (
                                 <button
                                     onClick={() => removeGroup(index)}
-                                    className="absolute top-0 right-0 p-1 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    title="Remove Group"
+                                    className="text-xs text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                    </svg>
+                                    Remove
                                 </button>
                             )}
                         </div>
-                    ))}
-
-                    <div className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 transition-colors cursor-pointer group" onClick={addGroup}>
-                        <div className="text-center">
-                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 group-hover:bg-blue-200 dark:group-hover:bg-blue-800 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                </svg>
-                            </div>
-                            <span className="mt-2 block text-sm font-medium text-gray-900 dark:text-gray-100">Add Group</span>
-                        </div>
+                        <textarea
+                            value={group}
+                            onChange={(e) => handleGroupChange(index, e.target.value)}
+                            placeholder="10, 12, 15..."
+                            className="w-full h-32 p-3 rounded-xl border border-gray-200 bg-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)] transition-all resize-none shadow-sm"
+                        />
                     </div>
-                </div>
+                ))}
 
-                <div className="mt-8 flex justify-end">
-                    <button
-                        onClick={handleCalculate}
-                        className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg transform active:scale-95 transition-all text-sm uppercase tracking-wide"
-                    >
-                        Calculate F-Statistic
-                    </button>
-                </div>
-
-                {error && (
-                    <div className="mt-6 p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 rounded-lg border border-red-200 dark:border-red-800 animate-pulse">
-                        {error}
+                <div
+                    className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-[var(--color-dot-mint)] transition-colors cursor-pointer group bg-gray-50/50"
+                    onClick={addGroup}
+                >
+                    <div className="h-10 w-10 rounded-full bg-white shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                        <span className="text-xl text-[var(--color-dot-mint)]">+</span>
                     </div>
-                )}
+                    <span className="text-sm font-medium text-[var(--color-ink-light)] group-hover:text-[var(--color-dot-mint)] transition-colors">Add Group</span>
+                </div>
+            </div>
+
+            {error && (
+                <p className="text-red-600 mb-4 p-3 bg-red-50 rounded-lg border border-red-200 text-sm">
+                    {error}
+                </p>
+            )}
+
+            <div className="flex justify-end">
+                <Button tone="mint" onClick={handleCalculate} className="w-full md:w-auto">
+                    Calculate F-Statistic
+                </Button>
             </div>
 
             {result && (
-                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 mt-8">
+                    <h3
+                        className="text-2xl font-medium"
+                        style={{ fontFamily: "var(--font-serif)" }}
+                    >
+                        Results
+                    </h3>
+
                     {/* Summary Table */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white border-b pb-2 dark:border-gray-700 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
+                    <Card className="bg-[var(--color-accent-mint)] border-none">
+                        <h4 className="font-semibold mb-4 flex items-center gap-2 text-[var(--color-ink)]">
                             ANOVA Summary Table
-                        </h3>
+                        </h4>
                         <div className="overflow-x-auto">
-                            <table className="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <table className="min-w-full text-sm text-left">
+                                <thead className="text-xs uppercase text-[var(--color-ink-light)] border-b border-[var(--color-ink-light)]/10">
                                     <tr>
-                                        <th scope="col" className="px-6 py-3">Source of Variation</th>
-                                        <th scope="col" className="px-6 py-3">SS</th>
-                                        <th scope="col" className="px-6 py-3">df</th>
-                                        <th scope="col" className="px-6 py-3">MS</th>
-                                        <th scope="col" className="px-6 py-3">F</th>
+                                        <th className="px-4 py-2">Source</th>
+                                        <th className="px-4 py-2">SS</th>
+                                        <th className="px-4 py-2">df</th>
+                                        <th className="px-4 py-2">MS</th>
+                                        <th className="px-4 py-2">F</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                            Between Groups
-                                        </td>
-                                        <td className="px-6 py-4">{result.ssBetween.toFixed(4)}</td>
-                                        <td className="px-6 py-4">{result.dfBetween}</td>
-                                        <td className="px-6 py-4">{result.msBetween.toFixed(4)}</td>
-                                        <td className="px-6 py-4 font-bold text-blue-600 dark:text-blue-400">{result.fStat.toFixed(4)}</td>
+                                <tbody className="text-[var(--color-ink)]">
+                                    <tr className="border-b border-[var(--color-ink-light)]/10">
+                                        <td className="px-4 py-3 font-medium">Between Groups</td>
+                                        <td className="px-4 py-3">{result.ssBetween.toFixed(4)}</td>
+                                        <td className="px-4 py-3">{result.dfBetween}</td>
+                                        <td className="px-4 py-3">{result.msBetween.toFixed(4)}</td>
+                                        <td className="px-4 py-3 font-bold text-[var(--color-dot-mint)]">{result.fStat.toFixed(4)}</td>
                                     </tr>
-                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                                            Within Groups (Error)
-                                        </td>
-                                        <td className="px-6 py-4">{result.ssWithin.toFixed(4)}</td>
-                                        <td className="px-6 py-4">{result.dfWithin}</td>
-                                        <td className="px-6 py-4">{result.msWithin.toFixed(4)}</td>
-                                        <td className="px-6 py-4">-</td>
+                                    <tr className="border-b border-[var(--color-ink-light)]/10">
+                                        <td className="px-4 py-3 font-medium">Within Groups</td>
+                                        <td className="px-4 py-3">{result.ssWithin.toFixed(4)}</td>
+                                        <td className="px-4 py-3">{result.dfWithin}</td>
+                                        <td className="px-4 py-3">{result.msWithin.toFixed(4)}</td>
+                                        <td className="px-4 py-3">-</td>
                                     </tr>
-                                    <tr className="bg-gray-50 border-b dark:bg-gray-700 dark:border-gray-600">
-                                        <td className="px-6 py-4 font-bold text-gray-900 dark:text-white whitespace-nowrap">
-                                            Total
-                                        </td>
-                                        <td className="px-6 py-4 font-bold">{result.totalSS.toFixed(4)}</td>
-                                        <td className="px-6 py-4 font-bold">{result.totalDf}</td>
-                                        <td className="px-6 py-4"></td>
-                                        <td className="px-6 py-4"></td>
+                                    <tr>
+                                        <td className="px-4 py-3 font-bold">Total</td>
+                                        <td className="px-4 py-3 font-bold">{result.totalSS.toFixed(4)}</td>
+                                        <td className="px-4 py-3 font-bold">{result.totalDf}</td>
+                                        <td className="px-4 py-3"></td>
+                                        <td className="px-4 py-3"></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </Card>
 
-                    {/* Detailed Working (Deviation Method) */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 overflow-hidden">
-                        <h3 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white border-b pb-2 dark:border-gray-700 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                            </svg>
-                            Step-by-Step Calculation (Deviation Method)
-                        </h3>
+                    {/* Detailed Working */}
+                    <Card className="border border-gray-100 shadow-sm">
+                        <h4
+                            className="font-semibold mb-6 text-lg"
+                            style={{ fontFamily: "var(--font-serif)" }}
+                        >
+                            Step-by-Step Calculation
+                        </h4>
 
-                        {/* Step 1: Means */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 1: Group Means and Overall Mean</h4>
-
-                            <div className="space-y-4 text-sm font-mono bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-                                <div>
-                                    <div className="font-bold text-gray-800 dark:text-gray-200 mb-1">Calculate the grand mean (X̄):</div>
-                                    <div>Sum = {result.grandSum.toFixed(2)}</div>
-                                    <div>N = {result.grandN}</div>
-                                    <div className="mt-1">
-                                        X̄ = {result.grandSum.toFixed(2)} / {result.grandN} = <strong>{(result.grandSum / result.grandN).toFixed(4)}</strong>
+                        <div className="space-y-8">
+                            {/* Step 1: Means */}
+                            <div>
+                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 1: Group Means and Overall Mean</h5>
+                                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 text-sm font-mono text-[var(--color-ink-light)] space-y-2">
+                                    <div>
+                                        <strong>Grand Mean (X̄):</strong> {result.grandSum.toFixed(2)} / {result.grandN} = <strong>{(result.grandSum / result.grandN).toFixed(4)}</strong>
                                     </div>
-                                </div>
-
-                                <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
-                                    <div className="font-bold text-gray-800 dark:text-gray-200 mb-1">Calculate the group means:</div>
+                                    <div className="h-px bg-gray-200 my-2" />
                                     {result.groupStats.map((g, i) => (
-                                        <div key={i} className="mb-2">
-                                            Mean_Group{i + 1} = {g.sum.toFixed(2)} / {g.n} = <strong>{g.mean.toFixed(4)}</strong>
+                                        <div key={i}>
+                                            Group {i + 1} Mean: {g.sum.toFixed(2)} / {g.n} = <strong>{g.mean.toFixed(4)}</strong>
                                         </div>
                                     ))}
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Step 2: Sum of Squares */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 2: Sum of Squares</h4>
-
-                            {/* SS Total */}
-                            <div className="mb-4">
-                                <h5 className="font-semibold text-gray-800 dark:text-gray-200">Total Sum of Squares (SStotal)</h5>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Formula: ∑(X - GrandMean)²</p>
-                                <div className="p-3 bg-white dark:bg-gray-800 border rounded font-mono text-sm overflow-x-auto">
-                                    {/* Show first 3 deviations for illustration */}
-                                    {groups.flat().slice(0, 3).map((val, idx) => (
-                                        <span key={idx}>({val} - {(result.grandSum / result.grandN).toFixed(2)})² + </span>
-                                    ))}
-                                    <span>...</span>
-                                    <div className="mt-2 font-bold text-gray-800 dark:text-blue-400">
-                                        = {result.totalSS.toFixed(4)}
+                            {/* Step 2: Sum of Squares */}
+                            <div>
+                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 2: Sum of Squares</h5>
+                                <div className="space-y-4">
+                                    <div>
+                                        <div className="text-sm font-medium mb-1">SS Total</div>
+                                        <MathBlock formula={`\\sum (X - \\bar{X}_{grand})^2 = ${result.totalSS.toFixed(4)}`} />
+                                    </div>
+                                    <div>
+                                        <div className="text-sm font-medium mb-1">SS Between</div>
+                                        <MathBlock formula={`\\sum n_i (\\bar{X}_i - \\bar{X}_{grand})^2 = ${result.ssBetween.toFixed(4)}`} />
+                                    </div>
+                                    <div>
+                                        <div className="text-sm font-medium mb-1">SS Within</div>
+                                        <MathBlock formula={`SS_{total} - SS_{between} = ${result.ssWithin.toFixed(4)}`} />
                                     </div>
                                 </div>
                             </div>
 
-                            {/* SS Between */}
-                            <div className="mb-4">
-                                <h5 className="font-semibold text-gray-800 dark:text-gray-200">Between-Groups Sum of Squares (SSbetween)</h5>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Formula: ∑ n_group * (Mean_group - GrandMean)²</p>
-                                <div className="p-3 bg-white dark:bg-gray-800 border rounded font-mono text-sm overflow-x-auto">
-                                    {result.groupStats.map((g, i) => (
-                                        <span key={i}>
-                                            {g.n} * ({g.mean.toFixed(2)} - {(result.grandSum / result.grandN).toFixed(2)})²
-                                            {i < result.groupStats.length - 1 ? " + " : ""}
-                                        </span>
-                                    ))}
-                                    <div className="mt-2 font-bold text-gray-800 dark:text-blue-400">
-                                        = {result.ssBetween.toFixed(4)}
+                            {/* Step 3: MS and F */}
+                            <div>
+                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 3: Mean Squares & F-Statistic</h5>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="p-4 rounded-xl border border-gray-100 bg-white">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-1">Degrees of Freedom</div>
+                                        <div className="space-y-1 text-sm">
+                                            <div>df_between = {result.groupStats.length} - 1 = <strong>{result.dfBetween}</strong></div>
+                                            <div>df_within = {result.grandN} - {result.groupStats.length} = <strong>{result.dfWithin}</strong></div>
+                                        </div>
+                                    </div>
+                                    <div className="p-4 rounded-xl border border-gray-100 bg-white">
+                                        <div className="text-xs text-[var(--color-ink-light)] uppercase tracking-wide mb-1">Mean Squares</div>
+                                        <div className="space-y-1 text-sm">
+                                            <div>MS_between = {result.ssBetween.toFixed(2)} / {result.dfBetween} = <strong>{result.msBetween.toFixed(4)}</strong></div>
+                                            <div>MS_within = {result.ssWithin.toFixed(2)} / {result.dfWithin} = <strong>{result.msWithin.toFixed(4)}</strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-4 p-4 bg-[var(--color-accent-mint)]/30 rounded-xl text-center">
+                                    <div className="text-sm text-[var(--color-ink-light)]">F = MS_between / MS_within</div>
+                                    <div className="text-2xl font-bold text-[var(--color-dot-mint)] mt-1">
+                                        {result.fStat.toFixed(4)}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* SS Within */}
-                            <div className="mb-4">
-                                <h5 className="font-semibold text-gray-800 dark:text-gray-200">Within-Groups Sum of Squares (SSwithin)</h5>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Formula: SStotal - SSbetween</p>
-                                <div className="p-3 bg-white dark:bg-gray-800 border rounded font-mono text-sm">
-                                    {result.totalSS.toFixed(4)} - {result.ssBetween.toFixed(4)}
-                                    <div className="mt-2 font-bold text-gray-800 dark:text-blue-400">
-                                        = {result.ssWithin.toFixed(4)}
-                                    </div>
+                            {/* Step 4: Decision */}
+                            <div>
+                                <h5 className="font-medium text-[var(--color-ink)] mb-3">Step 4: Decision Rule</h5>
+                                <div className="p-4 rounded-xl border border-l-4 border-l-[var(--color-dot-mint)] border-gray-100 bg-white text-sm">
+                                    <p className="mb-2">
+                                        Compare F = <strong>{result.fStat.toFixed(4)}</strong> with F_critical (df1={result.dfBetween}, df2={result.dfWithin}) at your chosen α level.
+                                    </p>
+                                    <p className="text-[var(--color-ink-light)]">
+                                        If F {'>'} F_critical, reject the null hypothesis (at least one group mean is different).
+                                    </p>
                                 </div>
                             </div>
                         </div>
-
-                        {/* Step 3: MS and F */}
-                        <div className="mb-8">
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 3: Calculate Mean Squares and F-Statistic</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="p-3 border rounded bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                                    <strong>Degrees of Freedom (df)</strong>
-                                    <ul className="list-disc list-inside mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                        <li>df_between = k - 1 = {result.groupStats.length} - 1 = {result.dfBetween}</li>
-                                        <li>df_within = N - k = {result.grandN} - {result.groupStats.length} = {result.dfWithin}</li>
-                                    </ul>
-                                </div>
-                                <div className="p-3 border rounded bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                                    <strong>Mean Squares (MS)</strong>
-                                    <ul className="list-disc list-inside mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                        <li>MS_between = {result.ssBetween.toFixed(2)} / {result.dfBetween} = {result.msBetween.toFixed(4)}</li>
-                                        <li>MS_within = {result.ssWithin.toFixed(2)} / {result.dfWithin} = {result.msWithin.toFixed(4)}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className="mt-4 p-4 border rounded-lg bg-blue-50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/50">
-                                <div className="text-center">
-                                    <span className="font-semibold text-gray-700 dark:text-gray-300">F-Statistic = MS_between / MS_within</span>
-                                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-2">
-                                        {result.msBetween.toFixed(2)} / {result.msWithin.toFixed(2)} ≈ {result.fStat.toFixed(4)}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Step 4: Decision */}
-                        <div>
-                            <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Step 4: Decision</h4>
-                            <div className="text-sm text-gray-600 dark:text-gray-400 border-l-4 border-purple-500 pl-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-r">
-                                <p className="mb-2"><strong>Critical F-Value:</strong></p>
-                                <p className="mb-2">
-                                    Look up the critical value in an F-distribution table with:
-                                    <br />
-                                    • df_between (numerator) = <strong>{result.dfBetween}</strong>
-                                    <br />
-                                    • df_within (denominator) = <strong>{result.dfWithin}</strong>
-                                    <br />
-                                    • α (significance level) usually = <strong>0.05</strong>
-                                </p>
-                                <p>
-                                    <strong>Compare F:</strong>
-                                    <br />
-                                    If F ({result.fStat.toFixed(4)}) &gt; F_critical, reject the null hypothesis (means are different).
-                                    <br />
-                                    If F ({result.fStat.toFixed(4)}) &le; F_critical, fail to reject (no significant difference).
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    </Card>
                 </div>
             )}
         </div>
