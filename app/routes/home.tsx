@@ -16,6 +16,7 @@ export default function Home() {
         <a href="/chi-square" className="text-blue-600 hover:underline font-bold">Chi-Square</a>
         <a href="/regression" className="text-blue-600 hover:underline font-bold">Regression Analysis</a>
         <a href="/probability" className="text-blue-600 hover:underline font-bold">Probability & Stats</a>
+        <a href="/descriptive" className="text-blue-600 hover:underline font-bold">Descriptive Stats</a>
       </div>
       <Welcome />
     </>
