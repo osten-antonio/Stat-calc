@@ -14,6 +14,7 @@ export interface CalculationResult<T = number> {
   steps: CalculationStep[];
   formula: string;
   inputs: Record<string, number | string>;
+  notes?: string[];
 }
 
 export interface InputFieldConfig {
