@@ -70,10 +70,10 @@ export default function PermutationsCalculator() {
       <div className="max-w-4xl mx-auto">
         <header className="mb-8 fade-in">
           <Link
-            to="/stats-stuff"
+            to="/"
             className="text-sm text-[var(--color-ink-light)] hover:text-[var(--color-ink)] transition-colors mb-4 inline-block"
           >
-            ← Back to Stats Stuff
+            ← Back to Home
           </Link>
           <h1
             className="text-4xl font-medium tracking-tight mb-2"
