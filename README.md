@@ -2,13 +2,6 @@
   <img src="public/og-image.png" alt="Stats Stuff" width="600" />
 </p>
 
-<h1 align="center"> 
-  ____  _        _     ____  _          __  __ 
- / ___|| |_ __ _| |_  / ___|| |_ _   _ / _|/ _|
- \___ \| __/ _` | __| \___ \| __| | | | |_| |_ 
-  ___) | || (_| | |_   ___) | |_| |_| |  _|  _|
- |____/ \__\__,_|\__| |____/ \__|\__,_|_| |_|  
-                                               /h1>
 
 <p align="center">
   <strong>Free statistical calculators with step-by-step solutions</strong>
