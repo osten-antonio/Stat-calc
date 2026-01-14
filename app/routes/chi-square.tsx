@@ -194,35 +194,46 @@ export default function ChiSquareCalculator() {
 
                 {results && submittedData && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">1. Expected Frequencies</h2>
-                            <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-semibold uppercase tracking-wider">Formula</p>
-                                <div className="flex items-center gap-4 text-lg text-gray-800 dark:text-gray-200 font-serif flex-wrap">
-                                    <span>E<sub>ij</sub> = </span>
+                        {/* Section 1: Expected Frequencies */}
+                        <section className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+                            <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 flex items-center gap-3">
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-sm">1</span>
+                                Expected Frequencies
+                            </h2>
+
+                            <div className="mb-6 p-4 bg-blue-50/50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                                <div className="flex items-center gap-4 text-gray-700 dark:text-gray-200 font-serif flex-wrap justify-center">
+                                    <span className="font-semibold italic">E<sub>ij</sub> = </span>
                                     <div className="flex flex-col items-center">
-                                        <span className="border-b border-gray-400 dark:border-gray-500 px-2 text-center">Row Total × Column Total</span>
-                                        <span className="text-center">Grand Total</span>
+                                        <span className="border-b border-gray-400 dark:border-gray-500 px-2 text-center text-sm">Row Total × Column Total</span>
+                                        <span className="text-center text-sm">Grand Total</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="overflow-x-auto">
+
+                            <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
                                 <table className="w-full border-collapse text-sm">
                                     <thead>
                                         <tr>
-                                            <th className="p-2 border dark:border-gray-600"></th>
-                                            {Array(cols).fill(0).map((_, c) => <th key={c} className="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700">{String.fromCharCode(65 + c)} (E)</th>)}
+                                            <th className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700"></th>
+                                            {Array(cols).fill(0).map((_, c) => (
+                                                <th key={c} className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700 font-bold text-gray-600 dark:text-gray-400">
+                                                    {String.fromCharCode(65 + c)} (E)
+                                                </th>
+                                            ))}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {results.expected.map((row, r) => (
-                                            <tr key={r}>
-                                                <td className="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 font-medium text-center">{String.fromCharCode(88 + r)}</td>
+                                            <tr key={r} className="hover:bg-gray-50/30 dark:hover:bg-gray-800/30 transition-colors">
+                                                <td className="p-3 bg-gray-50 dark:bg-gray-800/50 border-r border-b dark:border-gray-700 font-bold text-center text-gray-600 dark:text-gray-400">
+                                                    {String.fromCharCode(88 + r)}
+                                                </td>
                                                 {row.map((val, c) => (
-                                                    <td key={c} className="p-2 border dark:border-gray-600 text-center">
+                                                    <td key={c} className="p-3 border-r border-b dark:border-gray-700 text-center">
                                                         <div className="flex flex-col items-center">
-                                                            <span className="font-semibold text-blue-600 dark:text-blue-400">{val.toFixed(2)}</span>
-                                                            <span className="text-xs text-gray-400">
+                                                            <span className="font-bold text-blue-600 dark:text-blue-400 text-lg">{val.toFixed(2)}</span>
+                                                            <span className="text-xs text-gray-400 mt-1">
                                                                 {results.rowTotals[r]} × {results.colTotals[c]} / {results.grandTotal}
                                                             </span>
                                                         </div>
@@ -235,35 +246,46 @@ export default function ChiSquareCalculator() {
                             </div>
                         </section>
 
-                        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                            <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">2. Compute Chi-Square Statistic</h2>
-                            <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded border dark:border-gray-700">
-                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-semibold uppercase tracking-wider">Formula</p>
-                                <div className="flex items-center gap-2 text-xl text-gray-800 dark:text-gray-200 font-serif flex-wrap">
-                                    <span>χ² = ∑</span>
+                        {/* Section 2: Chi-Square Calculation */}
+                        <section className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+                            <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 flex items-center gap-3">
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300 text-sm">2</span>
+                                Compute Chi-Square Statistic
+                            </h2>
+
+                            <div className="mb-6 p-4 bg-teal-50/50 dark:bg-teal-900/20 rounded-xl border border-teal-100 dark:border-teal-800/30">
+                                <div className="flex items-center gap-3 text-gray-700 dark:text-gray-200 font-serif flex-wrap justify-center">
+                                    <span className="font-semibold italic text-xl">χ² = ∑</span>
                                     <div className="flex flex-col items-center mx-2">
-                                        <span className="border-b border-gray-400 dark:border-gray-500 px-1 text-center">(O<sub>ij</sub> - E<sub>ij</sub>)<sup>2</sup></span>
-                                        <span className="text-center">E<sub>ij</sub></span>
+                                        <span className="border-b border-gray-400 dark:border-gray-500 px-1 text-center text-sm">(O<sub>ij</sub> - E<sub>ij</sub>)<sup>2</sup></span>
+                                        <span className="text-center text-sm">E<sub>ij</sub></span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="overflow-x-auto">
+
+                            <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
                                 <table className="w-full border-collapse text-sm">
                                     <thead>
                                         <tr>
-                                            <th className="p-2 border dark:border-gray-600"></th>
-                                            {Array(cols).fill(0).map((_, c) => <th key={c} className="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700">{String.fromCharCode(65 + c)} (χ²)</th>)}
+                                            <th className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700"></th>
+                                            {Array(cols).fill(0).map((_, c) => (
+                                                <th key={c} className="p-3 bg-gray-50 dark:bg-gray-800/50 border-b border-r dark:border-gray-700 font-bold text-gray-600 dark:text-gray-400">
+                                                    {String.fromCharCode(65 + c)} (χ²)
+                                                </th>
+                                            ))}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {results.chiSquareCells.map((row, r) => (
-                                            <tr key={r}>
-                                                <td className="p-2 border dark:border-gray-600 bg-gray-50 dark:bg-gray-700 font-medium text-center">{String.fromCharCode(88 + r)}</td>
+                                            <tr key={r} className="hover:bg-gray-50/30 dark:hover:bg-gray-800/30 transition-colors">
+                                                <td className="p-3 bg-gray-50 dark:bg-gray-800/50 border-r border-b dark:border-gray-700 font-bold text-center text-gray-600 dark:text-gray-400">
+                                                    {String.fromCharCode(88 + r)}
+                                                </td>
                                                 {row.map((val, c) => (
-                                                    <td key={c} className="p-2 border dark:border-gray-600 text-center">
+                                                    <td key={c} className="p-3 border-r border-b dark:border-gray-700 text-center">
                                                         <div className="flex flex-col items-center">
-                                                            <span className="font-semibold text-green-600 dark:text-green-400">{val.toFixed(2)}</span>
-                                                            <span className="text-xs text-gray-400">
+                                                            <span className="font-bold text-teal-600 dark:text-teal-400 text-lg">{val.toFixed(2)}</span>
+                                                            <span className="text-xs text-gray-400 mt-1">
                                                                 ({submittedData[r][c]} - {results.expected[r][c].toFixed(2)})² / {results.expected[r][c].toFixed(2)}
                                                             </span>
                                                         </div>
@@ -276,43 +298,54 @@ export default function ChiSquareCalculator() {
                             </div>
                         </section>
 
-                        <section className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg border border-blue-100 dark:border-blue-800/30">
-                            <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">3. Results & Decision</h2>
+                        {/* Section 3: Results & Decision */}
+                        <section className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-8 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-4">
-                                    <div className="flex justify-between border-b pb-2 dark:border-blue-800/30">
-                                        <span className="text-gray-600 dark:text-gray-300">Chi-Square Statistic (χ²):</span>
-                                        <span className="font-bold text-xl text-blue-700 dark:text-blue-300">{results.chiSquareStat.toFixed(2)}</span>
-                                    </div>
-                                    <div className="flex flex-col border-b pb-2 dark:border-blue-800/30 gap-1">
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-600 dark:text-gray-300">Degrees of Freedom (df):</span>
-                                            <span className="font-mono text-lg dark:text-gray-200">{results.df}</span>
+                            <h2 className="text-2xl font-bold mb-8 text-gray-800 dark:text-gray-100 flex items-center gap-3 relative z-10">
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 text-sm">3</span>
+                                Results & Decision
+                            </h2>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
+                                <div className="space-y-6">
+                                    <div className="bg-white/80 dark:bg-gray-800/80 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                        <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:mb-0 last:pb-0">
+                                            <span className="text-gray-600 dark:text-gray-400 font-medium">Chi-Square Statistic (χ²)</span>
+                                            <span className="font-bold text-3xl text-blue-600 dark:text-blue-400 font-mono">{results.chiSquareStat.toFixed(4)}</span>
                                         </div>
-                                        <div className="text-xs text-gray-500 dark:text-gray-400 text-right font-serif">
-                                            df = (Rows - 1) × (Cols - 1) = ({rows} - 1) × ({cols} - 1)
+                                        <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:mb-0 last:pb-0">
+                                            <div className="flex flex-col">
+                                                <span className="text-gray-600 dark:text-gray-400 font-medium">Degrees of Freedom</span>
+                                                <span className="text-xs text-gray-400">({rows}-1) × ({cols}-1)</span>
+                                            </div>
+                                            <span className="font-bold text-xl text-gray-800 dark:text-gray-200 font-mono">{results.df}</span>
                                         </div>
-                                    </div>
-                                    <div className="flex justify-between border-b pb-2 dark:border-blue-800/30">
-                                        <span className="text-gray-600 dark:text-gray-300">Critical Value (α = 0.05):</span>
-                                        <span className="font-mono text-lg dark:text-gray-200">{results.criticalValue > 0 ? results.criticalValue : "N/A"}</span>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-gray-600 dark:text-gray-400 font-medium">Critical Value (α = 0.05)</span>
+                                            <span className="font-bold text-xl text-purple-600 dark:text-purple-400 font-mono">{results.criticalValue > 0 ? results.criticalValue : "N/A"}</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-col justify-center items-center p-4 bg-white dark:bg-gray-800 rounded shadow-sm">
-                                    <div className="text-lg font-medium text-gray-500 dark:text-gray-400 mb-2">Decision</div>
-                                    <div className={`text-4xl font-bold mb-2 ${results.rejectNull ? 'text-red-500' : 'text-green-500'}`}>
+                                <div className="flex flex-col justify-center items-center p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border-2 border-transparent relative">
+                                    <div className={`absolute inset-0 rounded-xl opacity-20 ${results.rejectNull ? 'bg-red-500' : 'bg-green-500'}`}></div>
+
+                                    <h3 className="text-sm font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400 mb-4 z-10">Conclusion</h3>
+
+                                    <div className={`text-5xl font-extrabold mb-4 z-10 text-center ${results.rejectNull ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
                                         {results.rejectNull ? "Reject H₀" : "Fail to Reject H₀"}
                                     </div>
-                                    <p className="text-center text-gray-600 dark:text-gray-300">
-                                        Since {results.chiSquareStat.toFixed(2)} {results.rejectNull ? ">" : "≤"} {results.criticalValue},
+
+                                    <p className="text-center text-gray-600 dark:text-gray-300 z-10 leading-relaxed max-w-xs">
+                                        Since <span className="font-bold">{results.chiSquareStat.toFixed(2)}</span> {results.rejectNull ? ">" : "≤"} <span className="font-bold">{results.criticalValue}</span>,
                                         we {results.rejectNull ? "reject" : "fail to reject"} the null hypothesis.
                                     </p>
+
                                     {results.rejectNull && (
-                                        <p className="mt-2 text-sm text-red-600 dark:text-red-400 text-center">
-                                            There is a significant association between the variables.
-                                        </p>
+                                        <div className="mt-6 px-4 py-2 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 rounded-full text-sm font-semibold z-10 animate-pulse">
+                                            Significant Association
+                                        </div>
                                     )}
                                 </div>
                             </div>
