@@ -2,7 +2,12 @@ import { useState } from "react";
 import type { Route } from "./+types/poisson";
 import { Link } from "react-router";
 
-import { poissonWithSteps, type PoissonResult } from "~/lib/math/probability";
+import {
+  poissonRangeWithSteps,
+  poissonNormalApproxWithSteps,
+  type PoissonRangeResult,
+  type NormalApproxResult
+} from "~/lib/math/probability";
 import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
 import { Input } from "~/components/ui/Input";
 import { Button } from "~/components/ui/Button";
@@ -11,13 +16,13 @@ import { MathBlock } from "~/components/math/MathBlock";
 import type { ExamAnswer } from "~/lib/format/examAnswer";
 import type { CalculationResult } from "~/lib/types/calculation";
 
-export function meta({}: Route.MetaArgs) {
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "Poisson Distribution" },
     {
       name: "description",
       content:
-        "Calculate Poisson probability P(X = k) with step-by-step workings.",
+        "Calculate Poisson probability P(min ≤ X ≤ max) with step-by-step workings.",
     },
   ];
 }
@@ -28,10 +33,17 @@ function formatNum(num: number, decimals = 6): string {
 }
 
 function resultToExamAnswer(
-  calc: CalculationResult<PoissonResult>,
+  calc: CalculationResult<PoissonRangeResult | NormalApproxResult>,
 ): ExamAnswer {
+  const isNormal = 'mean' in calc.value && 'stdDev' in calc.value;
+  const title = isNormal ? "Poisson Probability (Normal Approximation)" : "Poisson Probability Calculation";
+
+  // Safe access to min/max from inputs
+  const min = calc.inputs?.min ?? 0;
+  const max = calc.inputs?.max ?? 0;
+
   return {
-    title: "Poisson Probability Calculation",
+    title,
     sections: calc.steps.map((step) => ({
       title: step.title,
       lines: [
@@ -42,16 +54,18 @@ function resultToExamAnswer(
         step.result ? `= ${step.result}` : "",
       ].filter(Boolean),
     })),
-    finalAnswer: `P(X = ${calc.value.k}) = ${formatNum(calc.value.probability)} (${formatNum(calc.value.probability * 100, 2)}%)`,
+    finalAnswer: `P(${min} ≤ X ≤ ${max}) ≈ ${formatNum(calc.value.probability)} (${formatNum(calc.value.probability * 100, 2)}%)`,
   };
 }
 
 export default function PoissonCalculator() {
   const [lambda, setLambda] = useState("");
-  const [k, setK] = useState("");
-  const [result, setResult] = useState<CalculationResult<PoissonResult> | null>(
-    null,
-  );
+  const [min, setMin] = useState("");
+  const [max, setMax] = useState("");
+  const [useNormalApprox, setUseNormalApprox] = useState(false);
+
+  const [result, setResult] =
+    useState<CalculationResult<PoissonRangeResult | NormalApproxResult> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function calculate() {
@@ -59,35 +73,53 @@ export default function PoissonCalculator() {
     setResult(null);
 
     const lambdaVal = parseFloat(lambda);
-    const kVal = parseInt(k, 10);
+    const minVal = parseInt(min, 10);
+    const maxVal = parseInt(max, 10);
 
     if (isNaN(lambdaVal)) {
       setError(
-        "λ must be a valid number. Not 'lambda' spelled out, the actual number.",
+        "λ must be a valid number.",
       );
       return;
     }
-    if (isNaN(kVal)) {
-      setError("k must be a valid integer. Whole numbers only, no fractions.");
+    if (isNaN(minVal) || isNaN(maxVal)) {
+      setError("min and max must be valid integers.");
       return;
     }
     if (lambdaVal <= 0) {
       setError(
-        "λ must be positive. Zero events per time period means nothing ever happens. Boring.",
+        "λ must be positive.",
       );
       return;
     }
-    if (kVal < 0) {
-      setError("k must be non-negative. You can't have -3 meteor strikes.");
+    if (minVal < 0 || maxVal < 0) {
+      setError("Counts must be non-negative.");
       return;
     }
-    if (kVal > 170) {
-      setError("k is too large (factorial overflow). Keep k ≤ 170.");
+    if (minVal > maxVal) {
+      setError("Min cannot be greater than Max.");
       return;
     }
 
-    const calc = poissonWithSteps(lambdaVal, kVal);
-    setResult(calc);
+    // Limits
+    if (!useNormalApprox && maxVal > 170) {
+      setError("Max count is too large for exact calculation (factorial overflow). Use Normal Approximation.");
+      return;
+    }
+
+    // Suggest Normal Approx
+    if (lambdaVal > 15 && !useNormalApprox) {
+      // Just a warning or we could auto-switch, but let's stick to user choice with maybe a hint in UI.
+      // For now, allow exact calculation if maxVal isn't huge.
+    }
+
+    if (useNormalApprox) {
+      const calc = poissonNormalApproxWithSteps(lambdaVal, minVal, maxVal);
+      setResult(calc);
+    } else {
+      const calc = poissonRangeWithSteps(lambdaVal, minVal, maxVal);
+      setResult(calc);
+    }
   }
 
   return (
@@ -107,8 +139,7 @@ export default function PoissonCalculator() {
             Poisson Distribution
           </h1>
           <p className="text-lg text-[var(--color-ink-light)] max-w-2xl">
-            Calculate the probability of k events occurring in a fixed interval
-            when the average rate is λ.
+            Calculate Poisson probability P(min ≤ X ≤ max) when the average rate is λ.
           </p>
         </header>
 
@@ -123,7 +154,7 @@ export default function PoissonCalculator() {
         </Card>
 
         <section className="mb-12 fade-in" style={{ animationDelay: "100ms" }}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
               label="λ (lambda/mean)"
               type="number"
@@ -134,13 +165,34 @@ export default function PoissonCalculator() {
               placeholder="e.g. 3.5"
             />
             <Input
-              label="k (occurrences)"
+              label="min occurrences"
               type="number"
               min={0}
-              value={k}
-              onChange={(e) => setK(e.target.value)}
+              value={min}
+              onChange={(e) => setMin(e.target.value)}
               placeholder="e.g. 2"
             />
+            <Input
+              label="max occurrences"
+              type="number"
+              min={0}
+              value={max}
+              onChange={(e) => setMax(e.target.value)}
+              placeholder="e.g. 4"
+            />
+          </div>
+
+          <div className="mt-6 flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="useNormalApprox"
+              className="w-5 h-5 accent-[var(--color-dot-pink)] rounded border-gray-300 focus:ring-[var(--color-dot-pink)]"
+              checked={useNormalApprox}
+              onChange={(e) => setUseNormalApprox(e.target.checked)}
+            />
+            <label htmlFor="useNormalApprox" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
+              Use Normal Approximation (for λ {'>'} 15, applies continuity correction)
+            </label>
           </div>
 
           {error && (
@@ -154,7 +206,7 @@ export default function PoissonCalculator() {
             tone="pink"
             onClick={calculate}
           >
-            Calculate P(X = k)
+            {useNormalApprox ? "Calculate Approximation" : "Calculate Probability"}
           </Button>
         </section>
 

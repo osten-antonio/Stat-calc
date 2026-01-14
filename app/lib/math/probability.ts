@@ -302,6 +302,19 @@ export interface PoissonResult {
   k: number;
 }
 
+export interface PoissonRangeResult {
+  probability: number;
+  lambda: number;
+  min: number;
+  max: number;
+  normalApproximation?: NormalApproxResult;
+}
+
+export function poissonPmf(lambda: number, k: number): number {
+  if (k < 0 || !Number.isInteger(k)) return 0;
+  return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+}
+
 export function poissonWithSteps(
   lambda: number,
   k: number,
@@ -405,6 +418,209 @@ export function poissonWithSteps(
     steps,
     formula: "P(X = k) = \\frac{\\lambda^k \\cdot e^{-\\lambda}}{k!}",
     inputs: { lambda, k },
+  };
+}
+
+export function poissonRangeWithSteps(
+  lambda: number,
+  min: number,
+  max: number,
+): CalculationResult<PoissonRangeResult> {
+  const steps: CalculationStep[] = [];
+
+  steps.push({
+    id: "identify",
+    title: "Identify Variables",
+    description: [
+      `λ (lambda) = ${formatNumber(lambda)} (average rate/mean)`,
+      `Range: ${min} ≤ X ≤ ${max}`,
+    ].join("\n"),
+  });
+
+  if (min < 0 || max < min) {
+    steps.push({
+      id: "invalid",
+      title: "Invalid Input",
+      description: `Range [${min}, ${max}] must be valid (min ≥ 0, max ≥ min).`,
+      result: "0",
+    });
+    return {
+      value: { probability: 0, lambda, min, max },
+      steps,
+      formula: "P(min \\le X \\le max) = \\sum_{k=min}^{max} P(X=k)",
+      inputs: { lambda, min, max },
+    };
+  }
+
+  steps.push({
+    id: "formula",
+    title: "State the Formula",
+    formula: "P(min \\le X \\le max) = \\sum_{k=min}^{max} P(X=k) = \\sum_{k=min}^{max} \\frac{\\lambda^k \\cdot e^{-\\lambda}}{k!}",
+  });
+
+  let totalProb = 0;
+  const individualProbs: string[] = [];
+  const calculationLines: string[] = [];
+  const eNegLambda = Math.exp(-lambda);
+
+  // Calculate for each k
+  for (let k = min; k <= max; k++) {
+    const prob = poissonPmf(lambda, k);
+    totalProb += prob;
+    individualProbs.push(`P(X=${k})`);
+
+    // Explicit working for each k
+    const lambdaPowK = Math.pow(lambda, k);
+    const kFactorial = factorial(k);
+
+    calculationLines.push(
+      `P(X=${k}) = \\frac{${formatNumber(lambda)}^{${k}} \\cdot e^{-${formatNumber(lambda)}}}{${k}!}` +
+      ` = \\frac{${formatProbability(lambdaPowK)} \\cdot ${formatProbability(eNegLambda)}}{${kFactorial}}` +
+      ` = ${formatProbability(prob)}`
+    );
+  }
+
+  steps.push({
+    id: "summation-formula",
+    title: "Sum of Individual Probabilities",
+    formula: `P(${min} \\le X \\le ${max}) = ` + individualProbs.join(" + "),
+  });
+
+  if (calculationLines.length > 5) {
+    steps.push({
+      id: "calculations-preview",
+      title: "Calculate Individual Probabilities (First 3 and Last 2)",
+      description: [
+        ...calculationLines.slice(0, 3),
+        "...",
+        ...calculationLines.slice(-2)
+      ].join("\n\n"),
+    });
+  } else {
+    steps.push({
+      id: "calculations",
+      title: "Calculate Individual Probabilities",
+      description: calculationLines.join("\n\n"),
+    });
+  }
+
+  steps.push({
+    id: "sum",
+    title: "Sum the Results",
+    calculation: `P(${min} \\le X \\le ${max}) = ` +
+      calculationLines.map(l => l.split(" = ").pop()).join(" + ") +
+      ` = ${formatProbability(totalProb)}`,
+  });
+
+  const percentage = totalProb * 100;
+  steps.push({
+    id: "result",
+    title: "Final Answer",
+    result: formatProbability(totalProb),
+    description: `The probability of between ${min} and ${max} occurrences (inclusive) is ${formatProbability(totalProb)} (${formatNumber(percentage, 2)}%)`,
+  });
+
+  return {
+    value: { probability: totalProb, lambda, min, max },
+    steps,
+    formula: "P(min \\le X \\le max) = \\sum P(X=k)",
+    inputs: { lambda, min, max },
+  };
+}
+
+export function poissonNormalApproxWithSteps(
+  lambda: number,
+  min: number,
+  max: number,
+): CalculationResult<NormalApproxResult> {
+  const steps: CalculationStep[] = [];
+  const mean = lambda;
+  const variance = lambda;
+  const stdDev = Math.sqrt(lambda);
+
+  // 1. Check Conditions
+  const conditionsMet = lambda > 15; // Common rule of thumb for Poisson approx
+
+  steps.push({
+    id: "check-conditions",
+    title: "Check Conditions",
+    description: [
+      `λ = ${formatNumber(lambda)}`,
+      conditionsMet
+        ? "λ > 15, so the normal approximation is reasonably accurate."
+        : "Warning: λ ≤ 15. The normal approximation may be inaccurate for small λ."
+    ].join("\n"),
+  });
+
+  // 2. Parameters
+  steps.push({
+    id: "parameters",
+    title: "Calculate Mean and Standard Deviation",
+    description: [
+      `Mean (μ) = λ = ${formatNumber(mean)}`,
+      `Standard Deviation (σ) = √λ = √${formatNumber(lambda)} ≈ ${formatNumber(stdDev, 4)}`
+    ].join("\n"),
+    formula: "\\mu = \\lambda, \\sigma = \\sqrt{\\lambda}"
+  });
+
+  // 3. Continuity Correction
+  const lowerBound = min - 0.5;
+  const upperBound = max + 0.5;
+
+  steps.push({
+    id: "continuity",
+    title: "Apply Continuity Correction",
+    description: [
+      `We want to approximate the discrete range [${min}, ${max}].`,
+      `Apply continuity correction:`,
+      `• Lower Bound: ${min} - 0.5 = ${lowerBound}`,
+      `• Upper Bound: ${max} + 0.5 = ${upperBound}`,
+      `P(${min} ≤ X ≤ ${max}) ≈ P(${lowerBound} ≤ Y ≤ ${upperBound})`
+    ].join("\n")
+  });
+
+  // 4. Standardize (Z-scores)
+  const zLow = (lowerBound - mean) / stdDev;
+  const zHigh = (upperBound - mean) / stdDev;
+
+  steps.push({
+    id: "z-scores",
+    title: "Standardize (Calculate Z-Scores)",
+    description: [
+      `Z_low = (${lowerBound} - ${formatNumber(mean)}) / ${formatNumber(stdDev, 4)} ≈ ${formatNumber(zLow, 2)}`,
+      `Z_high = (${upperBound} - ${formatNumber(mean)}) / ${formatNumber(stdDev, 4)} ≈ ${formatNumber(zHigh, 2)}`
+    ].join("\n"),
+    formula: "Z = \\frac{X - \\mu}{\\sigma}"
+  });
+
+  // Calculate Probabilities
+  const probLow = normalCdf(zLow);
+  const probHigh = normalCdf(zHigh);
+  const prob = probHigh - probLow;
+
+  steps.push({
+    id: "calc-prob",
+    title: "Find Probability (from Z-table)",
+    description: [
+      `P(Z ≤ ${formatNumber(zHigh, 2)}) ≈ ${formatNumber(probHigh, 4)}`,
+      `P(Z ≤ ${formatNumber(zLow, 2)}) ≈ ${formatNumber(probLow, 4)}`,
+      `P(${lowerBound} ≤ Y ≤ ${upperBound}) = ${formatNumber(probHigh, 4)} - ${formatNumber(probLow, 4)} = ${formatNumber(prob, 4)}`
+    ].join("\n")
+  });
+
+  const percentage = prob * 100;
+  steps.push({
+    id: "result",
+    title: "Final Answer",
+    result: formatNumber(prob, 4),
+    description: `The probability is approximately ${formatNumber(prob, 4)} (${formatNumber(percentage, 2)}%)`
+  });
+
+  return {
+    value: { probability: prob, mean, stdDev, zLow, zHigh, correction: true },
+    steps,
+    formula: "P(X) \\approx \\Phi(Z_{high}) - \\Phi(Z_{low})",
+    inputs: { lambda, min, max }
   };
 }
 
