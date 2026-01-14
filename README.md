@@ -1,87 +1,79 @@
-# Welcome to React Router!
+<p align="center">
+  <img src="public/og-image.png" alt="Stats Stuff" width="600" />
+</p>
 
-A modern, production-ready template for building full-stack React applications using React Router.
+<h1 align="center">Stats Stuff</h1>
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+<p align="center">
+  <strong>Free statistical calculators with step-by-step solutions</strong>
+</p>
 
-## Features
+<p align="center">
+  <a href="https://stats-stuff.vercel.app">
+    <img src="https://img.shields.io/badge/▲_Deploy-stats--stuff.vercel.app-black?style=for-the-badge&logo=vercel" alt="Deployed on Vercel" />
+  </a>
+</p>
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
-
-```bash
-npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
-npm run dev
-```
-
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+<p align="center">
+  <img src="https://img.shields.io/badge/React_Router-v7-CA4245?style=flat-square&logo=react-router" alt="React Router v7" />
+  <img src="https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind-v4-38B2AC?style=flat-square&logo=tailwindcss" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Vite-Build-646CFF?style=flat-square&logo=vite" alt="Vite" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
+</p>
 
 ---
 
-Built with ❤️ using React Router.
+## Features
+
+| Category | Calculators |
+|----------|-------------|
+| **Probability** | Binomial, Poisson, Hypergeometric |
+| **Counting** | Permutations, Combinations |
+| **Inference** | T-Tests, Chi-Square, One-Way & Two-Way ANOVA |
+| **Data** | Descriptive Stats, Regression, Box Plot, Special Means |
+| **Reference** | Statistical Tables (Z, T, Chi-Square, F) |
+
+- Step-by-step calculations with formulas
+- Copy-friendly exam answers
+- Clean, minimal UI with pastel theming
+- Mobile responsive
+
+## Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start dev server
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173)
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run typecheck` | TypeScript type checking |
+| `npm run test` | Run Vitest tests |
+
+## Tech Stack
+
+- **Framework**: React Router v7 (Remix-style)
+- **Build**: Vite
+- **Styling**: Tailwind CSS v4
+- **Math Rendering**: KaTeX
+- **Deployment**: Vercel
+
+## License
+
+MIT
+
+---
+
+<p align="center">
+  <sub>Built for students who need to show their work</sub>
+</p>
