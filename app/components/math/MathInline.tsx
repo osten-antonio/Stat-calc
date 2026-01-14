@@ -1,4 +1,3 @@
-import 'katex/dist/katex.min.css';
 import pkg from 'react-katex';
 const { InlineMath } = pkg;
 
