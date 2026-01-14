@@ -66,8 +66,3 @@ Open [http://localhost:5173](http://localhost:5173)
 - **Math Rendering**: KaTeX
 - **Deployment**: Vercel
 
-
-
-<p align="center">
-  <sub>Built for students who need to show their work</sub>
-</p>
