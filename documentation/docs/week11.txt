@@ -1,0 +1,880 @@
+STAT6171001
+Basic Statistics
+Analysis of Variance & Chi Square
+Session 11
+Raymond Bahana
+rbahana@binus.edu
+
+Session Learning Outcomes
+Upon completion of this session, students are expected to be able to
+• LO 2. Analyze a problem by using the basic concept of descriptive and
+inferential statistics
+• LO 3. Design a descriptive and inferential statistics solution to meet a
+given set of computing requirements in the context of computer
+science
+• LO4.Produce descriptive and inferential statistics solutions
+
+Topics
+• Analysis of Variance
+• Chi Square
+
+Analysis of Variance
+
+Introduction
+• Analysis of Variance (ANOVA) is a statistical method used to test
+differences between two or more means.
+• It may seem odd that the technique is called “Analysis of Variance”
+rather than “Analysis of Means.”
+• As you will see, the name is appropriate because inferences about
+means are made by analyzing variance.
+
+When Can ANOVA Be Used?
+• ANOVA can be used when the dependent variable in an experiment
+or a quasi-experiment is measured on an interval scale or a ratio
+scale.
+• Analysis of variance would not be the right technique when the
+dependent variable is measured on an ordinal scale or a categorical
+scale.
+• The interval scale of measurement is a type of measurement scale
+that is characterized by equal intervals between scale units. Example:
+the Fahrenheit scale to measure temperature.
+Source: https://stattrek.com/
+
+When Can ANOVA Be Used?
+• The ratio scale of measurement is a type of measurement scale. It’s
+characterized by equal intervals between scale units and a minimum
+scale value of zero.
+• The ordinal scale is a type of measurement scale. Each value on the
+ordinal scale has a unique meaning, and it has an ordered relationship
+to every other value on the scale. Example: the results of a horse
+race, reported as "win", "place", and "show". We can’t tell whether it
+was a close race or whether the winning horse won by a mile.
+• Categorical. Categorical variables take on values that are names or
+labels. The color of a ball (red, green, blue) or the breed of a dog
+(collie, shepherd, terrier) would be examples of categorical variables.
+Source: https://stattrek.com/
+
+How Does ANOVA Work?
+• Analysis of variance refers to a set of techniques for interpreting
+differences between groups (in true experiments or in quasiexperiments).
+• These techniques have similarities and differences.
+
+• Note: Quasi-experiments are studies that aim to evaluate interventions
+but that do not use randomization
+
+Source: https://stattrek.com/
+
+ANOVA Techniques
+• Specify a mathematical model to describe how the independent variable(s) and the
+dependent variable are related.
+• Write statistical hypotheses to be tested by experimental data.
+• Specify a significance level for a hypothesis test.
+• Compute sums of squares for each effect in the model.
+• Find degrees of freedom for each effect in the model.
+• Based on sums of squares and degrees of freedom, compute mean squares for each
+effect in the model.
+• Find the expected value of the mean squares for each effect in the model.
+• Compute test statistics, based on observed mean squares and their expected values.
+• Find a P value for each observed test statistic.
+• Accept or reject the null hypothesis, based on the P value and the significance level.
+• Assess the magnitude of the effect of the independent variable(s), based on sums of
+squares.
+
+One-Way Analysis of Variance
+
+One-Way Analysis of Variance: Example
+• A pharmaceutical company conducts an experiment to test the effect
+of a new cholesterol medication. They selects 15 subjects randomly
+from a larger population. Each subject is randomly assigned to one of
+three treatment groups. Within each treatment group, subjects receive
+a different dose of the new medication. In Group 1, subjects receive 0
+mg/day; in Group 2, 50 mg/day; and in Group 3, 100 mg/day.
+• The treatment levels represent all the levels of interest to the
+experimenter, so this experiment used a fixed-effects model to select
+treatment levels for study.
+• After 30 days, doctors measure the cholesterol level of each subject.
+
+Example
+• The results for all 15 subjects appear
+in the table:
+• In conducting this experiment, the
+experimenter had two research
+questions:
+• Does dosage level have a
+significant effect on cholesterol
+level?
+• How strong is the effect of dosage
+level on cholesterol level?
+Source: https://stattrek.com/
+
+Example
+• To answer these questions, the experimenter intends to use one-way
+analysis of variance.
+• But before you crunch the first number in one-way ANOVA, you must
+be sure that one-way ANOVA is the correct technique.
+• That means you need to ask two questions:
+• Is the experimental design compatible with one-way ANOVA?
+• Does the data set satisfy the critical assumptions required for oneway ANOVA?
+• Let's address both of those questions.
+
+Example
+• Experimental Design
+• One-way ANOVA is only appropriate with one experimental design
+- a completely randomized design.
+• That is exactly the design used in our cholesterol study, so we can
+check the experimental design box.
+
+Source: https://stattrek.com/
+
+Example
+• Critical Assumptions, one-way ANOVA makes 3 critical assumptions:
+• Independence. The dependent variable score for each experimental
+unit is independent of the score for any other unit.
+• Normality. In the population, dependent variable scores are
+normally distributed within treatment groups.
+• Equality of variance (homogeneity of variance or
+homoscedasticity). In the population, the variance of dependent
+variable scores in each treatment group is equal.
+• Therefore, for the cholesterol study, we need to make sure our data set
+is consistent with the critical assumptions.
+
+Example
+Independence of Scores
+• The assumption of independence is the most important assumption.
+• When that assumption is violated, the resulting statistical tests can
+be misleading.
+
+• The independence assumption is satisfied by the design of the study,
+which features random selection of subjects and random assignment
+to treatment groups.
+• Randomization tends to distribute effects of extraneous variables
+evenly across groups.
+
+Example
+Normal Distributions in Groups
+• Violations of normality can be a problem when sample size is small,
+as it is in this cholesterol study.
+• Therefore, it is important to be on the lookout for any indication of
+non-normality.
+• There are many ways to check for normality.
+• Given the small sample size, our best option for testing normality is to
+look at the following descriptive statistics
+
+Example
+• Central tendency. The mean and the median are summary measures used to
+describe central tendency. With a normal distribution, the mean = the median
+• Skewness. Skewness is a measure of the asymmetry of a probability
+distribution. If observations are equally distributed around the mean, the
+skewness value is zero; otherwise, the skewness value is positive or negative.
+Skewness between -1 and +1 is consistent with a normal distribution.
+• Kurtosis. It’s a measure of whether observations cluster around the mean of
+the distribution or in the tails of the distribution. The normal distribution has
+a kurtosis value of zero. Kurtosis between -2 and +2 is consistent with a
+normal distribution.
+
+Central Tendency
+
+source: https://www.analyticsvidhya.com/
+
+Positive Skewed and Negative Skewed
+
+source: https://www.analyticsvidhya.com/
+
+Calculate the Skewness Coefficient
+• Skewness can be calculated using various methods, whereas the most
+commonly used method is Pearson’s coefficient.
+
+source: https://www.analyticsvidhya.com/
+
+Pearson’s First Coefficient of Skewness
+• To calculate skewness values, subtract the mode from the mean, and
+then divide the difference by standard deviation.
+
+• Pearson’s first coefficient of skewness is helping if the data present
+high mode.
+• But, if the data have low mode or various modes, Pearson’s first
+coefficient is not preferred, and Pearson’s second coefficient may be
+superior, as it does not rely on the mode.
+
+Pearson’s Second Coefficient of Skewness
+• To calculate skewness values, subtract the median from the mean,
+multiply the difference by 3, and divide the product by the standard
+deviation.
+
+What Is Kurtosis?
+• Positive kurtosis indicates heavier tails and a more peaked
+distribution, while negative kurtosis suggests lighter tails and a flatter
+distribution.
+• Kurtosis helps in analyzing the characteristics and outliers of a
+dataset.
+
+Types of Excess Kurtosis
+
+Types of Excess Kurtosis
+1. Leptokurtic or heavy-tailed distribution (kurtosis more than normal
+distribution, Kurtosis > 3)
+2. Mesokurtic (kurtosis same as the normal distribution, Kurtosis = 3)
+3. Platykurtic or short-tailed distribution (kurtosis less than normal
+distribution, Kurtosis < 3)
+
+The Formula for Kurtosis
+• The sample excess kurtosis is calculated as follows:
+
+• n denotes the number of observations in the sample, X̄ is the sample
+mean, whereas s is the sample standard deviation.
+
+The Formula for Kurtosis
+• The population raw kurtosis is calculated as follows:
+
+• n denotes the number of observations in the sample, μ is the
+population mean.
+
+The Formula for Kurtosis
+• If you subtract 3 from the kurtosis, you get excess kurtosis, which
+compares the dataset to a normal distribution.
+• The population excess kurtosis is calculated as follows:
+Kexcess = K - 3
+• For a normal distribution Kexcess = 0.
+
+Raw Kurtosis
+Use raw kurtosis when:
+• Absolute Tailedness Matters: You want to measure the overall degree
+of tailedness in a distribution without comparing it to a normal
+distribution.
+• Mathematical/Technical Applications: Certain statistical models or
+formulas might require the raw fourth moment rather than a
+deviation from normality.
+• Comparing Across Datasets: If you're comparing the kurtosis of
+multiple datasets but not necessarily against the normal distribution
+baseline.
+
+Excess Kurtosis
+Use excess kurtosis when:
+• Comparison to Normality is Key: You want to assess how "different"
+the data's shape is from a normal distribution.
+• Practical Interpretation: It simplifies the interpretation:
+o 𝐾excess = 0: Same tailedness as normal.
+o 𝐾 excess > 0: Heavier tails (leptokurtic).
+o 𝐾 excess < 0: Lighter tails (platykurtic).
+
+• Risk Analysis: In fields like finance, where fat tails indicate the
+potential for extreme events, excess kurtosis is often preferred.
+
+When to Use Minus 3
+• Use raw kurtosis if you're calculating the actual tailedness of a
+dataset.
+• Use excess kurtosis if you need to compare a dataset to the normal
+distribution.
+
+Example Kurtosis
+• The new data points are 27, 13, 17, 57, 113, and 25.
+• First, calculate the mean; add up the numbers and divide by 6 to get
+42.
+s2=∑(yi−yˉ)2
+s4=∑(yi−yˉ)4
+where:
+• yi=ith variable of the sample
+• yˉ=Mean of the sample
+source: https://www.investopedia.com/
+
+Example Kurtosis
+• To get s2, use each variable, subtract the mean, and then square the
+result.
+• Add all of the results together:
+
+Example Kurtosis
+• To get s4, use each variable, subtract the mean, and raise the result to
+the fourth power.
+• Add all of the results together:
+
+Example Kurtosis
+• So, our sums are:
+s2=7,246
+s4=26,694,358
+• Now, calculate m2 and m4, the second and fourth moments of the
+kurtosis formula:
+
+Example Kurtosis
+
+• So, the kurtosis is:
+
+Example
+• The table shows the mean, median, skewness, and kurtosis:
+• In all three groups, the difference
+between the mean and median looks
+small.
+• Skewness and kurtosis measures are
+consistent with a normal distribution.
+• These are crude tests, but they provide
+some confidence for the assumption
+of normality in each group.
+
+Example
+Homogeneity of Variance
+• When the normality of variance assumption is satisfied, you can use
+Hartley's Fmax test to test for homogeneity of variance.
+• Step 1. Compute the sample variance ( s2j ) for each group
+• Where Xi,j is the score for observation i
+in Group j , Xj is the mean of Group j,
+and nj is the number of observations in
+Group j.
+
+Source: https://stattrek.com/
+
+Example
+• Here is the variance (s2j) for each group in the cholesterol study
+
+Source: https://stattrek.com/
+
+Example
+Homogeneity of Variance
+• Step 2. Compute an F ratio from the following formula:
+FRATIO = s2MAX / s2MIN
+FRATIO = 1170 / 450
+FRATIO = 2.6
+• where s2MAX is the largest group variance, and s2MIN is the smallest
+group variance.
+
+Source: https://stattrek.com/
+
+Example
+Homogeneity of Variance
+• Step 3. Compute degrees of freedom ( df ).
+df = n - 1
+df = 5 - 1
+df = 4
+• where n is the largest sample size in any group.
+
+Source: https://stattrek.com/
+
+Example
+Homogeneity of Variance
+• Step 4. Based on the degrees of freedom ( 4 ) and the number of
+groups ( 3 ), Find the critical F value from the Table of Critical F Values
+for Hartley's Fmax Test. From the table, we see that the critical Fmax
+value is 15.5.
+• Note: The critical F values in the table are based on a significance
+level of 0.05.
+
+Source: https://stattrek.com/
+
+Example
+
+Example
+Homogeneity of Variance
+• Step 5. Compare the observed F ratio computed in Step 2 to the
+critical F value recovered from the Fmax table in Step 4.
+• If the F ratio is smaller than the Fmax table value, the variances are
+homogeneous.
+• Otherwise, the variances are heterogeneous.
+• Here, the F ratio (2.6) is smaller than the Fmax value (15.5), so we
+conclude that the variances are homogeneous.
+
+Source: https://stattrek.com/
+
+Example - Analysis of Variance
+• Having confirmed that the critical assumptions are tenable, we can proceed with a
+one-way analysis of variance. That means taking the following steps:
+1.
+
+Specify a mathematical model to describe the causal factors that affect the dependent
+variable.
+2. Write statistical hypotheses to be tested by experimental data.
+3. Specify a significance level for a hypothesis test.
+4. Compute the grand mean and the mean scores for each group.
+5. Compute sums of squares for each effect in the model.
+6. Find the degrees of freedom associated with each effect in the model.
+7. Based on sums of squares and degrees of freedom, compute mean squares for each effect in
+the model.
+8. Compute a test statistic, based on observed mean squares and their expected values.
+9. Find the P value for the test statistic.
+10. Accept or reject the null hypothesis, based on the P value and the significance level.
+11. Assess the magnitude of the effect of the independent variable, based on sums of squares.
+
+Example
+1. Mathematical Model
+• In this experiment, the dependent variable ( X ) is the cholesterol level
+of a subject, and the independent variable ( β ) is the dosage level
+administered to a subject.
+• Here is the fixed-effects model for a completely randomized design:
+X ij= μ + βj+ ε i(j)
+• where X i j is the cholesterol level for subject i in treatment group j, μ is
+the population mean, β j is the effect of the dosage level administered
+to subjects in group j; and ε i ( j ) is the effect of all other extraneous
+variables on subject i in treatment j.
+Source: https://stattrek.com/
+
+Example
+2. Statistical Hypotheses
+• For fixed-effects models, it is common practice to write statistical
+hypotheses in terms of the treatment effect β j.
+• Null hypothesis: the independent variable (dosage level) has no effect on
+the dependent variable (cholesterol level) in any treatment group.
+H0: β j = 0 for all j
+• Alternative hypothesis: the independent variable has an effect on the
+dependent variable in at least one treatment group.
+H1: β j ≠ 0 for some j
+• If the null hypothesis is true, mean scores in the k treatment groups should
+be equal. If the null hypothesis is false, at least one pair of mean scores
+should be unequal.
+
+Example
+3. Significance Level
+• The significance level (also known as alpha or α) is the probability of
+rejecting the null hypothesis when it is actually true.
+• Experimenters often choose significance levels of 0.05 or 0.01.
+• For this experiment, let's use a significance level of 0.05.
+
+Example
+4. Mean Scores
+• Analysis of variance begins by computing a grand mean and group means
+• Grand mean. The grand mean (X) is the mean of all observations,
+computed as follows
+
+X = ( 1 / 15 ) * ( 210 + 210 + ... + 270 + 240 )
+X = 238
+
+Example
+• Group means. The mean of group j ( X j ) is the mean of all observations
+in group j, computed as follows:
+X 1 = 258
+X 2 = 246
+X 3 = 210
+
+• In the equations above, n is the total sample size across all groups; and
+n j is the sample size in Group j .
+
+Example
+5. Sums of Squares
+• A sum of squares is the sum of squared deviations from a mean
+score. One-way analysis of variance makes use of three sums of
+squares:
+a. Between-groups sum of squares
+b. Within-groups sum of squares
+c. Total sum of squares
+
+Example
+a. Between-groups sum of squares (SSB)
+• SSB measures variation of group means around the grand mean.
+• It can be computed from the following formula:
+
+Example
+b. Within-groups sum of squares (SSW)
+• SSW measures variation of all scores around their respective group
+means.
+• It can be computed from the following formula:
+
+SSW = (210 - 258)2 + ….. + (240 - 210)2 = 2304 + … + 900 = 9000
+
+Example
+c. Total sum of squares (SST)
+• SST measures variation of all scores around the grand mean.
+• It can be computed from the following formula:
+
+Example
+• It turns out that the total sum of squares is equal to the betweengroups sum of squares plus the within-groups sum of squares, as
+shown below:
+SST = SSB + SSW
+15,240 = 6240 + 9000
+
+Example
+6. Degrees of Freedom
+• The term degrees of freedom (df) refers to the number of
+independent sample points used to compute a statistic minus the
+number of parameters estimated from the sample points.
+• To illustrate what is going on, let's find the degrees of freedom
+associated with the various sum of squares computations:
+a. Between-groups sum of squares
+b. Within-groups sum of squares
+c. Total sum of squares
+
+Example
+a. Between-groups sum of squares (SSB)
+• The between-groups sum of squares formula appears below:
+
+• The formula uses k independent sample points, the sample means Xj. And
+it uses one parameter estimate, the grand mean X, which was estimated
+from the sample points.
+• So, the between-groups sum of squares has k-1 degrees of freedom (dfBG).
+dfBG = k - 1 = 3 - 1 = 2
+
+Example
+b. Within-groups sum of squares (SSW)
+• The within-groups sum of squares formula appears below:
+
+• The formula uses n independent sample points, the individual subject scores
+Xi j. And it uses k parameter estimates, the group means Xj, which were
+estimated from the sample points. So, the within-groups sum of squares has
+n - k degrees of freedom (dfWG).
+n = Σ ni = 5 + 5 + 5 = 15
+dfWG = n - k = 15 - 3 = 12
+
+Example
+c. Total sum of squares (SST)
+• The total sum of squares formula appears below:
+
+• The formula uses n independent sample points, the individual subject
+scores Xi j. And it uses one parameter estimate, the grand mean X,
+which was estimated from the sample points. So, the total sum of
+squares has n - 1 degrees of freedom (dfTOT).
+dfTOT = n - 1 = 15 - 1 = 14
+
+Example
+• The degrees of freedom for each sum of squares are summarized in
+the table below:
+
+Example
+7. Mean Squares
+• A mean square is an estimate of population variance.
+• It is computed by dividing a sum of squares (SS) by its corresponding
+degrees of freedom (df), as shown below:
+MS = SS / df
+• To conduct a one-way analysis of variance, we are interested in two
+mean squares:
+a. Between-groups sum of squares
+b. Within-groups sum of squares
+
+Example
+a. Between-groups sum of squares (SSB)
+• The between-groups mean square ( MSBG ) refers to variation due to
+differences among experimental units within the same group plus
+variation due to treatment effects. It can be computed as follows:
+MSBG = SSB / df BG
+MSBG = 6240 / 2 = 3120
+
+Example
+b. Within-groups sum of squares (SSW)
+• The within-groups mean square ( MSWG ) refers to variation due to
+differences among experimental units within the same group. It can
+be computed as follows:
+MSWG = SSW / df WG
+MSWG = 9000 / 12 = 750
+
+Example
+8. Test Statistic
+• Suppose we use the mean squares to define a test statistic F as
+follows:
+F(v1, v2) = MSBG / MSWG
+F(2, 12) = 3120 / 750 = 4.16
+• where MSBG is the between-groups mean square, MSWG is the withingroups mean square, v1 is the degrees of freedom for MSBG, and v2 is
+the degrees of freedom for MSWG.
+
+Example
+• The F ratio is a convenient measure that we can use to test the null
+hypothesis. Here's how:
+• When the F ratio is close to one, MSBG is approximately equal to
+MSWG. This indicates that the independent variable did not affect
+the dependent variable, so we cannot reject the null hypothesis.
+• When the F ratio is significantly greater than one, MSBG is bigger
+than MSWG. This indicates that the independent variable did affect
+the dependent variable, so we must reject the null hypothesis.
+• What does it mean for the F ratio to be significantly greater than one?
+To answer that question, we need to talk about the P-value.
+
+Example
+9. P-Value
+• In an experiment, a P-value is the probability of obtaining a result
+more extreme than the observed experimental outcome, assuming
+the null hypothesis is true.
+• With ANOVA, the F ratio is the observed experimental outcome that
+we are interested in.
+• So, the P-value would be the probability that an F statistic would be
+more extreme (i.e., bigger) than the actual F ratio computed from
+experimental data.
+
+Example
+• We can use Stat Trek's F Distribution Calculator to
+find the probability that an F statistic will be
+bigger than the actual F ratio observed in the
+experiment.
+• https://stattrek.com/online-calculator/fdistribution
+• From the calculator, we see that the P ( F > 4.16 )
+equals about 0.04.
+• Therefore, the P-Value is 0.04.
+
+Example
+10. Hypothesis Test
+• We specified a significance level 0.05 for this experiment.
+• Here's the decision rule for accepting or rejecting the null hypothesis:
+• If the P-value > α, accept the null hypothesis.
+• If the P-value ≤ α, reject the null hypothesis.
+• Since the P-value (0.04) < α (0.05), we reject the null hypothesis that
+drug dosage had no effect on cholesterol level.
+• And we conclude that the mean cholesterol level in at least one
+treatment group differed significantly from the mean cholesterol level
+in another group.
+
+Example
+11. Magnitude of Effect
+• The hypothesis test tells us whether the independent variable in our
+experiment has a statistically significant effect on the dependent
+variable, but it does not address the magnitude of the effect.
+• Here's the issue:
+• When the sample size is large, you may find that even small
+differences in treatment means are statistically significant.
+• When the sample size is small, you may find that even big
+differences in treatment means are not statistically significant.
+
+Example
+• It is customary to supplement analysis of variance with an
+appropriate measure of effect size.
+• Eta squared (η2) is one such measure.
+• Eta squared is the proportion of variance in the dependent variable
+that is explained by a treatment effect.
+• The eta squared formula for one-way analysis of variance is:
+• η2 = SSB / SST
+• where SSB is the between-groups sum of squares and SST is the total
+sum of squares.
+
+Example
+• Given this formula, we can compute eta squared for this drug dosage
+experiment, as shown below:
+• η2 = SSB / SST = 6240 / 15240 = 0.41
+• Thus, 41 percent of the variance in our dependent variable
+(cholesterol level) can be explained by variation in our independent
+variable (dosage level).
+• It appears that the relationship between dosage level and cholesterol
+level is significant not only in a statistical sense; it is significant in a
+practical sense as well.
+
+Example - ANOVA Summary Table
+• This ANOVA table allows any researcher to interpret the results of the
+experiment, at a glance.
+
+Chi Square
+
+What Are Categorical Variables?
+• Categorical variables belong to a subset of variables that can be
+divided into discrete categories. Names or labels are the most
+common categories.
+• Known as qualitative variables.
+• Categorical variables can be divided into two categories:
+• Nominal Variable: A nominal variable's categories have no natural
+ordering. Example: Gender, Blood groups
+• Ordinal Variable: A variable that allows the categories to be sorted
+is ordinal variables. Customer satisfaction (Excellent, Very Good,
+Good, Average, Bad, and so on) is an example.
+Source: https://www.simplilearn.com/
+
+What Is a Chi-Square Test?
+• The Chi-Square test is a statistical procedure for determining the
+difference between observed and expected data.
+• Can be used to determine whether it correlates to the categorical
+variables in our data.
+• Helps to find out whether a difference between two categorical
+variables is due to chance or a relationship between them.
+
+Source: https://www.simplilearn.com/
+
+Chi-Square Test Definition
+• A statistical test that is used to compare observed and expected
+results.
+• The goal of this test is to identify whether a disparity between actual
+and predicted data is due to chance or to a link between the variables
+under consideration.
+• A chi-square test is required to test a hypothesis regarding the
+distribution of a categorical variable.
+• Categorical variables, which indicate categories such as animals or
+countries, can be nominal or ordinal.
+Source: https://www.simplilearn.com/
+
+Formula for Chi-Square Test
+• Where:
+• c = Degrees of freedom
+• O = Observed Value
+• E = Expected Value
+• The degrees of freedom in a statistical calculation represent the
+number of variables that can vary in a calculation.
+• The Observed values are those you gather yourselves.
+• The expected values are the frequencies expected, based on the null
+hypothesis.
+Source: https://www.simplilearn.com/
+
+Chi-Square Test
+• Chi-Squared Tests are most commonly used in hypothesis testing.
+• The Chi-Square test estimates the size of inconsistency between the
+expected results and the actual results when the size of the sample
+and the number of variables in the relationship is mentioned.
+• These tests use degrees of freedom to determine if a particular null
+hypothesis can be rejected based on the total number of
+observations made in the experiments.
+• Larger the sample size, more reliable is the result.
+
+Source: https://www.simplilearn.com/
+
+Chi-Square Test
+• There are two main types of Chi-Square tests namely • Independence
+• Goodness-of-Fit
+
+Source: https://www.simplilearn.com/
+
+Independence
+• It’s a derivable (also known as inferential) statistical test which
+examines whether the two sets of variables are likely to be related
+with each other or not.
+• This test is used when we have counts of values for two nominal or
+categorical variables and is considered as non-parametric test.
+• A relatively large sample size and independence of observations are
+the required criteria for conducting this test.
+
+Source: https://www.simplilearn.com/
+
+Independence
+Example:
+• In a movie theatre, suppose we made a list of movie genres.
+• Let us consider this as the first variable.
+• The second variable is whether or not the people who came to watch
+those genres of movies have bought snacks at the theatre.
+• Here the null hypothesis is that the genre of the film and whether
+people bought snacks or not are unrelatable.
+• If this is true, the movie genres don’t impact snack sales.
+
+Source: https://www.simplilearn.com/
+
+Goodness-of-Fit
+• In statistical hypothesis testing, the Chi-Square Goodness-of-Fit test
+determines whether a variable is likely to come from a given
+distribution or not.
+• We must have a set of data values and the idea of the distribution of
+this data.
+• We can use this test when we have value counts for categorical
+variables.
+• This test demonstrates a way of deciding if the data values have a
+“good enough” fit for our idea or if it is a representative sample data
+of the entire population.
+Source: https://www.simplilearn.com/
+
+Goodness-of-Fit
+Example:
+• Suppose we have bags of balls with five different colors in each bag.
+• The given condition is that the bag should contain an equal number
+of balls of each color.
+• The idea we would like to test here is that the proportions of the five
+colors of balls in each bag must be exact.
+
+Source: https://www.simplilearn.com/
+
+Goodness-of-Fit
+Example:
+• A die is rolled 60 times. You want to test if the die is fair (i.e., each
+side has an equal probability of appearing).
+
+Null Hypothesis (H0​): The die is fair, so the observed frequencies match
+the expected frequencies.
+Alternative Hypothesis (H1​): The die is not fair, so the observed
+frequencies do not match the expected frequencies.
+
+Goodness-of-Fit
+Example:
+
+Conclusion Statement
+• Depends on whether the calculated chi-square value is greater than
+or less than the critical value.
+• If greater than the critical value: reject the null hypothesis
+• If less than the critical value: fail to reject the null hypothesis
+
+Source: https://www.simplilearn.com/
+
+Example
+• We want to know if gender has anything to do with political party
+preference. Poll 420 voters in a simple random sample to find out
+which political party they prefer. The results of the survey are shown
+in the table below:
+
+420
+
+• To see if gender is linked to political party preference, perform a ChiSquare test of independence using the steps below.
+Source: https://www.simplilearn.com/
+
+Example
+• Step 1: Define the Hypothesis
+• H0: There is no link between gender and political party preference.
+• H1: There is a link between gender and political party preference.
+
+Source: https://www.simplilearn.com/
+
+Example
+• Step 2: Calculate the Expected Values
+• Now you will calculate the expected frequency, for example, the
+expected value for Male Republicans is:
+420
+
+114,29
+
+• Similarly, you can calculate the expected value for each of the cells.
+
+Example
+• Step 3: Calculate (O - E)2 / E for Each Cell in the Table
+• Where: O = Observed Value and E = Expected Value
+
+Example
+• Step 4: Calculate the Test Statistic X2
+X2 is the sum of all the values in the last table
+= 1.79 + 1.06 + 1.61 + 1.62 + 0.96 + 1.46
+= 8.50
+
+• Before conclude, first determine the critical statistic, which requires
+determining our degrees of freedom (df).
+• The degrees of freedom in this case are equal to the table's number
+of columns minus one multiplied by the table's number of rows
+minus one, or (c-1) (r-1) → (3-1)(2-1) = 2
+
+Example
+• Compare obtained statistic with the
+chi-square table.
+• For α = 0.05 and df =2, the critical
+statistic is 5.991, less than our obtained
+statistic of 8.50.
+• You can reject our null hypothesis
+because the obtained statistic is higher
+than your critical statistic, means it has
+sufficient evidence to say that there is
+an association between gender and
+political party preference.
+
+What the Difference?
+• Chi-Square test is used when we perform hypothesis testing on two
+categorical variables from a single population or we can say that to
+compare categorical variables from a single population.
+• T-test is an inferential statistic that is used to determine the
+difference or to compare the means of two groups of samples which
+may be related to certain features. It is performed on continuous
+variables.
+• Analysis of variance is used to compare multiple (three or more)
+samples with a single test. It is used when the categorical feature has
+more than two categories.
+
+Z-TEST
+• In a z-test, we assume the sample is normally distributed.
+• A z-score is calculated with population parameters such as population
+mean and population standard deviation.
+• We use this test to validate a hypothesis that states the sample
+belongs to the same population.
+
+T-TEST
+• We use a t-test to compare the mean of two given samples.
+• Like a z-test, a t-test also assumes a normal distribution of the
+sample.
+• When we don’t know the population parameters (mean and standard
+deviation), we use t-test.
+
+CHI-SQUARE TEST
+• We use the chi-square test to compare categorical variables.
+• We use a t-test to compare the mean of two given samples, but we
+use the chi-square test to compare categorical variables.
+
+ANOVA
+• We use analysis of variance (ANOVA) to compare three or more
+samples with a single test.
+
+References
+• Witte, R.S.&Witte, J.S. (2017). Statistics (11th ed.). Wiley. ISBN: 9781119386056.
+• Lane, D.M., Scott, D., Hebl, M., Guerra, R., Osherson, D.& Zimmer, H.
+(2003). Introduction to Statistics. Online edition at
+https://open.umn.edu/opentextbooks/textbooks/459
+• Levine, D.M., Stephan, D.F. & Szabat, K.A. (2017). Statistics for
+Managers Using Microsoft Excel (8th ed.). Pearson. ISBN: 9780134566672
+
+Thank you
+
+

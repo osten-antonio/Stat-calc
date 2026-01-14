@@ -1,0 +1,340 @@
+STAT6171001
+Basic Statistics
+Two-Way ANOVA
+Session 12
+Raymond Bahana
+rbahana@binus.edu
+
+Session Learning Outcomes
+Upon completion of this session, students are expected to be able to
+• LO 1. Explain basic statistics concept
+• LO 2. Analyze a problem by using the basic concept of descriptive and
+inferential statistics
+• LO 3. Design a descriptive and inferential statistics solution to meet a
+given set of computing requirements in the context of computer
+science
+• LO4. Produce descriptive and inferential statistics solutions
+
+Topic
+• Analysis of Variance
+
+What Is a Two-Way ANOVA?
+• A two-way analysis of variance is used to determine whether there is
+a statistically significant difference between the means of three or
+more independent groups that have been split on two variables (or
+factors).
+• The two-way ANOVA can be applied in different fields, such as
+economics, finance, social science, and medicine.
+
+When to Use a Two-Way ANOVA
+• Use a two-way ANOVA when you’d like to know how two factors
+affect a response variable and whether or not there is an interaction
+effect between the two factors on the response variable
+
+Example
+• A botanist wants to explore how sunlight exposure and watering
+frequency affect plant growth.
+• She plants 40 seeds and lets them grow for 2 months under different
+conditions for sunlight exposure and watering frequency.
+• After 2 months, she records the height of each plant.
+• In this case, we have the following variables:
+oResponse variable: plant growth
+oFactors: sunlight exposure, watering frequency
+
+Example
+• And we would like to answer the following questions:
+o Does sunlight exposure affect plant growth?
+o Does watering frequency affect plant growth?
+o Is there an interaction effect between sunlight exposure and watering
+frequency? (e.g., the effect that sunlight exposure has on the plants is
+dependent on watering frequency)
+
+• We would use a two-way ANOVA for this analysis because we have two
+factors.
+• If instead we wanted to know how only watering frequency affected
+plant growth, we would use a one-way ANOVA since we would only be
+working with one factor.
+
+Two-Way ANOVA Assumptions
+• The two-way ANOVA test has got two independent variables hence the
+term two-way.
+• That there as several assumptions that relate to the two-way analysis of
+variance, as follows:
+oThe sample population must be approximately normally or normally
+distributed
+oIt is mandatory for the samples to be independent
+oIt is mandatory that the populations variances be equal
+oThe sample size of the groups must be the same
+
+A Two-Way ANOVA Hypotheses
+• The two-way ANOVA has several sets to hypotheses.
+• The null hypotheses are as follows:
+oThe first factors population means are equal. It is the same as the
+one-way ANOVA when it comes to the row factor
+oThe second factors population means are equal. It is the same as
+the one-way ANOVA when it comes to column factor
+oBetween the two factors, no interaction exists. It is the same as
+administering a test for independence using contingency tables.
+
+Example
+• The results are shown
+(in inches):
+• In the table, we see
+that there were five
+plants grown under
+each combination of
+conditions.
+
+Example
+• For example, there were
+five plants grown with
+daily watering and no
+sunlight and their heights
+after two months were
+4.8 inches, 4.4 inches, 3.2
+inches, 3.9 inches, and
+4.4 inches:
+
+Example: Step by Step
+• Step 1: Calculate Sum of Squares for First Factor (Watering Frequency)
+• First, calculate the grand mean height of all 40 plants:
+Grand mean = (4.8 + 5 + 6.4 + 6.3 + … + 3.9 + 4.8 + 5.5 + 5.5) / 40 = 5.1525
+• Next, we will calculate the mean height of all plants watered daily:
+Mean of Daily = (4.8 + 5 + 6.4 + 6.3 + … + 4.4 + 4.8 + 5.8 + 5.8) /20 = 5.155
+• Next, we will calculate the mean height of all plants watered weekly:
+Mean of Weekly = (4.4 + 4.9 + 5.8 + 6 + … + 3.9 + 4.8 + 5.5 + 5.5) /20 = 5.15
+
+Example: Step by Step
+• Next, we will calculate the sum of squares for the factor “watering
+frequency” by using the following formula:
+Σn(Xj – X..)2
+• where:
+n: the sample size of group j
+Σ: a greek symbol that means “sum”
+Xj: the mean of group j
+X..: the grand mean
+
+• Calculate the sum of squares for the factor “watering frequency”:
+20*(5.155-5.1525)2 + 20*(5.15-5.1525)2 = 0.00025
+
+Example: Step by Step
+• Step 2: Calculate Sum of Squares for Second Factor (Sunlight Exposure)
+• First, we will calculate the grand mean height of all 40 plants:
+Grand mean = (4.8 + 5 + 6.4 + 6.3 + … + 3.9 + 4.8 + 5.5 + 5.5) / 40 = 5.1525
+• Next, we will calculate the mean height of all plants with no sunlight
+exposure:
+Mean of No Sunlight = (4.8+4.4+3.2+3.9+4.4+4.4+4.2+3.8+3.7+3.9) / 10 = 4.07
+Mean of Low Sunlight = 5.1
+Mean of Medium Sunlight = 5.89
+Mean of High Sunlight = 5.55
+
+Example: Step by Step
+• Next, we will calculate the sum of squares for the factor “sunlight
+exposure”.
+• Calculate the sum of squares for the factor “sunlight exposure”:
+10*(4.07-5.1525)2 + 10*(5.1-5.1525)2 + 10*(5.89-5.1525)2
++ 10*(5.55-5.1525)2 = 18.76475
+
+Example: Step by Step
+• Step 3: Calculate Sum of Squares Within (Error)
+• Next, calculate the sum of squares within by taking the sum of squared
+differences between each combination of factors and the individual
+plant heights.
+• For example, the mean height of all plants watered daily with no
+sunlight exposure is 4.14.
+• We can then calculate the sum of squared differences for each of these
+individual plants as:
+SS for daily watering and no sunlight: (4.8-4.14)2 + (4.4-4.14)2 + (3.24.14)2 + (3.9-4.14)2 + (4.4-4.14)2 = 1.512
+
+Example: Step by Step
+• Repeat this process for each combination of factors:
+SS for daily watering and low sunlight: 0.928
+SS for daily watering and medium sunlight: 1.788
+SS for daily watering and high sunlight: 1.648
+SS for weekly watering and no sunlight: 0.34
+SS for weekly watering and low sunlight: 0.548
+SS for weekly watering and medium sunlight: 0.652
+SS for weekly watering and high sunlight: 1.268
+
+• Sums of squares within = 1.512 + .928 + 1.788 + 1.648 + .34 + .548 +
+.652 + 1.268 = 8.684
+
+Example: Step by Step
+• Step 4: Calculate Total Sum of Squares
+• Next, calculate the total sum of squares by taking the sum of the
+differences between each individual plant height and the grand mean:
+Total Sum of Squares
+= (4.8 – 5.1525)2 + (5 – 5.1525)2 + … + (5.5 – 5.1525)2
+= 28.45975
+
+Example: Step by Step
+• Step 5: Calculate Sum of Squares Interaction
+• Next, calculate the sum of squares interaction by using the following
+formula:
+SS Interaction = SS Total – SS Factor 1 – SS Factor 2 – SS Within
+SS Interaction = 28.45975 – .00025 – 18.76475 – 8.684
+SS Interaction = 1.01075
+
+Example: Step by Step
+• Step 6: Fill in ANOVA Table
+df Watering Frequency: j-1 = 2-1 = 1
+df Sunlight Exposure: k-1 = 4-1 = 3
+df Interaction: (j-1)*(k-1) = 1*3 = 3
+df Within: n – (j*k) = 40 – (2*4) = 32
+df total: n-1 = 40-1 = 39
+MS: SS/ df
+F Watering Frequency: MS Watering Frequency / MS Within
+F Sunlight Exposure: MS Sunlight Exposure / MS Within
+
+Example: Step by Step
+F Interaction: MS Interaction / MS Within
+p-value Watering Frequency: The p-value that corresponds to F value
+of .000921 with df numerator = 1 and df denominator = 32
+p-value Sunlight Exposure: The p-value that corresponds to F value of
+23.04898 with df numerator = 3 and df denominator = 32
+p-value Interaction: The p-value that corresponds to F value of
+1.241517 with df numerator = 3 and df denominator = 32
+• Note #1: n = total observations, j = number of levels for watering
+frequency, k = number of levels for sunlight exposure.
+• Note #2: The p-values that correspond to the F-value were calculated
+using the F Distribution Calculator.
+
+Example
+• She performs a twoway ANOVA in Excel
+and ends up with the
+following output:
+
+Example: Step by Step
+• Step 7: Interpret the results
+• Observe the following from the ANOVA table:
+• The p-value for the interaction between watering frequency and
+sunlight exposure was 0.311 → This is not statistically significant at
+α = 0.05.
+• The p-value for watering frequency was 0.975 → This is not
+statistically significant at α = 0.05.
+• The p-value for sunlight exposure was < 0.000 → This is statistically
+significant at α = 0.05.
+
+Example
+• These results indicate that sunlight exposure is the only factor that has
+a statistically significant effect on plant height.
+• And because there is no interaction effect, the effect of sunlight
+exposure is consistent across each level of watering frequency.
+• That is, whether a plant is watered daily or weekly has no impact on
+how sunlight exposure affects a plant.
+
+A Two-Way vs. One-Way ANOVA
+• Analysis of variance exists in two types: one-way and two-way which
+is also known as unidirectional and bidirectional, respectively.
+• The two analyses of variance refer to independent variables number
+in the analysis of variance test.
+• One-Way ANOVA
+
+o It’s a type of analysis of variance used to evaluate the sole factors impact on a
+single response variable.
+o It also tests the samples to find out if they are equal.
+o In addition, it can be used to determine whether, between the means of three
+or more unrelated groups, there are significant differences in the statistics.
+
+A Two-Way vs. One-Way ANOVA
+• Two-Way ANOVA
+o There are two independent variables in this type of analysis of variance.
+o With the two-way variables test, a company can easily compare the
+productivity of its workers, based on two independent variables such as skills
+and salary.
+o It can utilize the test to observe how those two factors interact with each
+other.
+o It also tests the two factors effect simultaneously.
+
+Two-way ANOVA table
+
+nd
+2 Example
+• A reputed marketing agency in New Zealand has three different
+training programs for its salesmen.
+• The three programs are Method – A, B, C.
+• To assess the success of the programs, 4 salesmen from each of the
+programs were sent to the field.
+
+nd
+2 Example
+• Their performances in terms of sales are given in the following table.
+
+• Test whether there is significant difference among methods and
+among salesmen.
+
+nd
+2 Example
+• Step 1 : Hypotheses
+oNull Hypotheses: H01 : μM1= μM2 = μM3 (for treatments)
+oThat is, there is no significant difference among the three programs in
+their mean sales.
+oH02 : μS1 = μS2 = μS3 = μS4 (for block / salesman)
+
+• Alternative Hypotheses:
+oH11 : At least one average is different from the other, among the three
+programs.
+oH12 : At least one average is different from the other, among the four
+salesmen.
+
+nd
+2 Example
+• Step 2 : Data
+
+nd
+2 Example
+• Step 3 : Level of significance α = 5%
+• Step 4 : Test Statistic
+
+nd
+2 Example
+• Step 5 : Calculation of the Test Statistic
+
+nd
+2 Example
+
+nd
+2 Example
+
+8.5
+
+6
+
+nd
+2 Example
+• ANOVA Table (two-way)
+
+8.5
+
+8.5
+
+6
+
+5,09
+3,59
+
+nd
+2 Example
+• Step 6 : Critical values
+of(2, 6),0.05 = 5.1456 (for treatments)
+of(3, 6),0.05 = 4.7571 (for blocks)
+
+nd
+2 Example
+• Step 7 : Decision
+• (i) Calculated F0t = 5,09 < f(2, 6),0.05 = 5.1456, the null hypothesis is not
+rejected, and we conclude that there does not exist significant
+difference in the mean sales among the three programs.
+• (ii) Calculate F0b = 3,59 < f(3, 6),0.05 = 4.7571, the null hypothesis is not
+rejected and conclude that there does not exist significant difference
+in the mean sales among the four salesmen.
+
+References
+• https://www.statology.org/two-way-anova/
+• https://thebusinessprofessor.com/en_US/research-analysis-decisionscience/two-way-anova-definition
+• https://courses.lumenlearning.com/suny-natural-resourcesbiometrics/chapter/chapter-6-two-way-analysis-of-variance/
+• https://www.brainkart.com/article/Two-Way-ANOVA_39242/
+
+Thank you
+
+

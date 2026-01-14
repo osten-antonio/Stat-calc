@@ -1,0 +1,597 @@
+STAT6171001
+Basic Statistics
+Logic of Hypothesis Testing
+Session 9
+Raymond Bahana
+rbahana@binus.edu
+
+Session Learning Outcomes
+Upon completion of this session, students are expected to be able to
+• LO 2. Analyze a problem by using the basic concept of descriptive and
+inferential statistics
+• LO 3. Design a descriptive and inferential statistics solution to meet a
+given set of computing requirements in the context of computer
+science
+• LO4. Produce descriptive and inferential statistics solutions
+
+Topic
+• Logic of Hypothesis Testing
+
+Introduction
+James Bond case study
+• Mr. Bond was given 16 trials: martini shaken or stirred
+• Correct = 13 of the trials
+
+Binomial distribution
+• N = 16, x = 13, π = 0.5
+• P(x = 13) = 0.008544921875 (0.85%)
+• P(x ≥ 13) = 0.01063537597656 (1.06%)
+
+The Probability Value
+• In the James Bond example, the hypothesis is that he cannot tell the
+difference between shaken and stirred martinis.
+• The probability value is low (0.0106), thus providing evidence that he
+can tell the difference.
+• The p-value is a number, describes how likely you are to have found a
+particular set of observations if the null hypothesis were true.
+• p-values are used in hypothesis testing to help decide whether to
+reject the null hypothesis.
+• The smaller the p-value, the more likely you are to reject the null
+hypothesis.
+
+The Null Hypothesis
+
+The Null Hypothesis
+• The null hypothesis is a characteristic arithmetic theory suggesting that
+no statistical relationship and significance exists in a set of given,
+single, observed variables between two sets of observed data and
+measured phenomena.
+• The hypotheses play an important role in testing the significance of
+differences in experiments and between observations.
+• H0 symbolizes the null hypothesis of no difference.
+• It presumes to be true until evidence indicates otherwise.
+
+source: https://www.sciencedirect.com/topics/earth-and-planetary-sciences/null-hypothesis
+
+Examples of a Null Hypothesis
+• A school principal claims that students in her school score an average
+of seven out of 10 in exams.
+• The null hypothesis is that the population mean is 7.0.
+• To test this null hypothesis, we record marks of 30 students (sample)
+from the entire student population of the school (300) and calculate
+the mean of that sample.
+• We can then compare the (calculated) sample mean to the
+(hypothesized) population mean of 7.0 and attempt to reject the null
+hypothesis.
+
+Examples of a Null Hypothesis
+• The annual return of a particular mutual fund is claimed to be 8%.
+• Assume that a mutual fund has been in existence for 20 years.
+• The null hypothesis is that the mean return is 8% for the mutual fund.
+• We take a random sample of annual returns of the mutual fund for, say,
+five years (sample) and calculate the sample mean.
+• We then compare the (calculated) sample mean to the (claimed)
+population mean (8%) to test the null hypothesis.
+
+Examples of a Null Hypothesis
+For the previous examples, null hypotheses are:
+• Example 1: Students in the school score an average of seven out of
+10 in exams.
+• Example 2: Mean annual return of the mutual fund is 8% per year.
+
+Significance Testing
+• A low probability value casts doubt on the null hypothesis.
+• So, how low must the probability value be in order to conclude that the
+null hypothesis is false?
+• Although there is clearly no right or wrong answer to this question, it is
+conventional to conclude the null hypothesis is false if the probability
+value is less than 0.05 (< 0.05).
+• More conservative researchers conclude the null hypothesis is false
+only if the probability value is less than 0.01 (< 0.01).
+
+Significance Testing
+• When a researcher concludes that the null hypothesis is false, the
+researcher is said to have rejected the null hypothesis.
+• The probability value below which the null hypothesis is rejected is
+called the α level or simply α (alpha).
+• It is also called the significance level.
+
+Significance Testing
+There are two approaches to conducting significance tests.
+• favored by R. Fisher
+• favored by the statisticians Neyman and Pearson
+
+R. Fisher
+• A significance test is conducted, and the probability value reflects the
+strength of the evidence against the null hypothesis.
+• If the probability is below 0.01, the data provide strong evidence that the
+null hypothesis is false.
+• If the probability value is below 0.05 but larger than 0.01, then the null
+hypothesis is typically rejected, but not with as much confidence as it would
+be if the probability value were below 0.01.
+• Probability values between 0.05 and 0.10 provide weak evidence against the
+null hypothesis and, by convention, are not considered low enough to justify
+rejecting it.
+• Higher probabilities provide less evidence that the null hypothesis is false
+
+Neyman and Pearson
+• This approach is to specify an α level before analyzing the data.
+• If the data analysis results in a probability value below the α level, then
+the null hypothesis is rejected; if it is not, then the null hypothesis is
+not rejected.
+• According to this perspective, if a result is significant, then it does not
+matter how significant it is.
+• Moreover, if it is not significant, then it does not matter how close to
+being significant it is.
+• Therefore, if the 0.05 level is being used, then probability values of
+0.049 and 0.001 are treated identically.
+• Similarly, probability values of 0.06 and 0.34 are treated identically.
+
+Significance Testing
+• The former approach (preferred by Fisher) is more suitable for
+scientific research.
+• The latter is more suitable for applications in which a yes/no decision
+must be made.
+
+Steps in Hypothesis Testing
+1. Specify the null hypothesis.
+2. Specify the α level which is also known as the significance level.
+Typical values are 0.05 and 0.01.
+3. Compute the probability value (also known as the p value).
+4. Compare the probability value with the α level.
+
+Type I and II Errors
+Bhandari, P.(2022). Type I & Type II Errors | Differences, Examples, Visualizations. Scribbr. from
+https://www.scribbr.com/statistics/type-i-and-type-ii-errors/
+
+Introduction
+• In statistics, a Type I error is a false positive conclusion, while a Type II
+error is a false negative conclusion.
+• Making a statistical decision always involves uncertainties, so the risks
+of making these errors are unavoidable in hypothesis testing.
+• The probability of making a Type I error is the significance level, or
+alpha (α), while the probability of making a Type II error is beta (β).
+• These risks can be minimized through careful planning in your study
+design.
+
+Example
+• You decide to get tested for COVID-19 based on mild symptoms.
+• There are two errors that could potentially occur:
+• Type I error (false positive): the test result says you have
+coronavirus, but you actually don’t.
+• Type II error (false negative): the test result says you don’t have
+coronavirus, but you actually do.
+
+Error in Statistical Decision-Making
+• Hypothesis testing starts with the assumption of no difference
+between groups or no relationship between variables in the
+population—this is the null hypothesis.
+• It’s always paired with an alternative hypothesis, which is your
+research prediction of an actual difference between groups or a true
+relationship between variables.
+
+Error in Statistical Decision-Making
+Example:
+• You test whether a new drug intervention can alleviate symptoms of an
+auto immune disease.
+• In this case:
+• The null hypothesis (H0) is that the new drug has no effect on
+symptoms of the disease.
+• The alternative hypothesis (H1) is that the drug is effective for
+alleviating symptoms of the disease.
+• Then, you decide whether the null hypothesis can be rejected based on
+your data and the results of a statistical test.
+
+Error in Statistical Decision-Making
+• Since these decisions are based on probabilities, there is always a risk
+of making the wrong conclusion.
+• If your results show statistical significance, that means they are very
+unlikely to occur if the null hypothesis is true.
+• In this case, you would reject your null hypothesis.
+• But sometimes, this may be a Type I error.
+• If your findings do not show statistical significance, they have a high
+chance of occurring if the null hypothesis is true.
+• Therefore, you fail to reject your null hypothesis.
+• But sometimes, this may be a Type II error.
+
+Error in Statistical Decision-Making
+• A Type I error happens when you get false positive results: you
+conclude that the drug intervention improved symptoms when it
+actually didn’t.
+• These improvements could have arisen from other random factors or
+measurement errors.
+
+• A Type II error happens when you get false negative results: you
+conclude that the drug intervention didn’t improve symptoms when it
+actually did.
+• Your study may have missed key indicators of improvements or
+attributed any improvements to other factors instead.
+
+Error in Statistical Decision-Making
+
+How do you reduce the risk of making a Type I error?
+• The risk of making a Type I error is the significance level (or alpha) that
+you choose.
+• That’s a value that you set at the beginning of your study to assess the
+statistical probability of obtaining your results (p value).
+• The significance level is usually set at 0.05 or 5%.
+• This means that your results only have a 5% chance of occurring, or
+less, if the null hypothesis is actually true.
+• To reduce the Type I error probability, you can set a lower significance
+level.
+
+How do you reduce the risk of making a Type II error?
+• The risk of making a Type II error is inversely related to the statistical
+power of a test.
+• Power is the extent to which a test can correctly detect a real effect
+when there is one.
+• To (indirectly) reduce the risk of a Type II error, you can increase the
+sample size or the significance level to increase statistical power.
+
+One- and Two-Tailed Tests
+
+One-Tailed Test
+• From the binomial distribution,
+we know that the probability of
+being correct 13 or more times
+out of 16 if one is only guessing is
+0.0106
+• The red bars show the values
+greater than or equal to 13.
+• The probabilities are calculated
+for the upper tail of the
+distribution
+• A probability calculated in only
+one tail of the distribution is
+called a “one-tailed probability.”
+
+Two-Tailed Test
+• “What is the probability of getting a result
+as extreme or more extreme than the one
+observed”?
+• Since the chance expectation is 8/16, a
+result of 3/13 is equally as extreme as
+13/16.
+• Since the binomial distribution is
+symmetric when π = 0.5, this probability is
+exactly double the probability of 0.0106
+computed previously.
+• Therefore, p = 0.0212
+• A probability calculated in both tails of a
+distribution is called a two-tailed
+probability
+
+Introduction
+• One and Two-Tailed Tests are ways to identify the relationship between
+the statistical variables.
+• For checking the relationship between variables in a single direction
+(Left or Right direction), we use a one-tailed test.
+• A two-tailed test is used for checking whether the relations between
+variables are in any direction or not.
+
+Example
+• A two-tailed test is appropriate if you want to determine if there is any
+difference between the groups you are comparing.
+• For instance, if you want to see if Group A scored higher or lower than
+Group B, then you would want to use a two-tailed test.
+• If you are only interested in determining if Group A scored higher than
+Group B, and you are completely uninterested in possibility of Group A
+scoring lower than Group B, then you may want to use a one-tailed
+test.
+
+T Test for One Sample
+
+T Test for One Sample
+• When the population standard deviation, σ (sigma), is unknown, it
+must be estimated with the sample standard deviation, s.
+• By the same token, the standard error of the mean, σx̄ then must be
+estimated with Sx̄ . Under these circumstances, t rather than z should
+be used to test a hypothesis or to construct a confidence interval for
+the population mean.
+• Further reading: chapter 13 (Witte, 2017)
+
+What is a One Sample T Test?
+• The one sample t test compares the mean of your sample data to a
+known value.
+• For example, you might want to know how your sample mean
+compares to the population mean.
+• You should run a one sample t test when you don’t know the
+population standard deviation, or you have a small sample size.
+
+Example
+• A company wants to improve sales. Past sales data indicate that the
+average sale was $100 per transaction.
+• After training your sales force, recent sales data (taken from a sample
+of 25 salesmen) indicates an average sale of $130, with a standard
+deviation of $15.
+• Did the training work? Test your hypothesis at a 5% alpha level.
+• Step 1: Write your null hypothesis statement.
+• The accepted hypothesis is that there is no difference in sales, so:
+H0: μ = $100
+
+Example
+• Step 1: Write your null hypothesis statement.
+• The accepted hypothesis is that there is no difference in sales, so:
+H0: μ = $100
+• Step 2: Write your alternate hypothesis.
+• This is the one you’re testing in the one sample t test.
+• You think that there is a difference (that the mean sales increased),
+so:
+H1: μ > $100
+
+Example
+• Step 3: Identify the following pieces of information you’ll need to
+calculate the test statistic.
+• The question should give you these items:
+• The sample mean(x̄) → This is given in the question as $130.
+• The population mean(μ) → Given as $100 (from past data).
+• The sample standard deviation(s) = $15.
+• Number of observations(n) = 25.
+
+Example
+• Step 4: Insert the items from above into the t score formula.
+
+t = (130 – 100) / ((15 / √(25))
+t = (30 / 3) = 10
+• This is your calculated t-value.
+
+Example
+• Step 5: Find the t-table value. You need two values to find this:
+1. The alpha level: given as 5% in the question.
+2. The degrees of freedom, which is the number of items in the
+sample (n) minus 1: 25 – 1 = 24.
+
+Example
+• Look up 24 degrees of freedom in the left column and 0.05 in the top
+row.
+• The intersection is 1.711.
+• This is your one-tailed critical t-value.
+• What this critical value means in a one tailed t test, is that we would
+expect most values to fall under 1.711.
+• If our calculated t-value (from Step 4) falls within this range, the null
+hypothesis is likely true.
+
+Example
+• Step 6: Compare Step 4 to Step 5.
+• The value from Step 4 does not fall into the range calculated in Step 5,
+so we can reject the null hypothesis.
+• The value of 10 falls into the rejection region (the left tail).
+• In other words, it’s highly likely that the mean sale is greater.
+• The one sample t test has told us that sales training was probably a
+success.
+
+T Test for Two Independent
+Samples
+
+T Test for Two Independent Samples
+• Must be selected from among the following three possibilities
+
+• Further reading: chapter 14 (Witte, 2017)
+
+What is a Two-Sample T-Test?
+• A two-sample t-test is used when you want to compare two
+independent groups to see if their means are different.
+• “Independent” implies that the two samples must have come from
+two completely different populations.
+• If you have independent samples, you can use the two-sample t-test.
+• On the other hand, if your samples are connected in some way, run a
+paired samples t-test.
+• “Connected” means that you are collecting data twice from the same
+group, person, item or thing.
+
+Hypotheses
+• Ho: The population mean of one group equals the population mean of
+the other group, or μ1 = μ2
+• H1: The population mean of one group does not equal the population
+mean of the other group, or μ1 ≠ μ2
+
+This test can also be conducted with a directional alternate hypothesis:
+• Ho: The population mean of one group equals the population mean of
+the other group, or μ1 = μ2
+• H1: The population mean of one group is greater than the population
+mean of the other group, or μ1 > μ2
+
+Example
+• The following are a few real-life examples where two-sample T-test
+for independent samples can be used:
+1. Comparing the average test scores of two classes from two
+different schools
+2. Comparing the average weights of two different or independent
+groups of people
+3. Determining whether the medication have the same efficacy on
+two different or independent groups of people
+4. Compare whether the effect of vaccination on two different
+groups
+
+Example
+• One way to measure a person’s fitness is to measure their body fat
+percentage.
+• Average body fat percentages vary by age, but according to some
+guidelines, the normal range for men is 15-20% body fat, and the
+normal range for women is 20-25% body fat.
+• Our sample data is from a group of men and women who did
+workouts at a gym three times a week for a year. Then, their trainer
+measured the body fat.
+
+Example
+• The table below shows the data.
+
+Example
+
+Example
+• For each group, we need the average, standard deviation and sample
+size.
+
+Example
+• We start by calculating our test statistic.
+• This calculation begins with finding the difference between the two
+averages:
+22.29 − 14.95 = 7.34
+
+• This difference in our samples estimates the difference between the
+population means for the two groups.
+• Next, calculate the pooled standard deviation.
+
+Example
+• This builds a combined
+estimate of the overall
+standard deviation.
+• First, we calculate the pooled
+variance:
+
+Example
+• Formula:
+
+• The population mean(μ1 – μ2) = 0
+
+Example
+• To evaluate the difference between the means, compare the test statistic
+to a theoretical value from the t-distribution. This activity involves 4 steps:
+1. Decide on the risk we are willing to take for declaring a significant
+difference. We decide that we are willing to take a 5% risk of saying that
+the unknown population means for men and women are not equal when
+they really are. In statistics-speak, the significance level, denoted by α, is
+set to 0.05.
+2. Calculate a test statistic. The test statistic is 2.80.
+3. Find the theoretical value from the t-distribution based on our null
+hypothesis which states that the means for men and women are equal.
+
+Example
+• To find this value, we need the significance level (α = 0.05) and the
+degrees of freedom.
+• The degrees of freedom (df) are based on the sample sizes of the two
+groups.
+• For the body fat data, this is:
+df = n1 + n2 − 2 = 10 + 13 − 2 = 21
+
+Example
+• The t value with
+α = 0.05 and 21
+degrees of
+freedom is
+2.080.
+
+Example
+4. Compare the value of our statistic (2.80) to the t value.
+Since 2.80 > 2.080, we reject the null hypothesis that the mean
+body fat for men and women are equal and conclude that we have
+evidence body fat in the population is different between men and
+women.
+
+T Test for Two Related Samples
+
+T Test for Two Related Samples
+• Selected from among the following three possibilities, where μD
+represents the population mean for all difference scores:
+
+• Further reading: chapter 15 (Witte, 2017)
+
+T Test for Two Related Samples
+• The test statistic for the Paired Samples t Test, denoted t, follows the
+same formula as the one sample t test.
+
+Example
+• Testing two production lines to see if their outputs are different.
+• One-line feeds into a second line, so the second line depends on the
+first for at least part of the production.
+• Comparing test scores for the same group of students before an
+intensive study session and after the session.
+• You’re testing the same people twice, so a paired test is needed.
+• You are subjecting two different model cars to crashworthiness, using
+the same equipment.
+• Although you’re testing different items, they are being subjected to
+the same conditions and so are paired.
+
+Example
+• An instructor wants to use two exams in her classes next year.
+• This year, she gives both exams to the students.
+• She wants to know if the exams are equally difficult and wants to
+check this by looking at the differences between scores.
+• If the mean difference between scores for students is “close enough”
+to zero, she will make a practical conclusion that the exams are
+equally difficult.
+
+Example
+• Here is the data:
+• If you look at the table, you see that some of
+the score differences are positive, and some
+are negative.
+• You might think that the two exams are
+equally difficult.
+• Other people might disagree.
+• The statistical test gives a common way to
+make the decision, so that everyone makes
+the same decision on the same data.
+
+Example
+Checking the data
+• Let’s start by answering: Is the paired t-test an appropriate method to
+evaluate the difference in difficulty between the two exams?
+1. Subjects are independent. Each student does their own work on
+the two exams.
+2. Each of the paired measurements are obtained from the same
+subject. Each student takes both tests.
+3. The distribution of differences is normally distributed. For now, we
+will assume this is true.
+• We decide that we have selected a valid analysis method.
+
+Example
+• The figure below shows a histogram and summary statistics for the
+score differences.
+
+• From the histogram, the data are roughly bell-shaped, so the idea of a
+normal distribution for the differences seems reasonable.
+
+Example
+• The average score difference is:
+• Next, we calculate the standard error for the score difference. The
+calculation is:
+
+• In the formula above, n is the number of students – which is the
+number of differences.
+
+Example
+• Calculate our test statistic as:
+
+Example
+• To make our decision, we compare the test statistic to a value from
+the t-distribution. This activity involves four steps:
+1. Decide on the risk we are willing to take for declaring a difference
+when there is not a difference. For the exam score data, we decide
+that we are willing to take a 5% risk of saying that the unknown
+mean exam score difference is zero when in reality it is not. In
+statistics-speak, we set the significance level, denoted by α, to
+0.05.
+2. We calculate a test statistic. Our test statistic is 0.750.
+3. We find the value from the t-distribution.
+
+Example
+• To find this value, we need the significance level (α = 0.05) and the
+degrees of freedom.
+• The degrees of freedom (df) are based on the population size.
+• For the exam score data, this is:
+df = n = 16
+
+Example
+• The t value with
+α = 0.05 and 16
+degrees of
+freedom is
+2.120.
+
+Example
+4. We compare the value of our statistic (0.750) to the t value.
+Because 0.750 < 2.120, we can reject our idea that the mean score
+difference is zero.
+
+References
+• Witte, R.S.&Witte, J.S. (2017). Statistics (11th ed.). Wiley. ISBN: 9781119386056.
+• Lane, D.M., Scott, D., Hebl, M., Guerra, R., Osherson, D.& Zimmer, H.
+(2003). Introduction to Statistics. Online edition at
+https://open.umn.edu/opentextbooks/textbooks/459
+• Levine, D.M., Stephan, D.F. & Szabat, K.A. (2017). Statistics for
+Managers Using Microsoft Excel (8th ed.). Pearson. ISBN: 9780134566672
+
+Thank you
+
+

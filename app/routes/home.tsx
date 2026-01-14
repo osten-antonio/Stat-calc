@@ -3,7 +3,7 @@ import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Stuff" },
+    { title: "Stats Hell" },
     {
       name: "description",
       content: "A collection of statistical calculators.",
@@ -17,9 +17,9 @@ const CATEGORIES = [
     color: "var(--color-accent-pink)",
     dot: "var(--color-dot-pink)",
     tools: [
-      { name: "Binomial", path: "/stats-stuff/binomial" },
-      { name: "Poisson", path: "/stats-stuff/poisson" },
-      { name: "Hypergeometric", path: "/stats-stuff/hypergeometric" },
+      { name: "Binomial", path: "/binomial" },
+      { name: "Poisson", path: "/poisson" },
+      { name: "Hypergeometric", path: "/hypergeometric" },
     ],
   },
   {
@@ -27,8 +27,8 @@ const CATEGORIES = [
     color: "var(--color-accent-peach)",
     dot: "var(--color-dot-peach)",
     tools: [
-      { name: "Permutations", path: "/stats-stuff/permutations" },
-      { name: "Combinations", path: "/stats-stuff/combinations" },
+      { name: "Permutations", path: "/permutations" },
+      { name: "Combinations", path: "/combinations" },
     ],
   },
   {
@@ -36,9 +36,9 @@ const CATEGORIES = [
     color: "var(--color-accent-mint)",
     dot: "var(--color-dot-mint)",
     tools: [
-      { name: "T-Tests", path: "/stats-stuff/t-tests" },
-      { name: "Chi-Square", path: "/stats-stuff/chi-square" },
-      { name: "ANOVA", path: "/stats-stuff/anova" },
+      { name: "T-Tests", path: "/t-tests" },
+      { name: "Chi-Square", path: "/chi-square" },
+      { name: "ANOVA", path: "/anova" },
     ],
   },
   {
@@ -46,15 +46,17 @@ const CATEGORIES = [
     color: "var(--color-accent-blue)",
     dot: "var(--color-dot-blue)",
     tools: [
-      { name: "Descriptive Stats", path: "/stats-stuff/descriptive" },
-      { name: "Regression", path: "/stats-stuff/regression" },
+      { name: "Descriptive Stats", path: "/descriptive" },
+      { name: "Regression", path: "/regression" },
+      { name: "Box Plot", path: "/box-plot" },
+      { name: "Special Means", path: "/special-means" },
     ],
   },
   {
     name: "Reference",
     color: "var(--color-accent-lavender)",
     dot: "var(--color-dot-lavender)",
-    tools: [{ name: "Statistical Tables", path: "/stats-stuff/tables" }],
+    tools: [{ name: "Statistical Tables", path: "/tables" }],
   },
 ];
 
