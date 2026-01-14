@@ -6,6 +6,7 @@ import {
   oneSampleTTestWithSteps,
   pairedTTestWithSteps,
   independentTTestWithSteps,
+  independentTTestFromStats,
   type OneSampleTTestResult,
   type PairedTTestResult,
   type IndependentTTestResult,
@@ -27,6 +28,7 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 type TestType = "one-sample" | "paired" | "independent";
+type InputMode = "data" | "stats";
 
 function formatNum(num: number, decimals = 4): string {
   if (!Number.isFinite(num)) return "N/A";
@@ -72,6 +74,7 @@ export default function TTestsPage() {
   const [testType, setTestType] = useState<TestType>("one-sample");
   const [alpha, setAlpha] = useState("0.05");
 
+  // One Sample State
   const [oneSampleData, setOneSampleData] = useState<DataTableValue>({
     columns: ["Sample"],
     rows: [[""], [""], [""], [""], [""]],
@@ -79,17 +82,29 @@ export default function TTestsPage() {
   const [mu0, setMu0] = useState("");
   const [oneSampleResult, setOneSampleResult] = useState<CalculationResult<OneSampleTTestResult> | null>(null);
 
+  // Paired State
   const [pairedData, setPairedData] = useState<DataTableValue>({
     columns: ["Before", "After"],
     rows: [["", ""], ["", ""], ["", ""], ["", ""], ["", ""]],
   });
   const [pairedResult, setPairedResult] = useState<CalculationResult<PairedTTestResult> | null>(null);
 
+  // Independent State
+  const [indepMode, setIndepMode] = useState<InputMode>("data");
+  const [indepAlpha, setIndepAlpha] = useState(0.05);
+  const [indepTails, setIndepTails] = useState<1 | 2>(2);
+
+  // Data Mode State
   const [indepData, setIndepData] = useState<DataTableValue>({
     columns: ["Group 1", "Group 2"],
     rows: [["", ""], ["", ""], ["", ""], ["", ""], ["", ""]],
   });
   const [selectedGroups, setSelectedGroups] = useState<[number, number]>([0, 1]);
+
+  // Stats Mode State
+  const [stats1, setStats1] = useState({ n: "", mean: "", sd: "" });
+  const [stats2, setStats2] = useState({ n: "", mean: "", sd: "" });
+
   const [indepResult, setIndepResult] = useState<CalculationResult<IndependentTTestResult> | null>(null);
 
   const [error, setError] = useState<string | null>(null);
@@ -152,21 +167,52 @@ export default function TTestsPage() {
     setError(null);
     setIndepResult(null);
 
-    if (indepData.columns.length < 2) {
-      setError("Add at least two columns to compare independent groups.");
-      return;
-    }
-    if (selectedGroups[0] === selectedGroups[1]) {
-      setError("Select two different columns to compare.");
-      return;
-    }
-    if (indepGroup1.length < 2 || indepGroup2.length < 2) {
-      setError("Need at least 2 values in each selected group.");
-      return;
-    }
+    if (indepMode === "data") {
+      if (indepData.columns.length < 2) {
+        setError("Add at least two columns to compare independent groups.");
+        return;
+      }
+      if (selectedGroups[0] === selectedGroups[1]) {
+        setError("Select two different columns to compare.");
+        return;
+      }
+      if (indepGroup1.length < 2 || indepGroup2.length < 2) {
+        setError("Need at least 2 values in each selected group.");
+        return;
+      }
 
-    const result = independentTTestWithSteps(indepGroup1, indepGroup2, parseFloat(alpha));
-    setIndepResult(result);
+      const result = independentTTestWithSteps(indepGroup1, indepGroup2, indepAlpha, indepTails);
+      setIndepResult(result);
+    } else {
+      // Stats Mode Validation
+      const n1 = parseFloat(stats1.n);
+      const m1 = parseFloat(stats1.mean);
+      const s1 = parseFloat(stats1.sd);
+      const n2 = parseFloat(stats2.n);
+      const m2 = parseFloat(stats2.mean);
+      const s2 = parseFloat(stats2.sd);
+
+      if ([n1, m1, s1, n2, m2, s2].some(isNaN)) {
+        setError("Please enter all statistical values (n, Mean, SD) for both groups.");
+        return;
+      }
+      if (n1 < 2 || n2 < 2) {
+        setError("Sample sizes must be at least 2.");
+        return;
+      }
+      if (s1 < 0 || s2 < 0) {
+        setError("Standard deviations cannot be negative.");
+        return;
+      }
+
+      const result = independentTTestFromStats(
+        { n: n1, mean: m1, sd: s1 },
+        { n: n2, mean: m2, sd: s2 },
+        indepAlpha,
+        indepTails
+      );
+      setIndepResult(result);
+    }
   }
 
   return (
@@ -499,57 +545,128 @@ export default function TTestsPage() {
               </p>
             </Card>
 
-            <div className="mb-6 space-y-3">
-              <DataTableInput
-                label="Groups"
-                helpText="Enter each group in its own column; add columns for more groups"
-                value={indepData}
-                onChange={setIndepData}
-                minRows={5}
-                tone="mint"
-                controlsPlacement="bottom"
-              />
+            <div className="mb-6">
+              <div className="flex gap-4 border-b border-gray-200 mb-6">
+                <button
+                  className={`pb-2 text-sm font-medium transition-colors border-b-2 ${indepMode === 'data' ? 'border-[var(--color-dot-mint)] text-[var(--color-dot-mint)]' : 'border-transparent text-[var(--color-ink-light)] hover:text-[var(--color-ink)]'}`}
+                  onClick={() => setIndepMode('data')}
+                >
+                  Enter Raw Data
+                </button>
+                <button
+                  className={`pb-2 text-sm font-medium transition-colors border-b-2 ${indepMode === 'stats' ? 'border-[var(--color-dot-mint)] text-[var(--color-dot-mint)]' : 'border-transparent text-[var(--color-ink-light)] hover:text-[var(--color-ink)]'}`}
+                  onClick={() => setIndepMode('stats')}
+                >
+                  Enter Statistics
+                </button>
+              </div>
 
-              <Card className="p-4 border border-gray-100 shadow-sm">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div className="space-y-1 text-sm text-[var(--color-ink-light)]">
-                    <div>Group 1: {indepGroup1.length} values</div>
-                    <div>Group 2: {indepGroup2.length} values</div>
-                    {extraGroupsCount > 0 ? (
-                      <div className="text-[var(--color-ink-light)]">
-                        {extraGroupsCount} additional column{extraGroupsCount === 1 ? "" : "s"} captured; select which two to compare below.
+              {indepMode === "data" ? (
+                <div className="space-y-3">
+                  <DataTableInput
+                    label="Groups"
+                    helpText="Enter each group in its own column; add columns for more groups"
+                    value={indepData}
+                    onChange={setIndepData}
+                    minRows={5}
+                    tone="mint"
+                    controlsPlacement="bottom"
+                  />
+
+                  <Card className="p-4 border border-gray-100 shadow-sm">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <div className="space-y-1 text-sm text-[var(--color-ink-light)]">
+                        <div>Group 1: {indepGroup1.length} values</div>
+                        <div>Group 2: {indepGroup2.length} values</div>
+                        {extraGroupsCount > 0 ? (
+                          <div className="text-[var(--color-ink-light)]">
+                            {extraGroupsCount} additional column{extraGroupsCount === 1 ? "" : "s"} captured; select which two to compare below.
+                          </div>
+                        ) : null}
                       </div>
-                    ) : null}
-                  </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
-                    <label className="text-sm font-medium">Compare:</label>
-                    <select
-                      className="p-2 border rounded bg-white border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
-                      value={selectedGroups[0]}
-                      onChange={(e) => setSelectedGroups([Number(e.target.value), selectedGroups[1]])}
-                    >
-                      {indepData.columns.map((col, idx) => (
-                        <option key={col || idx} value={idx}>
-                          {col || `Col ${idx + 1}`}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="text-sm text-[var(--color-ink-light)]">vs</span>
-                    <select
-                      className="p-2 border rounded bg-white border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
-                      value={selectedGroups[1]}
-                      onChange={(e) => setSelectedGroups([selectedGroups[0], Number(e.target.value)])}
-                    >
-                      {indepData.columns.map((col, idx) => (
-                        <option key={col || idx} value={idx} disabled={idx === selectedGroups[0]}>
-                          {col || `Col ${idx + 1}`}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <label className="text-sm font-medium">Compare:</label>
+                        <select
+                          className="p-2 border rounded bg-white border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
+                          value={selectedGroups[0]}
+                          onChange={(e) => setSelectedGroups([Number(e.target.value), selectedGroups[1]])}
+                        >
+                          {indepData.columns.map((col, idx) => (
+                            <option key={col || idx} value={idx}>
+                              {col || `Col ${idx + 1}`}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="text-sm text-[var(--color-ink-light)]">vs</span>
+                        <select
+                          className="p-2 border rounded bg-white border-[var(--color-border)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-dot-mint)]"
+                          value={selectedGroups[1]}
+                          onChange={(e) => setSelectedGroups([selectedGroups[0], Number(e.target.value)])}
+                        >
+                          {indepData.columns.map((col, idx) => (
+                            <option key={col || idx} value={idx} disabled={idx === selectedGroups[0]}>
+                              {col || `Col ${idx + 1}`}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </Card>
                 </div>
-              </Card>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-6">
+                  <Card className="p-6 border border-gray-100 shadow-sm space-y-4">
+                    <h3 className="font-medium text-lg border-b pb-2 mb-4">Group 1 Statistics</h3>
+                    <Input
+                      label="Sample Size (n₁)"
+                      type="number"
+                      value={stats1.n}
+                      onChange={(e) => setStats1({ ...stats1, n: e.target.value })}
+                      placeholder="e.g. 25"
+                    />
+                    <Input
+                      label="Sample Mean (x̄₁)"
+                      type="number"
+                      value={stats1.mean}
+                      onChange={(e) => setStats1({ ...stats1, mean: e.target.value })}
+                      placeholder="e.g. 8"
+                    />
+                    <Input
+                      label="Sample Std Dev (s₁)"
+                      type="number"
+                      value={stats1.sd}
+                      onChange={(e) => setStats1({ ...stats1, sd: e.target.value })}
+                      placeholder="e.g. 2"
+                    />
+                  </Card>
+
+                  <Card className="p-6 border border-gray-100 shadow-sm space-y-4">
+                    <h3 className="font-medium text-lg border-b pb-2 mb-4">Group 2 Statistics</h3>
+                    <Input
+                      label="Sample Size (n₂)"
+                      type="number"
+                      value={stats2.n}
+                      onChange={(e) => setStats2({ ...stats2, n: e.target.value })}
+                      placeholder="e.g. 25"
+                    />
+                    <Input
+                      label="Sample Mean (x̄₂)"
+                      type="number"
+                      value={stats2.mean}
+                      onChange={(e) => setStats2({ ...stats2, mean: e.target.value })}
+                      placeholder="e.g. 6"
+                    />
+                    <Input
+                      label="Sample Std Dev (s₂)"
+                      type="number"
+                      value={stats2.sd}
+                      onChange={(e) => setStats2({ ...stats2, sd: e.target.value })}
+                      placeholder="e.g. 2.5"
+                    />
+                  </Card>
+                </div>
+              )}
             </div>
 
             {error && (
@@ -557,9 +674,50 @@ export default function TTestsPage() {
                 {error}
               </p>
             )}
-            <Button tone="mint" className="w-full md:w-auto" onClick={runIndependent}>
-              Calculate Independent t-Test
-            </Button>
+            <div className="flex flex-wrap gap-6 items-end mb-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-ink-light)] mb-1">
+                  Significance Level (α)
+                </label>
+                <select
+                  value={indepAlpha}
+                  onChange={(e) => setIndepAlpha(Number(e.target.value))}
+                  className="p-2 rounded border border-[var(--color-border)] bg-white text-sm"
+                >
+                  <option value={0.1}>0.10</option>
+                  <option value={0.05}>0.05</option>
+                  <option value={0.01}>0.01</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-ink-light)] mb-1">
+                  Tail Type
+                </label>
+                <div className="flex bg-white rounded border border-[var(--color-border)] overflow-hidden">
+                  <button
+                    onClick={() => setIndepTails(1)}
+                    className={`px-3 py-2 text-sm transition-colors ${indepTails === 1 ? 'bg-[var(--color-accent-mint)] text-[var(--color-dot-mint)] font-medium' : 'hover:bg-gray-50'}`}
+                  >
+                    One-tailed
+                  </button>
+                  <div className="w-px bg-gray-200"></div>
+                  <button
+                    onClick={() => setIndepTails(2)}
+                    className={`px-3 py-2 text-sm transition-colors ${indepTails === 2 ? 'bg-[var(--color-accent-mint)] text-[var(--color-dot-mint)] font-medium' : 'hover:bg-gray-50'}`}
+                  >
+                    Two-tailed
+                  </button>
+                </div>
+              </div>
+              <Button tone="mint" className="w-full md:w-auto ml-auto" onClick={runIndependent}>
+                Calculate Independent t-Test
+              </Button>
+            </div>
+
+            <p className="text-xs text-[var(--color-ink-light)] mt-2 mb-4 italic">
+              <strong>Two-Tailed Test:</strong> Use when you want to know if there's any difference between two group means (e.g., "Is Group A different from Group B?").<br />
+              <strong>One-Tailed Test:</strong> Use only when you predict a specific direction (e.g., "Is the mean of Group A greater than Group B?").
+            </p>
 
             {indepResult && (
               <div className="mt-8 fade-in space-y-6" style={{ animationDelay: "150ms" }}>
@@ -585,9 +743,13 @@ export default function TTestsPage() {
                     </div>
                     <div>
                       <div className="text-3xl font-bold text-[var(--color-ink)]">
-                        {formatNum(indepResult.value.pooledVariance)}
+                        {indepResult.value.pooledVariance > 0
+                          ? formatNum(indepResult.value.pooledVariance)
+                          : "N/A"}
                       </div>
-                      <div className="text-xs text-[var(--color-ink-light)]">Pooled Var</div>
+                      <div className="text-xs text-[var(--color-ink-light)]">
+                        {indepResult.value.pooledVariance > 0 ? "Pooled Var" : "Pooled Var (N/A)"}
+                      </div>
                     </div>
                     <div>
                       <div className="text-3xl font-bold text-[var(--color-ink)]">
