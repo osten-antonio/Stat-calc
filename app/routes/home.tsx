@@ -51,6 +51,7 @@ const CATEGORIES = [
       { name: "Descriptive Stats", path: "/descriptive/basic" },
       { name: "Special Means", path: "/descriptive/means" },
       { name: "Regression", path: "/regression" },
+      { name: "Box Plot", path: "/box-plot" },
     ],
   },
   {

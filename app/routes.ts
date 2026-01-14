@@ -17,4 +17,5 @@ export default [
     route("independent", "routes/independent.tsx"),
     route("descriptive/basic", "routes/descriptive-basic.tsx"),
     route("descriptive/means", "routes/descriptive-means.tsx"),
+    route("box-plot", "routes/box-plot.tsx"),
 ] satisfies RouteConfig;
