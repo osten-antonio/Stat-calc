@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { Route } from "./+types/stats-hell.descriptive";
+import type { Route } from "./+types/stats-stuff.descriptive";
 import { Link } from "react-router";
 
 import { descriptiveStatsWithSteps, type DescriptiveStats } from "~/lib/math/descriptive";
@@ -13,7 +13,7 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Hell | Descriptive Statistics" },
+    { title: "Stats Stuff | Descriptive Statistics" },
     { name: "description", content: "Calculate mean, median, mode, variance, and standard deviation with step-by-step workings." },
   ];
 }
@@ -107,8 +107,8 @@ export default function DescriptiveCalculator() {
         <p className="text-sm mt-2">
           Calculate mean, median, mode, variance, and standard deviation with step-by-step workings.
         </p>
-        <Link to="/stats-hell" className="text-xs">
-          ← Back to Stats Hell
+        <Link to="/stats-stuff" className="text-xs">
+          ← Back to Stats Stuff
         </Link>
       </header>
 

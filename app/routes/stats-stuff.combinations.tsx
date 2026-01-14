@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { Route } from "./+types/stats-hell.permutations";
+import type { Route } from "./+types/stats-stuff.combinations";
 import { Link } from "react-router";
 
-import { permutationsWithSteps } from "~/lib/math/permutations";
+import { combinationsWithSteps } from "~/lib/math/combinations";
 import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
 import { Input } from "~/components/ui/Input";
 import { Button } from "~/components/ui/Button";
@@ -13,14 +13,14 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Hell | Permutations" },
-    { name: "description", content: "Calculate permutations P(n, r) with step-by-step workings." },
+    { title: "Stats Stuff | Combinations" },
+    { name: "description", content: "Calculate combinations C(n, r) with step-by-step workings." },
   ];
 }
 
 function resultToExamAnswer(calc: CalculationResult<number>): ExamAnswer {
   return {
-    title: "Permutations Calculation",
+    title: "Combinations Calculation",
     sections: calc.steps.map((step) => ({
       title: step.title,
       lines: [
@@ -31,11 +31,11 @@ function resultToExamAnswer(calc: CalculationResult<number>): ExamAnswer {
         step.result ? `= ${step.result}` : "",
       ].filter(Boolean),
     })),
-    finalAnswer: `P(${calc.inputs.n}, ${calc.inputs.r}) = ${calc.value}`,
+    finalAnswer: `C(${calc.inputs.n}, ${calc.inputs.r}) = ${calc.value}`,
   };
 }
 
-export default function PermutationsCalculator() {
+export default function CombinationsCalculator() {
   const [n, setN] = useState("");
   const [r, setR] = useState("");
   const [result, setResult] = useState<CalculationResult<number> | null>(null);
@@ -61,24 +61,24 @@ export default function PermutationsCalculator() {
       return;
     }
 
-    const calc = permutationsWithSteps(nVal, rVal);
+    const calc = combinationsWithSteps(nVal, rVal);
     setResult(calc);
   }
 
   return (
     <main className="retro-theme min-h-screen p-6">
       <header className="mb-6">
-        <h1 className="text-3xl retro-fire">PERMUTATIONS</h1>
+        <h1 className="text-3xl retro-fire">COMBINATIONS</h1>
         <p className="text-sm mt-2">
-          Calculate P(n, r) — the number of ways to arrange r items from n.
+          Calculate C(n, r) — the number of ways to choose r items from n (order doesn't matter).
         </p>
-        <Link to="/stats-hell" className="text-xs">
-          ← Back to Stats Hell
+        <Link to="/stats-stuff" className="text-xs">
+          ← Back to Stats Stuff
         </Link>
       </header>
 
       <Card className="retro-card mb-6">
-        <MathBlock formula="P(n, r) = \frac{n!}{(n - r)!}" />
+        <MathBlock formula="C(n, r) = \frac{n!}{r!(n - r)!}" />
       </Card>
 
       <section className="mb-6">
@@ -89,15 +89,15 @@ export default function PermutationsCalculator() {
             min={0}
             value={n}
             onChange={(e) => setN(e.target.value)}
-            placeholder="e.g. 8"
+            placeholder="e.g. 10"
           />
           <Input
-            label="r (items to arrange)"
+            label="r (items to choose)"
             type="number"
             min={0}
             value={r}
             onChange={(e) => setR(e.target.value)}
-            placeholder="e.g. 4"
+            placeholder="e.g. 3"
           />
         </div>
 

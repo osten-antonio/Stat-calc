@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Route } from "./+types/stats-hell.tables";
+import type { Route } from "./+types/stats-stuff.tables";
 import { Link } from "react-router";
 
 import {
@@ -25,7 +25,7 @@ import { Card } from "~/components/ui/Card";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Hell | Statistical Tables" },
+    { title: "Stats Stuff | Statistical Tables" },
     { name: "description", content: "t-distribution, z-distribution, and chi-square tables with auto-lookup." },
   ];
 }
@@ -85,8 +85,8 @@ export default function TablesPage() {
         <p className="text-sm mt-2">
           Look up critical values from t, z, and χ² distributions.
         </p>
-        <Link to="/stats-hell" className="text-xs">
-          ← Back to Stats Hell
+        <Link to="/stats-stuff" className="text-xs">
+          ← Back to Stats Stuff
         </Link>
       </header>
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Route } from "./+types/stats-hell.chi-square";
+import type { Route } from "./+types/stats-stuff.chi-square";
 import { Link } from "react-router";
 
 import {
@@ -18,7 +18,7 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Hell | Chi-Square Tests" },
+    { title: "Stats Stuff | Chi-Square Tests" },
     { name: "description", content: "Chi-square goodness-of-fit and independence tests with step-by-step workings." },
   ];
 }
@@ -139,8 +139,8 @@ export default function ChiSquarePage() {
         <p className="text-sm mt-2">
           Goodness-of-fit and test of independence with step-by-step workings.
         </p>
-        <Link to="/stats-hell" className="text-xs">
-          ← Back to Stats Hell
+        <Link to="/stats-stuff" className="text-xs">
+          ← Back to Stats Stuff
         </Link>
       </header>
 

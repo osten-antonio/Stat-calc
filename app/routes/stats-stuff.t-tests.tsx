@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { Route } from "./+types/stats-hell.t-tests";
+import type { Route } from "./+types/stats-stuff.t-tests";
 import { Link } from "react-router";
 
 import {
@@ -21,7 +21,7 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Hell | T-Tests" },
+    { title: "Stats Stuff | T-Tests" },
     { name: "description", content: "One-sample, paired, and independent t-tests with step-by-step workings." },
   ];
 }
@@ -144,8 +144,8 @@ export default function TTestsPage() {
         <p className="text-sm mt-2">
           One-sample, paired, and independent samples t-tests with full step-by-step workings.
         </p>
-        <Link to="/stats-hell" className="text-xs">
-          ← Back to Stats Hell
+        <Link to="/stats-stuff" className="text-xs">
+          ← Back to Stats Stuff
         </Link>
       </header>
 

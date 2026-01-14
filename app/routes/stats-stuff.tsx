@@ -1,16 +1,16 @@
-import type { Route } from "./+types/stats-hell";
+import type { Route } from "./+types/stats-stuff";
 import { Link } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Hell" },
+    { title: "Stats Stuff" },
     { name: "description", content: "A retro exam-style statistics calculator." },
   ];
 }
 
 const calculators = [
-  { to: "/stats-hell/descriptive", label: "Descriptive Stats" },
-  { to: "/stats-hell/tables", label: "Tables (t / z / χ²)" },
+  { to: "/stats-stuff/descriptive", label: "Descriptive Stats" },
+  { to: "/stats-stuff/tables", label: "Tables (t / z / χ²)" },
 ];
 
 export default function StatsHellHome() {

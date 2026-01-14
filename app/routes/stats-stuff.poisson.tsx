@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { Route } from "./+types/stats-hell.binomial";
+import type { Route } from "./+types/stats-stuff.poisson";
 import { Link } from "react-router";
 
-import { binomialWithSteps, type BinomialResult } from "~/lib/math/probability";
+import { poissonWithSteps, type PoissonResult } from "~/lib/math/probability";
 import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
 import { Input } from "~/components/ui/Input";
 import { Button } from "~/components/ui/Button";
@@ -13,8 +13,8 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Hell | Binomial Distribution" },
-    { name: "description", content: "Calculate binomial probability P(X = k) with step-by-step workings." },
+    { title: "Stats Stuff | Poisson Distribution" },
+    { name: "description", content: "Calculate Poisson probability P(X = k) with step-by-step workings." },
   ];
 }
 
@@ -23,9 +23,9 @@ function formatNum(num: number, decimals = 6): string {
   return num.toFixed(decimals).replace(/\.?0+$/, "");
 }
 
-function resultToExamAnswer(calc: CalculationResult<BinomialResult>): ExamAnswer {
+function resultToExamAnswer(calc: CalculationResult<PoissonResult>): ExamAnswer {
   return {
-    title: "Binomial Probability Calculation",
+    title: "Poisson Probability Calculation",
     sections: calc.steps.map((step) => ({
       title: step.title,
       lines: [
@@ -40,92 +40,81 @@ function resultToExamAnswer(calc: CalculationResult<BinomialResult>): ExamAnswer
   };
 }
 
-export default function BinomialCalculator() {
-  const [n, setN] = useState("");
+export default function PoissonCalculator() {
+  const [lambda, setLambda] = useState("");
   const [k, setK] = useState("");
-  const [p, setP] = useState("");
-  const [result, setResult] = useState<CalculationResult<BinomialResult> | null>(null);
+  const [result, setResult] = useState<CalculationResult<PoissonResult> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function calculate() {
     setError(null);
     setResult(null);
 
-    const nVal = parseInt(n, 10);
+    const lambdaVal = parseFloat(lambda);
     const kVal = parseInt(k, 10);
-    const pVal = parseFloat(p);
 
-    if (isNaN(nVal) || isNaN(kVal)) {
-      setError("n and k must be valid integers. Try using numbers instead of hopes and dreams.");
+    if (isNaN(lambdaVal)) {
+      setError("λ must be a valid number. Not 'lambda' spelled out, the actual number.");
       return;
     }
-    if (isNaN(pVal)) {
-      setError("p must be a valid probability (0 to 1). Not 'maybe' or 'probably'.");
+    if (isNaN(kVal)) {
+      setError("k must be a valid integer. Whole numbers only, no fractions.");
       return;
     }
-    if (nVal < 0 || kVal < 0) {
-      setError("Negative trials? That's not how probability works.");
+    if (lambdaVal <= 0) {
+      setError("λ must be positive. Zero events per time period means nothing ever happens. Boring.");
       return;
     }
-    if (pVal < 0 || pVal > 1) {
-      setError("Probability must be between 0 and 1. This isn't Calvinball.");
+    if (kVal < 0) {
+      setError("k must be non-negative. You can't have -3 meteor strikes.");
       return;
     }
-    if (nVal > 170) {
-      setError("n is too large (factorial overflow). Keep n ≤ 170.");
+    if (kVal > 170) {
+      setError("k is too large (factorial overflow). Keep k ≤ 170.");
       return;
     }
 
-    const calc = binomialWithSteps(nVal, kVal, pVal);
+    const calc = poissonWithSteps(lambdaVal, kVal);
     setResult(calc);
   }
 
   return (
     <main className="retro-theme min-h-screen p-6">
       <header className="mb-6">
-        <h1 className="text-3xl retro-fire">BINOMIAL DISTRIBUTION</h1>
+        <h1 className="text-3xl retro-fire">POISSON DISTRIBUTION</h1>
         <p className="text-sm mt-2">
-          Calculate the probability of exactly k successes in n independent trials.
+          Calculate the probability of k events occurring in a fixed interval when the average rate is λ.
         </p>
-        <Link to="/stats-hell" className="text-xs">
-          ← Back to Stats Hell
+        <Link to="/stats-stuff" className="text-xs">
+          ← Back to Stats Stuff
         </Link>
       </header>
 
       <Card className="retro-card mb-6">
-        <MathBlock formula="P(X = k) = C(n, k) \cdot p^k \cdot (1-p)^{n-k}" />
+        <MathBlock formula="P(X = k) = \frac{\lambda^k \cdot e^{-\lambda}}{k!}" />
         <p className="text-center text-xs opacity-70 mt-2">
-          n = trials, k = successes, p = probability of success
+          λ = average rate (mean), k = number of occurrences, e ≈ 2.71828
         </p>
       </Card>
 
       <section className="mb-6">
-        <div className="grid grid-cols-3 gap-4 max-w-lg">
+        <div className="grid grid-cols-2 gap-4 max-w-md">
           <Input
-            label="n (trials)"
+            label="λ (lambda/mean)"
             type="number"
             min={0}
-            value={n}
-            onChange={(e) => setN(e.target.value)}
-            placeholder="e.g. 10"
+            step={0.1}
+            value={lambda}
+            onChange={(e) => setLambda(e.target.value)}
+            placeholder="e.g. 3.5"
           />
           <Input
-            label="k (successes)"
+            label="k (occurrences)"
             type="number"
             min={0}
             value={k}
             onChange={(e) => setK(e.target.value)}
-            placeholder="e.g. 3"
-          />
-          <Input
-            label="p (probability)"
-            type="number"
-            min={0}
-            max={1}
-            step={0.01}
-            value={p}
-            onChange={(e) => setP(e.target.value)}
-            placeholder="e.g. 0.5"
+            placeholder="e.g. 2"
           />
         </div>
 

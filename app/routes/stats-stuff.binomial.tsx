@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { Route } from "./+types/stats-hell.hypergeometric";
+import type { Route } from "./+types/stats-stuff.binomial";
 import { Link } from "react-router";
 
-import { hypergeometricWithSteps, type HypergeometricResult } from "~/lib/math/probability";
+import { binomialWithSteps, type BinomialResult } from "~/lib/math/probability";
 import { CopyExamAnswer } from "~/components/calculator/CopyExamAnswer";
 import { Input } from "~/components/ui/Input";
 import { Button } from "~/components/ui/Button";
@@ -13,8 +13,8 @@ import type { CalculationResult } from "~/lib/types/calculation";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Stats Hell | Hypergeometric Distribution" },
-    { name: "description", content: "Calculate hypergeometric probability for sampling without replacement." },
+    { title: "Stats Stuff | Binomial Distribution" },
+    { name: "description", content: "Calculate binomial probability P(X = k) with step-by-step workings." },
   ];
 }
 
@@ -23,9 +23,9 @@ function formatNum(num: number, decimals = 6): string {
   return num.toFixed(decimals).replace(/\.?0+$/, "");
 }
 
-function resultToExamAnswer(calc: CalculationResult<HypergeometricResult>): ExamAnswer {
+function resultToExamAnswer(calc: CalculationResult<BinomialResult>): ExamAnswer {
   return {
-    title: "Hypergeometric Probability Calculation",
+    title: "Binomial Probability Calculation",
     sections: calc.steps.map((step) => ({
       title: step.title,
       lines: [
@@ -40,107 +40,94 @@ function resultToExamAnswer(calc: CalculationResult<HypergeometricResult>): Exam
   };
 }
 
-export default function HypergeometricCalculator() {
-  const [N, setN] = useState("");
-  const [K, setK] = useState("");
-  const [n, setN2] = useState("");
-  const [k, setK2] = useState("");
-  const [result, setResult] = useState<CalculationResult<HypergeometricResult> | null>(null);
+export default function BinomialCalculator() {
+  const [n, setN] = useState("");
+  const [k, setK] = useState("");
+  const [p, setP] = useState("");
+  const [result, setResult] = useState<CalculationResult<BinomialResult> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   function calculate() {
     setError(null);
     setResult(null);
 
-    const NVal = parseInt(N, 10);
-    const KVal = parseInt(K, 10);
     const nVal = parseInt(n, 10);
     const kVal = parseInt(k, 10);
+    const pVal = parseFloat(p);
 
-    if ([NVal, KVal, nVal, kVal].some(isNaN)) {
-      setError("All values must be valid integers. This isn't a creative writing exercise.");
+    if (isNaN(nVal) || isNaN(kVal)) {
+      setError("n and k must be valid integers. Try using numbers instead of hopes and dreams.");
       return;
     }
-    if (NVal < 0 || KVal < 0 || nVal < 0 || kVal < 0) {
-      setError("Negative values? In probability? That's not how any of this works.");
+    if (isNaN(pVal)) {
+      setError("p must be a valid probability (0 to 1). Not 'maybe' or 'probably'.");
       return;
     }
-    if (KVal > NVal) {
-      setError("K can't exceed N. You can't have more successes than the total population.");
+    if (nVal < 0 || kVal < 0) {
+      setError("Negative trials? That's not how probability works.");
       return;
     }
-    if (nVal > NVal) {
-      setError("n can't exceed N. You can't draw more items than exist.");
+    if (pVal < 0 || pVal > 1) {
+      setError("Probability must be between 0 and 1. This isn't Calvinball.");
       return;
     }
-    if (NVal > 170) {
-      setError("N is too large (factorial overflow). Keep N ≤ 170.");
+    if (nVal > 170) {
+      setError("n is too large (factorial overflow). Keep n ≤ 170.");
       return;
     }
 
-    const calc = hypergeometricWithSteps(NVal, KVal, nVal, kVal);
+    const calc = binomialWithSteps(nVal, kVal, pVal);
     setResult(calc);
   }
 
   return (
     <main className="retro-theme min-h-screen p-6">
       <header className="mb-6">
-        <h1 className="text-3xl retro-fire">HYPERGEOMETRIC</h1>
+        <h1 className="text-3xl retro-fire">BINOMIAL DISTRIBUTION</h1>
         <p className="text-sm mt-2">
-          Probability of k successes in n draws without replacement from a finite population.
+          Calculate the probability of exactly k successes in n independent trials.
         </p>
-        <Link to="/stats-hell" className="text-xs">
-          ← Back to Stats Hell
+        <Link to="/stats-stuff" className="text-xs">
+          ← Back to Stats Stuff
         </Link>
       </header>
 
       <Card className="retro-card mb-6">
-        <MathBlock formula="P(X = k) = \frac{C(K, k) \cdot C(N-K, n-k)}{C(N, n)}" />
+        <MathBlock formula="P(X = k) = C(n, k) \cdot p^k \cdot (1-p)^{n-k}" />
         <p className="text-center text-xs opacity-70 mt-2">
-          N = population, K = success states, n = draws, k = observed successes
+          n = trials, k = successes, p = probability of success
         </p>
       </Card>
 
       <section className="mb-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl">
+        <div className="grid grid-cols-3 gap-4 max-w-lg">
           <Input
-            label="N (population)"
-            type="number"
-            min={0}
-            value={N}
-            onChange={(e) => setN(e.target.value)}
-            placeholder="e.g. 52"
-          />
-          <Input
-            label="K (successes in pop)"
-            type="number"
-            min={0}
-            value={K}
-            onChange={(e) => setK(e.target.value)}
-            placeholder="e.g. 13"
-          />
-          <Input
-            label="n (draws)"
+            label="n (trials)"
             type="number"
             min={0}
             value={n}
-            onChange={(e) => setN2(e.target.value)}
-            placeholder="e.g. 5"
+            onChange={(e) => setN(e.target.value)}
+            placeholder="e.g. 10"
           />
           <Input
-            label="k (successes wanted)"
+            label="k (successes)"
             type="number"
             min={0}
             value={k}
-            onChange={(e) => setK2(e.target.value)}
-            placeholder="e.g. 2"
+            onChange={(e) => setK(e.target.value)}
+            placeholder="e.g. 3"
+          />
+          <Input
+            label="p (probability)"
+            type="number"
+            min={0}
+            max={1}
+            step={0.01}
+            value={p}
+            onChange={(e) => setP(e.target.value)}
+            placeholder="e.g. 0.5"
           />
         </div>
-
-        <p className="text-xs opacity-70 mt-2">
-          Example: Drawing 5 cards from a 52-card deck, what's the probability of exactly 2 hearts?
-          N=52, K=13 (hearts), n=5, k=2
-        </p>
 
         {error && <p className="text-red-500 mt-2 text-sm retro-blink">{error}</p>}
 
