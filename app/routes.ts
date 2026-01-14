@@ -12,4 +12,5 @@ export default [
     route("stats-stuff/combinations", "routes/combinations.tsx"),
     route("stats-stuff/descriptive/basic", "routes/descriptive-basic.tsx"),
     route("stats-stuff/descriptive/means", "routes/descriptive-means.tsx"),
+    route("stats-stuff/regression", "routes/regression.tsx"),
 ] satisfies RouteConfig;
