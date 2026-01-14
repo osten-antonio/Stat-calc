@@ -67,14 +67,44 @@ export function oneSampleTTestWithSteps(
   const se = s / Math.sqrt(n);
   const t = (xBar - mu0) / se;
 
+  const sum = data.reduce((a, b) => a + b, 0);
+  const sumDisplay = data.length <= 8 
+    ? data.map(x => formatNumber(x)).join(" + ")
+    : data.slice(0, 5).map(x => formatNumber(x)).join(" + ") + " + ... + " + formatNumber(data[data.length - 1]);
+  
+  const squaredDeviations = data.map(x => Math.pow(x - xBar, 2));
+  const sumSquaredDev = squaredDeviations.reduce((a, b) => a + b, 0);
+  const variance = sumSquaredDev / (n - 1);
+
   steps.push({
     id: "sample-stats",
     title: "Calculate Sample Statistics",
-    description: [
-      `Sample mean (x̄) = ${formatNumber(xBar)}`,
-      `Sample standard deviation (s) = ${formatNumber(s)}`,
-      `Degrees of freedom (df) = n - 1 = ${df}`,
-    ].join("\n"),
+    formula: "\\bar{x} = \\frac{\\sum x_i}{n}, \\quad s = \\sqrt{\\frac{\\sum(x_i - \\bar{x})^2}{n-1}}",
+  });
+
+  steps.push({
+    id: "sample-mean",
+    title: "Step 2a: Calculate Sample Mean",
+    formula: "\\bar{x} = \\frac{\\sum x_i}{n}",
+    calculation: `\\bar{x} = \\frac{${sumDisplay}}{${n}} = \\frac{${formatNumber(sum)}}{${n}} = ${formatNumber(xBar)}`,
+    result: formatNumber(xBar),
+  });
+
+  steps.push({
+    id: "sample-sd",
+    title: "Step 2b: Calculate Sample Standard Deviation",
+    formula: "s = \\sqrt{\\frac{\\sum(x_i - \\bar{x})^2}{n-1}}",
+    description: `Sum of squared deviations: Σ(xᵢ - ${formatNumber(xBar)})² = ${formatNumber(sumSquaredDev)}`,
+    calculation: `s = \\sqrt{\\frac{${formatNumber(sumSquaredDev)}}{${n - 1}}} = \\sqrt{${formatNumber(variance)}} = ${formatNumber(s)}`,
+    result: formatNumber(s),
+  });
+
+  steps.push({
+    id: "df",
+    title: "Step 2c: Degrees of Freedom",
+    formula: "df = n - 1",
+    calculation: `df = ${n} - 1 = ${df}`,
+    result: String(df),
   });
 
   steps.push({
@@ -212,14 +242,44 @@ export function pairedTTestWithSteps(
   const se = sd / Math.sqrt(n);
   const t = dBar / se;
 
+  const sumDiff = differences.reduce((a, b) => a + b, 0);
+  const sumDiffDisplay = differences.length <= 8
+    ? differences.map(d => formatNumber(d)).join(" + ")
+    : differences.slice(0, 5).map(d => formatNumber(d)).join(" + ") + " + ... + " + formatNumber(differences[differences.length - 1]);
+  
+  const squaredDevDiff = differences.map(d => Math.pow(d - dBar, 2));
+  const sumSquaredDevDiff = squaredDevDiff.reduce((a, b) => a + b, 0);
+  const varianceDiff = sumSquaredDevDiff / (n - 1);
+
   steps.push({
     id: "diff-stats",
     title: "Calculate Difference Statistics",
-    description: [
-      `Mean of differences (d̄) = ${formatNumber(dBar)}`,
-      `Standard deviation of differences (s_d) = ${formatNumber(sd)}`,
-      `Degrees of freedom (df) = n - 1 = ${df}`,
-    ].join("\n"),
+    formula: "\\bar{d} = \\frac{\\sum d_i}{n}, \\quad s_d = \\sqrt{\\frac{\\sum(d_i - \\bar{d})^2}{n-1}}",
+  });
+
+  steps.push({
+    id: "diff-mean",
+    title: "Step 3a: Calculate Mean of Differences",
+    formula: "\\bar{d} = \\frac{\\sum d_i}{n}",
+    calculation: `\\bar{d} = \\frac{${sumDiffDisplay}}{${n}} = \\frac{${formatNumber(sumDiff)}}{${n}} = ${formatNumber(dBar)}`,
+    result: formatNumber(dBar),
+  });
+
+  steps.push({
+    id: "diff-sd",
+    title: "Step 3b: Calculate Standard Deviation of Differences",
+    formula: "s_d = \\sqrt{\\frac{\\sum(d_i - \\bar{d})^2}{n-1}}",
+    description: `Sum of squared deviations: Σ(dᵢ - ${formatNumber(dBar)})² = ${formatNumber(sumSquaredDevDiff)}`,
+    calculation: `s_d = \\sqrt{\\frac{${formatNumber(sumSquaredDevDiff)}}{${n - 1}}} = \\sqrt{${formatNumber(varianceDiff)}} = ${formatNumber(sd)}`,
+    result: formatNumber(sd),
+  });
+
+  steps.push({
+    id: "df",
+    title: "Step 3c: Degrees of Freedom",
+    formula: "df = n - 1",
+    calculation: `df = ${n} - 1 = ${df}`,
+    result: String(df),
   });
 
   steps.push({
@@ -326,13 +386,58 @@ export function independentTTestWithSteps(
   const s1 = sampleStdDev(sample1);
   const s2 = sampleStdDev(sample2);
 
+  const sum1 = sample1.reduce((a, b) => a + b, 0);
+  const sum2 = sample2.reduce((a, b) => a + b, 0);
+  const sumDisplay1 = sample1.length <= 6
+    ? sample1.map(x => formatNumber(x)).join(" + ")
+    : sample1.slice(0, 4).map(x => formatNumber(x)).join(" + ") + " + ...";
+  const sumDisplay2 = sample2.length <= 6
+    ? sample2.map(x => formatNumber(x)).join(" + ")
+    : sample2.slice(0, 4).map(x => formatNumber(x)).join(" + ") + " + ...";
+
+  const squaredDev1 = sample1.map(x => Math.pow(x - x1Bar, 2));
+  const squaredDev2 = sample2.map(x => Math.pow(x - x2Bar, 2));
+  const sumSqDev1 = squaredDev1.reduce((a, b) => a + b, 0);
+  const sumSqDev2 = squaredDev2.reduce((a, b) => a + b, 0);
+  const var1 = sumSqDev1 / (n1 - 1);
+  const var2 = sumSqDev2 / (n2 - 1);
+
   steps.push({
     id: "sample-stats",
     title: "Calculate Sample Statistics",
-    description: [
-      `Sample 1: x̄₁ = ${formatNumber(x1Bar)}, s₁ = ${formatNumber(s1)}, n₁ = ${n1}`,
-      `Sample 2: x̄₂ = ${formatNumber(x2Bar)}, s₂ = ${formatNumber(s2)}, n₂ = ${n2}`,
-    ].join("\n"),
+    formula: "\\bar{x} = \\frac{\\sum x_i}{n}, \\quad s = \\sqrt{\\frac{\\sum(x_i - \\bar{x})^2}{n-1}}",
+  });
+
+  steps.push({
+    id: "group1-mean",
+    title: "Step 2a: Group 1 - Sample Mean",
+    formula: "\\bar{x}_1 = \\frac{\\sum x_{1i}}{n_1}",
+    calculation: `\\bar{x}_1 = \\frac{${sumDisplay1}}{${n1}} = \\frac{${formatNumber(sum1)}}{${n1}} = ${formatNumber(x1Bar)}`,
+    result: formatNumber(x1Bar),
+  });
+
+  steps.push({
+    id: "group1-sd",
+    title: "Step 2b: Group 1 - Sample Standard Deviation",
+    formula: "s_1 = \\sqrt{\\frac{\\sum(x_{1i} - \\bar{x}_1)^2}{n_1-1}}",
+    calculation: `s_1 = \\sqrt{\\frac{${formatNumber(sumSqDev1)}}{${n1 - 1}}} = \\sqrt{${formatNumber(var1)}} = ${formatNumber(s1)}`,
+    result: formatNumber(s1),
+  });
+
+  steps.push({
+    id: "group2-mean",
+    title: "Step 2c: Group 2 - Sample Mean",
+    formula: "\\bar{x}_2 = \\frac{\\sum x_{2i}}{n_2}",
+    calculation: `\\bar{x}_2 = \\frac{${sumDisplay2}}{${n2}} = \\frac{${formatNumber(sum2)}}{${n2}} = ${formatNumber(x2Bar)}`,
+    result: formatNumber(x2Bar),
+  });
+
+  steps.push({
+    id: "group2-sd",
+    title: "Step 2d: Group 2 - Sample Standard Deviation",
+    formula: "s_2 = \\sqrt{\\frac{\\sum(x_{2i} - \\bar{x}_2)^2}{n_2-1}}",
+    calculation: `s_2 = \\sqrt{\\frac{${formatNumber(sumSqDev2)}}{${n2 - 1}}} = \\sqrt{${formatNumber(var2)}} = ${formatNumber(s2)}`,
+    result: formatNumber(s2),
   });
 
   const df = n1 + n2 - 2;

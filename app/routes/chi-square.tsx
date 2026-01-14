@@ -269,6 +269,64 @@ export default function ChiSquarePage() {
 
                 <Card className="border border-gray-100 shadow-sm">
                   <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+                    Calculation Details
+                  </h4>
+                  <div className="overflow-x-auto rounded-lg border border-[var(--color-border)]">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="p-3 border-b border-r border-[var(--color-border)] text-left font-medium">Category</th>
+                          <th className="p-3 border-b border-r border-[var(--color-border)] text-center font-medium">O</th>
+                          <th className="p-3 border-b border-r border-[var(--color-border)] text-center font-medium">E</th>
+                          <th className="p-3 border-b border-r border-[var(--color-border)] text-center font-medium">O − E</th>
+                          <th className="p-3 border-b border-r border-[var(--color-border)] text-center font-medium">(O − E)²</th>
+                          <th className="p-3 border-b border-[var(--color-border)] text-center font-medium text-[var(--color-dot-mint)]">(O − E)²/E</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {gofResult.value.observed.map((o, i) => {
+                          const e = gofResult.value.expected[i];
+                          const diff = o - e;
+                          const diffSq = diff * diff;
+                          const contrib = diffSq / e;
+                          return (
+                            <tr key={i} className="hover:bg-gray-50/50">
+                              <td className="p-3 border-b border-r border-[var(--color-border)] font-medium text-[var(--color-ink-light)]">
+                                {i + 1}
+                              </td>
+                              <td className="p-3 border-b border-r border-[var(--color-border)] text-center font-mono">
+                                {o}
+                              </td>
+                              <td className="p-3 border-b border-r border-[var(--color-border)] text-center font-mono">
+                                {formatNum(e)}
+                              </td>
+                              <td className="p-3 border-b border-r border-[var(--color-border)] text-center font-mono">
+                                {formatNum(diff)}
+                              </td>
+                              <td className="p-3 border-b border-r border-[var(--color-border)] text-center font-mono">
+                                {formatNum(diffSq)}
+                              </td>
+                              <td className="p-3 border-b border-[var(--color-border)] text-center font-mono font-semibold text-[var(--color-dot-mint)]">
+                                {formatNum(contrib)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                        <tr className="bg-[var(--color-accent-mint)] font-bold">
+                          <td colSpan={5} className="p-3 border-r border-[var(--color-border)] text-right">
+                            Σ (Sum) =
+                          </td>
+                          <td className="p-3 text-center font-mono text-[var(--color-dot-mint)]">
+                            {formatNum(gofResult.value.chiSquare)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+
+                <Card className="border border-gray-100 shadow-sm">
+                  <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
                     Step-by-Step Working
                   </h4>
                   <div className="space-y-4">
@@ -405,6 +463,141 @@ export default function ChiSquarePage() {
                       </div>
                       <div className="text-xs text-[var(--color-ink-light)]">χ²-critical</div>
                     </div>
+                  </div>
+                </Card>
+
+                <Card className="border border-gray-100 shadow-sm">
+                  <h4 className="font-semibold mb-4" style={{ fontFamily: "var(--font-serif)" }}>
+                    Observed Frequencies (with Marginal Totals)
+                  </h4>
+                  <div className="overflow-x-auto rounded-lg border border-[var(--color-border)]">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="p-3 border-b border-r border-[var(--color-border)] font-medium"></th>
+                          {indepResult.value.colTotals.map((_, c) => (
+                            <th key={c} className="p-3 border-b border-r border-[var(--color-border)] text-center font-medium text-[var(--color-ink-light)]">
+                              Col {c + 1}
+                            </th>
+                          ))}
+                          <th className="p-3 border-b border-[var(--color-border)] text-center font-semibold bg-[var(--color-accent-mint)]">Row Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {indepResult.value.observedTable.map((row, r) => (
+                          <tr key={r}>
+                            <td className="p-3 border-b border-r border-[var(--color-border)] bg-gray-50 font-medium text-[var(--color-ink-light)]">
+                              Row {r + 1}
+                            </td>
+                            {row.map((cell, c) => (
+                              <td key={c} className="p-3 border-b border-r border-[var(--color-border)] text-center font-mono">
+                                {cell}
+                              </td>
+                            ))}
+                            <td className="p-3 border-b border-[var(--color-border)] text-center font-mono font-semibold bg-[var(--color-accent-mint)]">
+                              {indepResult.value.rowTotals[r]}
+                            </td>
+                          </tr>
+                        ))}
+                        <tr className="bg-[var(--color-accent-mint)]">
+                          <td className="p-3 border-r border-[var(--color-border)] font-semibold">Col Total</td>
+                          {indepResult.value.colTotals.map((total, c) => (
+                            <td key={c} className="p-3 border-r border-[var(--color-border)] text-center font-mono font-semibold">
+                              {total}
+                            </td>
+                          ))}
+                          <td className="p-3 text-center font-mono font-bold text-[var(--color-dot-mint)]">
+                            {indepResult.value.grandTotal}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+
+                <Card className="border border-gray-100 shadow-sm">
+                  <h4 className="font-semibold mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+                    Expected Frequencies
+                  </h4>
+                  <p className="text-sm text-[var(--color-ink-light)] mb-4">
+                    E = (Row Total × Column Total) / Grand Total
+                  </p>
+                  <div className="overflow-x-auto rounded-lg border border-[var(--color-border)]">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="p-3 border-b border-r border-[var(--color-border)] font-medium"></th>
+                          {indepResult.value.colTotals.map((_, c) => (
+                            <th key={c} className="p-3 border-b border-[var(--color-border)] text-center font-medium text-[var(--color-ink-light)]">
+                              Col {c + 1}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {indepResult.value.expectedTable.map((row, r) => (
+                          <tr key={r} className="hover:bg-gray-50/50">
+                            <td className="p-3 border-b border-r border-[var(--color-border)] bg-gray-50 font-medium text-[var(--color-ink-light)]">
+                              Row {r + 1}
+                            </td>
+                            {row.map((cell, c) => (
+                              <td key={c} className="p-3 border-b border-[var(--color-border)] text-center font-mono">
+                                {formatNum(cell, 2)}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+
+                <Card className="border border-gray-100 shadow-sm">
+                  <h4 className="font-semibold mb-2" style={{ fontFamily: "var(--font-serif)" }}>
+                    Chi-Square Contributions
+                  </h4>
+                  <p className="text-sm text-[var(--color-ink-light)] mb-4">
+                    (O − E)² / E for each cell
+                  </p>
+                  <div className="overflow-x-auto rounded-lg border border-[var(--color-border)]">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="p-3 border-b border-r border-[var(--color-border)] font-medium"></th>
+                          {indepResult.value.colTotals.map((_, c) => (
+                            <th key={c} className="p-3 border-b border-[var(--color-border)] text-center font-medium text-[var(--color-ink-light)]">
+                              Col {c + 1}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {indepResult.value.observedTable.map((row, r) => (
+                          <tr key={r} className="hover:bg-gray-50/50">
+                            <td className="p-3 border-b border-r border-[var(--color-border)] bg-gray-50 font-medium text-[var(--color-ink-light)]">
+                              Row {r + 1}
+                            </td>
+                            {row.map((o, c) => {
+                              const e = indepResult.value.expectedTable[r][c];
+                              const contrib = Math.pow(o - e, 2) / e;
+                              return (
+                                <td key={c} className="p-3 border-b border-[var(--color-border)] text-center font-mono text-[var(--color-dot-mint)] font-semibold">
+                                  {formatNum(contrib)}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                        <tr className="bg-[var(--color-accent-mint)] font-bold">
+                          <td className="p-3 border-r border-[var(--color-border)] text-right" colSpan={1}>
+                            Σ =
+                          </td>
+                          <td colSpan={indepResult.value.colTotals.length} className="p-3 text-center font-mono text-[var(--color-dot-mint)]">
+                            {formatNum(indepResult.value.chiSquare)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </Card>
 
