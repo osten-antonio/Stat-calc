@@ -3,7 +3,7 @@ import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   console.log("Glory to all Monkeys!");
-  console.log("http://bit.ly/4pCHsoj");
+  console.log("https://docs.google.com/document/d/1N5wwT-CRTw8Yj6z7DKgRJAWq31gCXNcMswXA0T2K-AA/edit?usp=sharing");
   
   const title = "Stats Stuff | Statistical Calculators";
   const description = "Free statistical calculators for probability, hypothesis testing, ANOVA, regression, and more. Step-by-step solutions for students and professionals.";
